@@ -1,0 +1,755 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\dtos\\resetpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\dtos\\resetpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\dtos\\forgotpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\dtos\\forgotpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\e-pharmahub.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\e-pharmahub.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\services\\iemailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\services\\iemailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\services\\emailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\services\\emailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\dtos\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\dtos\\logindto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\dtos\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\dtos\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Migrations\\20251002204526_createinitialdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:E-PharmaHub\\Migrations\\20251002204526_createinitialdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\ehealthdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\ehealthdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\donorprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\donorprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\servicetype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\servicetype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\prescriptionitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\prescriptionitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\prescription.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\prescription.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\pharmacy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\pharmacy.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\pharmacistprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\pharmacistprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\paymentstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\paymentstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\payment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\payment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\orderstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\orderstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\orderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\orderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\messagethreadparticipant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\messagethreadparticipant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\messagethread.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\messagethread.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\medication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\medication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\inventoryitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\inventoryitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\healthproviderprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\healthproviderprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\donormatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\donormatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\doctorprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\doctorprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\clinic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\clinic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\chatmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\chatmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\bloodtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\bloodtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\bloodrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\bloodrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\appointmentstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\appointmentstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\appointment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\appointment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\alternativemedication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\alternativemedication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\models\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|c:\\users\\lenovo\\source\\repos\\api\\e-pharmahub\\e-pharmahub\\e-pharmahub.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{D39140EF-862E-401D-883D-E0380882391B}|E-PharmaHub\\E-PharmaHub.csproj|solutionrelative:e-pharmahub\\e-pharmahub.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "E-PharmaHub.http",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\E-PharmaHub.http",
+              "RelativeDocumentMoniker": "E-PharmaHub\\E-PharmaHub.http",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\E-PharmaHub.http",
+              "RelativeToolTip": "E-PharmaHub\\E-PharmaHub.http",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2025-10-03T00:59:00.431Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "IEmailSender.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Services\\IEmailSender.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Services\\IEmailSender.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Services\\IEmailSender.cs",
+              "RelativeToolTip": "E-PharmaHub\\Services\\IEmailSender.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T00:51:24.007Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "EmailSender.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Services\\EmailSender.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Services\\EmailSender.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Services\\EmailSender.cs",
+              "RelativeToolTip": "E-PharmaHub\\Services\\EmailSender.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAAA0AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T00:46:18.619Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ResetPasswordDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Dtos\\ResetPasswordDto.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Dtos\\ResetPasswordDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Dtos\\ResetPasswordDto.cs",
+              "RelativeToolTip": "E-PharmaHub\\Dtos\\ResetPasswordDto.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T00:44:20.88Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ForgotPasswordDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Dtos\\ForgotPasswordDto.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Dtos\\ForgotPasswordDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Dtos\\ForgotPasswordDto.cs",
+              "RelativeToolTip": "E-PharmaHub\\Dtos\\ForgotPasswordDto.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T00:44:03.867Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Controllers\\UserController.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Controllers\\UserController.cs",
+              "RelativeToolTip": "E-PharmaHub\\Controllers\\UserController.cs",
+              "ViewState": "AQIAAFoAAAAAAAAAAIAwwGUAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T21:48:19.326Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Review.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Review.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Review.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Review.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Review.cs",
+              "ViewState": "AQIAAAQAAAAAAAAAAAAAAAgAAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:21:21.791Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "UserRole.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\UserRole.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\UserRole.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\UserRole.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\UserRole.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:21:49.177Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Program.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Program.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Program.cs",
+              "RelativeToolTip": "E-PharmaHub\\Program.cs",
+              "ViewState": "AQIAABUAAAAAAAAAAAAAACIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T20:18:24.712Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\appsettings.json",
+              "RelativeDocumentMoniker": "E-PharmaHub\\appsettings.json",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\appsettings.json",
+              "RelativeToolTip": "E-PharmaHub\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-02T20:13:11.679Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ServiceType.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\ServiceType.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\ServiceType.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\ServiceType.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\ServiceType.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:21:34.01Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "PrescriptionItem.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\PrescriptionItem.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\PrescriptionItem.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\PrescriptionItem.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\PrescriptionItem.cs",
+              "ViewState": "AQIAAAcAAAAAAAAAAAAAAAgAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:21:09.817Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "Prescription.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Prescription.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Prescription.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Prescription.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Prescription.cs",
+              "ViewState": "AQIAAAQAAAAAAAAAAAAAAAoAAAA8AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:20:57.486Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AppUser.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\AppUser.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\AppUser.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\AppUser.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\AppUser.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAA+AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:06:03.787Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "RegisterDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Dtos\\RegisterDto.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Dtos\\RegisterDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Dtos\\RegisterDto.cs",
+              "RelativeToolTip": "E-PharmaHub\\Dtos\\RegisterDto.cs",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAABwAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T21:51:24.86Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "LoginDto.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Dtos\\LoginDto.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Dtos\\LoginDto.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Dtos\\LoginDto.cs",
+              "RelativeToolTip": "E-PharmaHub\\Dtos\\LoginDto.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T21:51:50.196Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "20251002204526_createinitialdb.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Migrations\\20251002204526_createinitialdb.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Migrations\\20251002204526_createinitialdb.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Migrations\\20251002204526_createinitialdb.cs",
+              "RelativeToolTip": "E-PharmaHub\\Migrations\\20251002204526_createinitialdb.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T20:45:27.045Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Pharmacy.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Pharmacy.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Pharmacy.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Pharmacy.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Pharmacy.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:20:45.508Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "PharmacistProfile.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\PharmacistProfile.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\PharmacistProfile.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\PharmacistProfile.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\PharmacistProfile.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAAAsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:09:37.732Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "PaymentStatus.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\PaymentStatus.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\PaymentStatus.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\PaymentStatus.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\PaymentStatus.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:20:24.795Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "EHealthDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\EHealthDbContext.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\EHealthDbContext.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\EHealthDbContext.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\EHealthDbContext.cs",
+              "ViewState": "AQIAAEwAAAAAAAAAAAAAAFYAAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:23:07.126Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "DonorProfile.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\DonorProfile.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\DonorProfile.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\DonorProfile.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\DonorProfile.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:07:21.908Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "Payment.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Payment.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Payment.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Payment.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Payment.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAAAAkAAAA6AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:20:12.444Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "OrderStatus.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\OrderStatus.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\OrderStatus.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\OrderStatus.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\OrderStatus.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAoAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:19:49.324Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "OrderItem.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\OrderItem.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\OrderItem.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\OrderItem.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\OrderItem.cs",
+              "ViewState": "AQIAAAcAAAAAAAAAAAAAAAsAAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:19:39.271Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Order.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Order.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Order.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Order.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Order.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAsAAAAvAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:19:28.115Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "Notification.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Notification.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Notification.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Notification.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Notification.cs",
+              "ViewState": "AQIAAAcAAAAAAAAAAAAAAAUAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:19:18.501Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "MessageThreadParticipant.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\MessageThreadParticipant.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\MessageThreadParticipant.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\MessageThreadParticipant.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\MessageThreadParticipant.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAAAAkAAAA9AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:19:09.987Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "MessageThread.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\MessageThread.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\MessageThread.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\MessageThread.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\MessageThread.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAeAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:18:56.684Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "Medication.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Medication.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Medication.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Medication.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Medication.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAAAAUAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:18:37.313Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "InventoryItem.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\InventoryItem.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\InventoryItem.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\InventoryItem.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\InventoryItem.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAAAAYAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:18:27.378Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "HealthProviderProfile.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\HealthProviderProfile.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\HealthProviderProfile.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\HealthProviderProfile.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\HealthProviderProfile.cs",
+              "ViewState": "AQIAAAQAAAAAAAAAAAAAAAYAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:15:57.151Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "DonorMatch.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\DonorMatch.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\DonorMatch.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\DonorMatch.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\DonorMatch.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAAAAkAAABAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:15:42.833Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "DoctorProfile.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\DoctorProfile.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\DoctorProfile.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\DoctorProfile.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\DoctorProfile.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAAAcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:15:29.599Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "Clinic.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Clinic.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Clinic.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Clinic.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Clinic.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAAAAkAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:15:21.59Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "ChatMessage.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\ChatMessage.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\ChatMessage.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\ChatMessage.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\ChatMessage.cs",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAAAAcAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:15:11.871Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "BloodType.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\BloodType.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\BloodType.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\BloodType.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\BloodType.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:50:13.637Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "BloodRequest.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\BloodRequest.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\BloodRequest.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\BloodRequest.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\BloodRequest.cs",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAAAAgAAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:14:54.798Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "AppointmentStatus.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\AppointmentStatus.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\AppointmentStatus.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\AppointmentStatus.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\AppointmentStatus.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:49:47.859Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "Appointment.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Appointment.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Appointment.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Appointment.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Appointment.cs",
+              "ViewState": "AQIAABAAAAAAAAAAAAAAABEAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:14:35.29Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "AlternativeMedication.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\AlternativeMedication.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\AlternativeMedication.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\AlternativeMedication.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\AlternativeMedication.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAAAAkAAAAtAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:14:17.658Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "Address.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Address.cs",
+              "RelativeDocumentMoniker": "E-PharmaHub\\Models\\Address.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\Models\\Address.cs",
+              "RelativeToolTip": "E-PharmaHub\\Models\\Address.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAAA4AAAAuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-02T19:14:04.947Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "E-PharmaHub",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\E-PharmaHub.csproj",
+              "RelativeDocumentMoniker": "E-PharmaHub\\E-PharmaHub.csproj",
+              "ToolTip": "C:\\Users\\Lenovo\\source\\repos\\API\\E-PharmaHub\\E-PharmaHub\\E-PharmaHub.csproj",
+              "RelativeToolTip": "E-PharmaHub\\E-PharmaHub.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-02T19:59:12.244Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

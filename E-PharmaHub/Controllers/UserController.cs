@@ -1,0 +1,139 @@
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
+using E_PharmaHub.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace E_PharmaHub.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UserController : ControllerBase
+    {
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly IConfiguration _config;
+        private readonly IEmailSender _emailSender;
+
+        public UserController(
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            IConfiguration config,
+            IEmailSender emailSender
+            )
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _config = config;
+            _emailSender = emailSender;
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            if (model.Role != UserRole.RegularUser && model.Role != UserRole.Donor)
+                return BadRequest("Invalid role selection. You can only register as RegularUser or Donor.");
+
+            var user = new AppUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                Role = model.Role
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            await _userManager.AddToRoleAsync(user, model.Role.ToString());
+
+            return Ok(new
+            {
+                message = "User registered successfully!",
+                role = user.Role.ToString()
+            });
+        }
+
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) return Unauthorized("Invalid credentials , email not found");
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+
+            if (!result.Succeeded) return Unauthorized("Invalid credentials , wrong password");
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var token = GenerateJwtToken(user, roles);
+
+            return Ok(new
+            {
+                token,
+                user = new { user.UserName, user.Email, Roles = roles }
+            });
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) return BadRequest("User not found");
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var resetLink = $"{_config["Jwt:Audience"]}/reset-password?email={user.Email}&token={Uri.EscapeDataString(token)}";
+
+            await _emailSender.SendEmailAsync(user.Email, "Reset Your Password",
+                $"<p>Click the link below to reset your password:</p><a href='{resetLink}'>Reset Password</a>");
+
+            return Ok(new { message = "Password reset link has been sent to your email.",token });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null) return BadRequest("User not found");
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+            if (!result.Succeeded) return BadRequest(result.Errors);
+
+            return Ok(new { message = "Password has been reset successfully!" });
+        }
+        private string GenerateJwtToken(AppUser user, IList<string> roles)
+        {
+            var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim("FullName", user.UserName)
+        };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(2),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+    }
+}
