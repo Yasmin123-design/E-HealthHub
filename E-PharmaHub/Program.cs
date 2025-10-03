@@ -33,6 +33,23 @@ namespace E_PharmaHub
                                 });
             builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddGoogle(options =>
+            {
+               options.ClientId = builder.Configuration["AuthenticationGoogle:Google:ClientId"];
+               options.ClientSecret = builder.Configuration["AuthenticationGoogle:Google:ClientSecret"];
+               options.CallbackPath = "/signin-google";
+            })
+            .AddFacebook(options =>
+            {
+               options.AppId = builder.Configuration["AuthenticationFacebook:Facebook:AppId"];
+               options.AppSecret = builder.Configuration["AuthenticationFacebook:Facebook:AppSecret"];
+               options.CallbackPath = "/signin-facebook";
+            });
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
