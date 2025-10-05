@@ -32,11 +32,13 @@ namespace E_PharmaHub.Migrations
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Country")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<double?>("Latitude")
                         .HasColumnType("float");
@@ -46,11 +48,13 @@ namespace E_PharmaHub.Migrations
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Street")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
 
@@ -106,6 +110,9 @@ namespace E_PharmaHub.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -287,6 +294,9 @@ namespace E_PharmaHub.Migrations
                     b.Property<int>("AddressId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -311,12 +321,10 @@ namespace E_PharmaHub.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AppUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ClinicName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ClinicId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Specialty")
                         .IsRequired()
@@ -325,9 +333,12 @@ namespace E_PharmaHub.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[AppUserId] IS NOT NULL");
 
-                    b.ToTable("DoctorProfile");
+                    b.HasIndex("ClinicId");
+
+                    b.ToTable("DoctorProfiles");
                 });
 
             modelBuilder.Entity("E_PharmaHub.Models.DonorMatch", b =>
@@ -463,23 +474,32 @@ namespace E_PharmaHub.Migrations
 
                     b.Property<string>("ATCCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("BrandName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("DosageForm")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("GenericName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ImagePath")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Strength")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -677,12 +697,12 @@ namespace E_PharmaHub.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AppUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LicenseNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("PharmacyId")
                         .HasColumnType("int");
@@ -690,11 +710,12 @@ namespace E_PharmaHub.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[AppUserId] IS NOT NULL");
 
                     b.HasIndex("PharmacyId");
 
-                    b.ToTable("PharmacistProfile");
+                    b.ToTable("Pharmacists");
                 });
 
             modelBuilder.Entity("E_PharmaHub.Models.Pharmacy", b =>
@@ -708,15 +729,21 @@ namespace E_PharmaHub.Migrations
                     b.Property<int>("AddressId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ImagePath")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
-                    b.Property<double>("Rating")
+                    b.Property<double?>("Rating")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
@@ -795,7 +822,8 @@ namespace E_PharmaHub.Migrations
 
                     b.Property<string>("Comment")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -810,7 +838,6 @@ namespace E_PharmaHub.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -1046,11 +1073,17 @@ namespace E_PharmaHub.Migrations
                 {
                     b.HasOne("E_PharmaHub.Models.AppUser", "AppUser")
                         .WithOne("DoctorProfile")
-                        .HasForeignKey("E_PharmaHub.Models.DoctorProfile", "AppUserId")
+                        .HasForeignKey("E_PharmaHub.Models.DoctorProfile", "AppUserId");
+
+                    b.HasOne("E_PharmaHub.Models.Clinic", "Clinic")
+                        .WithMany()
+                        .HasForeignKey("ClinicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AppUser");
+
+                    b.Navigation("Clinic");
                 });
 
             modelBuilder.Entity("E_PharmaHub.Models.DonorMatch", b =>
@@ -1203,9 +1236,7 @@ namespace E_PharmaHub.Migrations
                 {
                     b.HasOne("E_PharmaHub.Models.AppUser", "AppUser")
                         .WithOne("PharmacistProfile")
-                        .HasForeignKey("E_PharmaHub.Models.PharmacistProfile", "AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("E_PharmaHub.Models.PharmacistProfile", "AppUserId");
 
                     b.HasOne("E_PharmaHub.Models.Pharmacy", "Pharmacy")
                         .WithMany()
@@ -1271,9 +1302,7 @@ namespace E_PharmaHub.Migrations
 
                     b.HasOne("E_PharmaHub.Models.AppUser", "User")
                         .WithMany("Reviews")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Medication");
 
@@ -1337,14 +1366,11 @@ namespace E_PharmaHub.Migrations
                 {
                     b.Navigation("DoctorAppointments");
 
-                    b.Navigation("DoctorProfile")
-                        .IsRequired();
+                    b.Navigation("DoctorProfile");
 
-                    b.Navigation("DonorProfile")
-                        .IsRequired();
+                    b.Navigation("DonorProfile");
 
-                    b.Navigation("HealthProviderProfile")
-                        .IsRequired();
+                    b.Navigation("HealthProviderProfile");
 
                     b.Navigation("MessageThreads");
 
@@ -1352,8 +1378,7 @@ namespace E_PharmaHub.Migrations
 
                     b.Navigation("PatientAppointments");
 
-                    b.Navigation("PharmacistProfile")
-                        .IsRequired();
+                    b.Navigation("PharmacistProfile");
 
                     b.Navigation("Reviews");
                 });
@@ -1386,8 +1411,7 @@ namespace E_PharmaHub.Migrations
                 {
                     b.Navigation("Items");
 
-                    b.Navigation("Payment")
-                        .IsRequired();
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("E_PharmaHub.Models.Pharmacy", b =>

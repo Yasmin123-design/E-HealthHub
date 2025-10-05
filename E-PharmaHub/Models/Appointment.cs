@@ -16,7 +16,7 @@ namespace E_PharmaHub.Models
         public virtual AppUser Doctor { get; set; }
 
         public int ClinicId { get; set; }
-        public virtual Clinic Clinic { get; set; }
+        public virtual Clinic? Clinic { get; set; }
 
         public DateTime StartAt { get; set; }
         public DateTime EndAt { get; set; }

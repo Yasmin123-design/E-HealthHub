@@ -8,7 +8,7 @@ namespace E_PharmaHub.Models
         public int ThreadId { get; set; }
         public string UserId { get; set; }
         public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
-        public virtual MessageThread Thread { get; set; }
-        public virtual AppUser User { get; set; }
+        public virtual MessageThread? Thread { get; set; }
+        public virtual AppUser? User { get; set; }
     }
 }

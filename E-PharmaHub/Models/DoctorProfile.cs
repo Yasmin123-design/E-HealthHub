@@ -5,11 +5,11 @@ namespace E_PharmaHub.Models
 {
     public class DoctorProfile
     {
-
         [Key] public int Id { get; set; }
         public string Specialty { get; set; }
-        public string ClinicName { get; set; }
-        public string AppUserId { get; set; }
-        public virtual AppUser AppUser { get; set; }
+        public int ClinicId { get; set; }
+        public virtual Clinic? Clinic { get; set; }
+        public string? AppUserId { get; set; }
+        public virtual AppUser? AppUser { get; set; }
     }
 }

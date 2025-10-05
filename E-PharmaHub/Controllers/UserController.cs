@@ -46,13 +46,26 @@ namespace E_PharmaHub.Controllers
             {
                 UserName = model.Email,
                 Email = model.Email,
-                Role = model.Role
+                Role = model.Role,
+                IsApproved = true
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded) return BadRequest(result.Errors);
 
             await _userManager.AddToRoleAsync(user, model.Role.ToString());
+
+            //if (model.Role == UserRole.Donor)
+            //{
+            //    var donorProfile = new DonorProfile
+            //    {
+            //        AppUserId = user.Id,
+            //        // ممكن تضيفي أي بيانات إضافية خاصة بالمتبرع هنا
+            //    };
+
+            //    //await _unitOfWork.Repository<DonorProfile>().AddAsync(donorProfile);
+            //    //await _unitOfWork.CommitAsync();
+            //}
 
             return Ok(new
             {

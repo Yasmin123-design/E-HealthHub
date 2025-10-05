@@ -10,6 +10,8 @@ namespace E_PharmaHub.Models
 
         public DbSet<AppUser> Users { get; set; }
         public DbSet<DonorProfile> DonorProfiles { get; set; }
+        public DbSet<DoctorProfile> DoctorProfiles { get; set; }
+        public DbSet<PharmacistProfile> Pharmacists { get; set; }
         public DbSet<Pharmacy> Pharmacies { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Medication> Medications { get; set; }

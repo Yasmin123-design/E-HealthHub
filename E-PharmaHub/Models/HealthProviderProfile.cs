@@ -8,7 +8,7 @@ namespace E_PharmaHub.Models
         [Key] public int Id { get; set; }
         public string OrganizationName { get; set; }
         public string ServicesOffered { get; set; } 
-        public virtual AppUser AppUser { get; set; }
+        public virtual AppUser? AppUser { get; set; }
         public string AppUserId { get; set; }
     }
 }

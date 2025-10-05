@@ -11,7 +11,7 @@ namespace E_PharmaHub.Models
         public int Quantity { get; set; }
         public DateTime LastUpdated { get; set; }
 
-        public virtual Pharmacy Pharmacy { get; set; }
-        public virtual Medication Medication { get; set; }
+        public virtual Pharmacy? Pharmacy { get; set; }
+        public virtual Medication? Medication { get; set; }
     }
 }

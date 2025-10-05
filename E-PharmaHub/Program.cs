@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using E_PharmaHub.Services;
+using E_PharmaHub.Repositories;
+using E_PharmaHub.UnitOfWorkes;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace E_PharmaHub
 {
@@ -35,8 +40,24 @@ namespace E_PharmaHub
 
             builder.Services.AddAuthentication(options =>
             {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+
                 options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+              options.TokenValidationParameters = new TokenValidationParameters
+            {
+              ValidateIssuer = true,
+              ValidateAudience = true,
+              ValidateLifetime = true,
+              ValidateIssuerSigningKey = true,
+              ValidIssuer = builder.Configuration["JWT:Issuer"],
+              ValidAudience = builder.Configuration["JWT:Audience"],
+              IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+            };
             })
             .AddGoogle(options =>
             {
@@ -51,6 +72,32 @@ namespace E_PharmaHub
                options.CallbackPath = "/signin-facebook";
             });
 
+            builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
+            builder.Services.AddScoped<IMedicineService, MedicineService>();
+
+            builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+            builder.Services.AddScoped<IReviewService, ReviewService>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+
+            builder.Services.AddScoped<IGenericRepository<Pharmacy>, PharmacyRepository>();
+            builder.Services.AddScoped<IGenericRepository<Address>, AddressRepository>();
+            builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
+            builder.Services.AddScoped<IAddressService, AddressService>();
+            builder.Services.AddScoped<IPharmacyService, PharmacyService>();
+            builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
+            builder.Services.AddScoped<IGenericRepository<Clinic>, ClinicRepository>();
+            builder.Services.AddScoped<IGenericRepository<PharmacistProfile>, PharmacistRepository>();
+            builder.Services.AddScoped<IClinicService, ClinicService>();
+            builder.Services.AddScoped<IPharmacistService, PharmacistService>();
+            builder.Services.AddScoped<IMedicineService, MedicineService>();
+            builder.Services.AddScoped<IDoctorService, DoctorService>();
+            builder.Services.AddScoped<IInventoryService, InventoryService>();
+            builder.Services.AddScoped<IInventoryItemRepository, InventoryItemRepository>();
+            builder.Services.AddHttpContextAccessor();
+
+
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -60,6 +107,12 @@ namespace E_PharmaHub
             builder.Services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<EHealthDbContext>()
                 .AddDefaultTokenProviders();
+            builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+              options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+              options.JsonSerializerOptions.WriteIndented = true;
+            });
 
             var app = builder.Build();
 

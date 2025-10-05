@@ -11,7 +11,7 @@ namespace E_PharmaHub.Models
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
         public bool Read { get; set; } = false;
 
-        public virtual MessageThread Thread { get; set; }
-        public virtual AppUser Sender { get; set; }
+        public virtual MessageThread? Thread { get; set; }
+        public virtual AppUser? Sender { get; set; }
     }
 }

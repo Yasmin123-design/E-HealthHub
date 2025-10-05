@@ -12,9 +12,9 @@ namespace E_PharmaHub.Models
         public decimal TotalPrice { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public virtual AppUser User { get; set; }
-        public virtual Pharmacy Pharmacy { get; set; }
-        public virtual ICollection<OrderItem> Items { get; set; }
-        public virtual Payment Payment { get; set; }
+        public virtual AppUser? User { get; set; }
+        public virtual Pharmacy? Pharmacy { get; set; }
+        public virtual ICollection<OrderItem>? Items { get; set; }
+        public virtual Payment? Payment { get; set; }
     }
 }

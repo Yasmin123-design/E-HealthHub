@@ -10,7 +10,7 @@ namespace E_PharmaHub.Models
         public DateTime MatchedAt { get; set; } = DateTime.UtcNow;
         public bool Notified { get; set; }
 
-        public virtual BloodRequest BloodRequest { get; set; }
-        public virtual AppUser DonorUser { get; set; }
+        public virtual BloodRequest? BloodRequest { get; set; }
+        public virtual AppUser? DonorUser { get; set; }
     }
 }

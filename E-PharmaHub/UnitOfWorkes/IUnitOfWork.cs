@@ -1,0 +1,19 @@
+﻿using E_PharmaHub.Models;
+using E_PharmaHub.Repositories;
+
+namespace E_PharmaHub.UnitOfWorkes
+{
+    public interface IUnitOfWork
+    {
+        IMedicineRepository Medicines { get; }
+        IGenericRepository<PharmacistProfile> PharmasistsProfile { get; }
+        IGenericRepository<Pharmacy> Pharmacies { get; }
+        IGenericRepository<Clinic> Clinics { get; }
+        IGenericRepository<DonorProfile> Donors { get; }
+        IReviewRepository Reviews { get; }
+        IInventoryItemRepository IinventoryItem { get; }
+        IDoctorRepository Doctors { get; }
+        IGenericRepository<Address> Addresses { get; }
+        Task<int> CompleteAsync();
+    }
+}

@@ -9,7 +9,7 @@ namespace E_PharmaHub.Models
         public int DoctorId { get; set; }
         public string Notes { get; set; }
         public DateTime IssuedAt { get; set; } = DateTime.UtcNow;
-        public virtual ICollection<PrescriptionItem> Items { get; set; }
-        public virtual AppUser User { get; set; }
+        public virtual ICollection<PrescriptionItem>? Items { get; set; }
+        public virtual AppUser? User { get; set; }
     }
 }

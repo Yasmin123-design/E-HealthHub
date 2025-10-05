@@ -9,7 +9,7 @@ namespace E_PharmaHub.Models
         public int MedicationId { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
-        public virtual Order Order { get; set; }
-        public virtual Medication Medication { get; set; }
+        public virtual Order? Order { get; set; }
+        public virtual Medication? Medication { get; set; }
     }
 }

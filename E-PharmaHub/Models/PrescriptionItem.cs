@@ -10,7 +10,7 @@ namespace E_PharmaHub.Models
         public string Dosage { get; set; }
         public int Quantity { get; set; }
 
-        public virtual Prescription Prescription { get; set; }
-        public virtual Medication Medication { get; set; }
+        public virtual Prescription? Prescription { get; set; }
+        public virtual Medication? Medication { get; set; }
     }
 }

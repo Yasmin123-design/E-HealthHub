@@ -10,6 +10,6 @@ namespace E_PharmaHub.Models
         public string Body { get; set; }
         public bool IsRead { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public virtual AppUser User { get; set; }
+        public virtual AppUser? User { get; set; }
     }
 }

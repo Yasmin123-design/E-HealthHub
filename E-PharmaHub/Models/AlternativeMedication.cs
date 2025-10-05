@@ -9,7 +9,7 @@ namespace E_PharmaHub.Models
         public int MedicationId { get; set; }
         public int AlternativeId { get; set; } 
         public string Reason { get; set; } 
-        public virtual Medication Medication { get; set; }
-        [ForeignKey("AlternativeId")] public virtual Medication Alternative { get; set; }
+        public virtual Medication? Medication { get; set; }
+        [ForeignKey("AlternativeId")] public virtual Medication? Alternative { get; set; }
     }
 }

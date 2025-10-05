@@ -11,6 +11,6 @@ namespace E_PharmaHub.Models
         public decimal Amount { get; set; }
         public DateTime ProcessedAt { get; set; }
 
-        public virtual Order Order { get; set; }
+        public virtual Order? Order { get; set; }
     }
 }

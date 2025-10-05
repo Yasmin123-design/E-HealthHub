@@ -1,0 +1,45 @@
+﻿using E_PharmaHub.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace E_PharmaHub.Repositories
+{
+    public class ClinicRepository : IGenericRepository<Clinic>
+    {
+        private readonly EHealthDbContext _context;
+
+        public ClinicRepository(EHealthDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Clinic>> GetAllAsync()
+        {
+            return await _context.Clinics
+                .Include(c => c.Address)
+                .ToListAsync();
+        }
+
+        public async Task<Clinic> GetByIdAsync(int id)
+        {
+            return await _context.Clinics
+                .Include(c => c.Address)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task AddAsync(Clinic entity)
+        {
+            await _context.Clinics.AddAsync(entity);
+        }
+
+        public void Update(Clinic entity)
+        {
+            _context.Clinics.Update(entity);
+        }
+
+        public void Delete(Clinic entity)
+        {
+            _context.Clinics.Remove(entity);
+        }
+
+    }
+}
