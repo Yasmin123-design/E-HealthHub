@@ -1,5 +1,6 @@
 ﻿using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace E_PharmaHub.Repositories
 {
@@ -31,6 +32,22 @@ namespace E_PharmaHub.Repositories
         public async Task AddAsync(InventoryItem entity)
         {
             await _context.InventoryItems.AddAsync(entity);
+        }
+        public async Task<InventoryItem?> FindAsync(Expression<Func<InventoryItem, bool>> predicate)
+        {
+            return await _context.InventoryItems
+                                 .Include(i => i.Medication)
+                                 .Include(i => i.Pharmacy)
+                                 .FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task<IEnumerable<InventoryItem>> FindAllAsync(Expression<Func<InventoryItem, bool>> predicate)
+        {
+            return await _context.InventoryItems
+                                 .Include(i => i.Medication)
+                                 .Include(i => i.Pharmacy)
+                                 .Where(predicate)
+                                 .ToListAsync();
         }
 
         public void Update(InventoryItem entity)

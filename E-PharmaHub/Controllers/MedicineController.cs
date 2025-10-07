@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -42,13 +43,10 @@ namespace E_PharmaHub.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist,Admin")]
-        public async Task<IActionResult> Add([FromForm] Medication medicine, IFormFile? image)
+        public async Task<IActionResult> Add([FromForm] MedicineDto dto, IFormFile? image)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            if (medicine == null)
-                return BadRequest("Medicine data is required.");
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                          ?? User.FindFirst("sub")?.Value;
@@ -56,31 +54,27 @@ namespace E_PharmaHub.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "User not authenticated." });
 
-            if (!User.IsInRole("Admin"))
-            {
-                var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
-                if (pharmacist == null)
-                    return NotFound(new { message = "Pharmacist profile not found." });
+            var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
+            if (pharmacist == null)
+                return NotFound(new { message = "Pharmacist profile not found." });
 
-                if (!pharmacist.IsApproved)
-                    return Forbid("Your account is pending admin approval.");
-            }
+            if (!pharmacist.IsApproved)
+                return Forbid("Your account is pending admin approval.");
 
-            await _medicineService.AddMedicineAsync(medicine, image);
-            return CreatedAtAction(nameof(GetById), new { id = medicine.Id }, medicine);
+            await _medicineService.AddMedicineWithInventoryAsync(dto, image, pharmacist.PharmacyId);
+
+            return Ok(new { message = "Medicine added successfully" });
         }
+
 
 
 
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist,Admin")]
-        public async Task<IActionResult> Update(int id, [FromForm] Medication medicine, IFormFile? image)
+        public async Task<IActionResult> Update(int id, [FromForm] MedicineDto dto, IFormFile? image)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            if (medicine == null)
-                return BadRequest("Invalid medicine data.");
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                          ?? User.FindFirst("sub")?.Value;
@@ -88,6 +82,7 @@ namespace E_PharmaHub.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "User not authenticated." });
 
+            int? pharmacyId = null;
             if (!User.IsInRole("Admin"))
             {
                 var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
@@ -96,25 +91,39 @@ namespace E_PharmaHub.Controllers
 
                 if (!pharmacist.IsApproved)
                     return Forbid("Your account is pending admin approval.");
+
+                pharmacyId = pharmacist.PharmacyId;
             }
 
-            await _medicineService.UpdateMedicineAsync(id, medicine, image);
-            return Ok(new { message = "Medicine updated successfully", medicine });
+            await _medicineService.UpdateMedicineAsync(id, dto, image, pharmacyId);
+            return Ok(new { message = "Medicine updated successfully." });
         }
 
-
         [HttpDelete("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Pharmacist")]
         public async Task<IActionResult> Delete(int id)
         {
-            var medicine = await _medicineService.GetMedicineByIdAsync(id);
-            if (medicine == null)
-                return NotFound($"Medicine with ID {id} not found.");
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value;
 
-            await _medicineService.DeleteMedicineAsync(id);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "User not authenticated." });
 
-            return Ok("Medicine deleted successfully.");
+            int? pharmacyId = null;
+            if (!User.IsInRole("Admin"))
+            {
+                var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
+                if (pharmacist == null)
+                    return NotFound(new { message = "Pharmacist profile not found." });
+
+                if (!pharmacist.IsApproved)
+                    return Forbid("Your account is pending admin approval.");
+
+                pharmacyId = pharmacist.PharmacyId;
+            }
+
+            await _medicineService.DeleteMedicineAsync(id, pharmacyId);
+            return Ok(new { message = "Medicine deleted successfully." });
         }
 
         [HttpGet("search/{name}")]

@@ -199,11 +199,6 @@ namespace E_PharmaHub.Services
             _unitOfWork.PharmasistsProfile.Update(existing);
             await _unitOfWork.CompleteAsync();
         }
-
-
-
-
-
         public async Task DeletePharmacistAsync(int id)
         {
             var pharmacist = await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);
