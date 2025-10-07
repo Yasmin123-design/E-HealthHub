@@ -37,10 +37,20 @@ namespace E_PharmaHub.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            if (model.Role != UserRole.RegularUser && model.Role != UserRole.Donor)
-                return BadRequest("Invalid role selection. You can only register as RegularUser or Donor.");
+            var adminEmail = _config["AdminSettings:AdminEmail"];
+
+            if (model.Email.Equals(adminEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                model.Role = UserRole.Admin;
+            }
+            else
+            {
+                if (model.Role != UserRole.RegularUser && model.Role != UserRole.Donor)
+                    return BadRequest("Invalid role selection. You can only register as RegularUser or Donor.");
+            }
 
             var user = new AppUser
             {
@@ -50,21 +60,10 @@ namespace E_PharmaHub.Controllers
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
 
             await _userManager.AddToRoleAsync(user, model.Role.ToString());
-
-            //if (model.Role == UserRole.Donor)
-            //{
-            //    var donorProfile = new DonorProfile
-            //    {
-            //        AppUserId = user.Id,
-            //        // ممكن تضيفي أي بيانات إضافية خاصة بالمتبرع هنا
-            //    };
-
-            //    //await _unitOfWork.Repository<DonorProfile>().AddAsync(donorProfile);
-            //    //await _unitOfWork.CommitAsync();
-            //}
 
             return Ok(new
             {
