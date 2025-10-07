@@ -64,19 +64,9 @@ namespace E_PharmaHub.Controllers
             return Ok(pharmacist);
         }
 
-        [HttpPost("add")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-        public async Task<IActionResult> AddPharmacist([FromBody] PharmacistProfile pharmacist)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            await _pharmacistService.AddPharmacistAsync(pharmacist);
-            return Ok(new { message = "Pharmacist added successfully." });
-        }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Pharmacist")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePharmacist(int id, [FromBody] PharmacistProfile updated)
+        public async Task<IActionResult> UpdatePharmacist(int id, [FromForm] PharmacistProfile updated, IFormFile? image)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -99,7 +89,7 @@ namespace E_PharmaHub.Controllers
                         return Forbid("Your account is pending admin approval.");
                 }
 
-                await _pharmacistService.UpdatePharmacistAsync(id, updated);
+                await _pharmacistService.UpdatePharmacistAsync(id, updated, image);
                 return Ok(new { message = "Pharmacist updated successfully." });
             }
             catch (Exception ex)

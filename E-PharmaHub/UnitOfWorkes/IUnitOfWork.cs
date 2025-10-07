@@ -13,7 +13,7 @@ namespace E_PharmaHub.UnitOfWorkes
         IReviewRepository Reviews { get; }
         IInventoryItemRepository IinventoryItem { get; }
         IDoctorRepository Doctors { get; }
-        IGenericRepository<Address> Addresses { get; }
+        IAddressRepository Addresses { get; }
         Task<int> CompleteAsync();
     }
 }

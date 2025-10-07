@@ -11,7 +11,7 @@ namespace E_PharmaHub.UnitOfWorkes
         public IReviewRepository Reviews { get; }
         public IDoctorRepository Doctors { get; }
         public IGenericRepository<Pharmacy> Pharmacies { get; private set; }
-        public IGenericRepository<Address> Addresses { get; private set; }
+        public IAddressRepository Addresses { get; private set; }
         public IGenericRepository<Clinic> Clinics { get; }
         public IGenericRepository<DonorProfile> Donors { get; }
 
@@ -24,7 +24,8 @@ namespace E_PharmaHub.UnitOfWorkes
             IReviewRepository reviewRepository,
             IDoctorRepository doctorRepository,
             IInventoryItemRepository inventoryItemRepository,
-            IPharmacistRepository pharmacistRepository
+            IPharmacistRepository pharmacistRepository,
+            IAddressRepository addressRepository
             )
         {
             _context = context;
@@ -32,7 +33,7 @@ namespace E_PharmaHub.UnitOfWorkes
             IinventoryItem = inventoryItemRepository;
             Pharmacies = new PharmacyRepository(_context);
             Reviews = reviewRepository;
-            Addresses = new AddressRepository(_context);
+            Addresses = addressRepository;
             PharmasistsProfile = pharmacistRepository;
             Doctors = doctorRepository;
             Clinics = new ClinicRepository(_context);

@@ -6,9 +6,6 @@ namespace E_PharmaHub.Models
     {
         [Key]
         public int Id { get; set; }
-
-        [Required(ErrorMessage = "PharmacyId is required.")]
-        [Range(1, int.MaxValue, ErrorMessage = "Invalid Pharmacy ID.")]
         public int PharmacyId { get; set; }
         public bool IsApproved { get; set; } = false; 
 

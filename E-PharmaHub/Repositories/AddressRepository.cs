@@ -1,9 +1,10 @@
 ﻿using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace E_PharmaHub.Repositories
 {
-    public class AddressRepository : IGenericRepository<Address>
+    public class AddressRepository : IAddressRepository
     {
         private readonly EHealthDbContext _context;
 
@@ -11,7 +12,10 @@ namespace E_PharmaHub.Repositories
         {
             _context = context;
         }
-
+        public async Task<Address?> FindAsync(Expression<Func<Address, bool>> predicate)
+        {
+            return await _context.Addresses.FirstOrDefaultAsync(predicate);
+        }
         public async Task<IEnumerable<Address>> GetAllAsync()
         {
             return await _context.Addresses.ToListAsync();

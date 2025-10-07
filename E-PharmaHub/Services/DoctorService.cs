@@ -39,17 +39,34 @@ namespace E_PharmaHub.Services
 
             await _userManager.AddToRoleAsync(user, UserRole.Doctor.ToString());
 
-            var address = new Address
+            var existingAddress = await _unitOfWork.Addresses.FindAsync(a =>
+                a.Country == dto.ClinicAddress.Country &&
+                a.City == dto.ClinicAddress.City &&
+                a.Street == dto.ClinicAddress.Street &&
+                a.PostalCode == dto.ClinicAddress.PostalCode &&
+                a.Latitude == dto.ClinicAddress.Latitude &&
+                a.Longitude == dto.ClinicAddress.Longitude
+            );
+
+            Address address;
+            if (existingAddress != null)
             {
-                Country = dto.ClinicAddress.Country,
-                City = dto.ClinicAddress.City,
-                Street = dto.ClinicAddress.Street,
-                PostalCode = dto.ClinicAddress.PostalCode,
-                Latitude = dto.ClinicAddress.Latitude,
-                Longitude = dto.ClinicAddress.Longitude
-            };
-            await _unitOfWork.Addresses.AddAsync(address);
-            await _unitOfWork.CompleteAsync();
+                address = existingAddress;
+            }
+            else
+            {
+                address = new Address
+                {
+                    Country = dto.ClinicAddress.Country,
+                    City = dto.ClinicAddress.City,
+                    Street = dto.ClinicAddress.Street,
+                    PostalCode = dto.ClinicAddress.PostalCode,
+                    Latitude = dto.ClinicAddress.Latitude,
+                    Longitude = dto.ClinicAddress.Longitude
+                };
+                await _unitOfWork.Addresses.AddAsync(address);
+                await _unitOfWork.CompleteAsync();
+            }
 
             string imagePath = null;
             if (image != null)
@@ -81,6 +98,7 @@ namespace E_PharmaHub.Services
 
             return user;
         }
+
 
         public async Task<DoctorProfile?> GetDoctorByIdAsync(int id)
         {

@@ -41,17 +41,34 @@ namespace E_PharmaHub.Services
 
             await _userManager.AddToRoleAsync(user, UserRole.Pharmacist.ToString());
 
-            var address = new Address
+            var existingAddress = await _unitOfWork.Addresses.FindAsync(a =>
+                a.Country == dto.Address.Country &&
+                a.City == dto.Address.City &&
+                a.Street == dto.Address.Street &&
+                a.PostalCode == dto.Address.PostalCode &&
+                a.Latitude == dto.Address.Latitude &&
+                a.Longitude == dto.Address.Longitude
+            );
+
+            Address address;
+            if (existingAddress != null)
             {
-                Country = dto.Address.Country,
-                City = dto.Address.City,
-                Street = dto.Address.Street,
-                PostalCode = dto.Address.PostalCode,
-                Latitude = dto.Address.Latitude,
-                Longitude = dto.Address.Longitude
-            };
-            await _unitOfWork.Addresses.AddAsync(address);
-            await _unitOfWork.CompleteAsync();
+                address = existingAddress;
+            }
+            else
+            {
+                address = new Address
+                {
+                    Country = dto.Address.Country,
+                    City = dto.Address.City,
+                    Street = dto.Address.Street,
+                    PostalCode = dto.Address.PostalCode,
+                    Latitude = dto.Address.Latitude,
+                    Longitude = dto.Address.Longitude
+                };
+                await _unitOfWork.Addresses.AddAsync(address);
+                await _unitOfWork.CompleteAsync();
+            }
 
             string? imagePath = null;
             if (image != null && image.Length > 0)
@@ -82,6 +99,7 @@ namespace E_PharmaHub.Services
             return user;
         }
 
+
         public async Task AddPharmacistAsync(PharmacistProfile pharmacist)
         {
             await _unitOfWork.PharmasistsProfile.AddAsync(pharmacist);
@@ -102,7 +120,7 @@ namespace E_PharmaHub.Services
             return await _pharmacistRepository.GetPharmacistByUserIdAsync(userId);
         }
 
-        public async Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist)
+        public async Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist, IFormFile? newImage)
         {
             var existing = await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);
             if (existing == null)
@@ -118,13 +136,73 @@ namespace E_PharmaHub.Services
             if (existing.AppUserId != userId && !isAdmin)
                 throw new UnauthorizedAccessException("You are not allowed to update this pharmacist.");
 
-            existing.LicenseNumber = updatedPharmacist.LicenseNumber;
-            existing.PharmacyId = updatedPharmacist.PharmacyId;
-            existing.AppUserId = userId;
+            var pharmacy = await _unitOfWork.Pharmacies.GetByIdAsync(existing.PharmacyId)
+                           ?? throw new Exception("Pharmacy not found.");
+
+            var currentAddress = await _unitOfWork.Addresses.GetByIdAsync(pharmacy.AddressId)
+                                ?? throw new Exception("Address not found.");
+
+            Address address = currentAddress;
+
+            if (updatedPharmacist.Pharmacy?.Address != null)
+            {
+                var dtoAddress = updatedPharmacist.Pharmacy.Address;
+
+                var existingAddress = await _unitOfWork.Addresses.FindAsync(a =>
+                    a.Country == dtoAddress.Country &&
+                    a.City == dtoAddress.City &&
+                    a.Street == dtoAddress.Street &&
+                    a.PostalCode == dtoAddress.PostalCode &&
+                    a.Latitude == dtoAddress.Latitude &&
+                    a.Longitude == dtoAddress.Longitude
+                );
+
+                if (existingAddress != null)
+                {
+                    address = existingAddress;
+                }
+                else
+                {
+                    address = new Address
+                    {
+                        Country = dtoAddress.Country ?? currentAddress.Country,
+                        City = dtoAddress.City ?? currentAddress.City,
+                        Street = dtoAddress.Street ?? currentAddress.Street,
+                        PostalCode = dtoAddress.PostalCode ?? currentAddress.PostalCode,
+                        Latitude = dtoAddress.Latitude ?? currentAddress.Latitude,
+                        Longitude = dtoAddress.Longitude ?? currentAddress.Longitude
+                    };
+                    await _unitOfWork.Addresses.AddAsync(address);
+                    await _unitOfWork.CompleteAsync();
+                }
+            }
+
+            string imagePath = pharmacy.ImagePath;
+            if (newImage != null && newImage.Length > 0)
+            {
+                imagePath = await _fileStorage.SaveFileAsync(newImage, "pharmacies");
+            }
+
+            pharmacy.Name = updatedPharmacist.Pharmacy?.Name ?? pharmacy.Name;
+            pharmacy.Phone = updatedPharmacist.Pharmacy?.Phone ?? pharmacy.Phone;
+            pharmacy.AddressId = address.Id;
+            pharmacy.ImagePath = imagePath ?? pharmacy.ImagePath;
+
+            _unitOfWork.Pharmacies.Update(pharmacy);
+
+            existing.LicenseNumber = updatedPharmacist.LicenseNumber ?? existing.LicenseNumber;
+            existing.PharmacyId = pharmacy.Id;
+
+            if (isAdmin)
+                existing.IsApproved = updatedPharmacist.IsApproved;
 
             _unitOfWork.PharmasistsProfile.Update(existing);
             await _unitOfWork.CompleteAsync();
         }
+
+
+
+
 
         public async Task DeletePharmacistAsync(int id)
         {
@@ -148,7 +226,6 @@ namespace E_PharmaHub.Services
             _unitOfWork.PharmasistsProfile.Delete(pharmacist);
             await _unitOfWork.CompleteAsync();
         }
-
     }
 
 

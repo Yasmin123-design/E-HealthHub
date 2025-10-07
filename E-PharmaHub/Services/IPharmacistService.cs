@@ -13,7 +13,7 @@ namespace E_PharmaHub.Services
 
         Task<PharmacistProfile?> GetPharmacistByIdAsync(int id);
 
-        Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist);
+        Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist,IFormFile? newImage);
 
         Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId);
 
