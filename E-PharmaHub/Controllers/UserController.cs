@@ -47,7 +47,6 @@ namespace E_PharmaHub.Controllers
                 UserName = model.Email,
                 Email = model.Email,
                 Role = model.Role,
-                IsApproved = true
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

@@ -20,6 +20,11 @@ namespace E_PharmaHub.Repositories
                 .ToListAsync();
         }
 
+        public async Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId)
+        {
+            return await _context.DoctorProfiles
+                .FirstOrDefaultAsync(d => d.AppUserId == userId);
+        }
         public async Task<DoctorProfile> GetByIdAsync(int id)
         {
             return await _context.DoctorProfiles

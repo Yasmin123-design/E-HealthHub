@@ -6,7 +6,7 @@ namespace E_PharmaHub.UnitOfWorkes
     public interface IUnitOfWork
     {
         IMedicineRepository Medicines { get; }
-        IGenericRepository<PharmacistProfile> PharmasistsProfile { get; }
+        IPharmacistRepository PharmasistsProfile { get; }
         IGenericRepository<Pharmacy> Pharmacies { get; }
         IGenericRepository<Clinic> Clinics { get; }
         IGenericRepository<DonorProfile> Donors { get; }

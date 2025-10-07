@@ -15,6 +15,7 @@ namespace E_PharmaHub.Services
 
         Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist);
 
+        Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId);
 
         Task DeletePharmacistAsync(int id);
 

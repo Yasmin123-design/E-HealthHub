@@ -3,6 +3,7 @@ using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
 {
@@ -11,10 +12,12 @@ namespace E_PharmaHub.Controllers
     public class MedicineController : ControllerBase
     {
         private readonly IMedicineService _medicineService;
+        private readonly IPharmacistService _pharmacistService;
 
-        public MedicineController(IMedicineService medicineService)
+        public MedicineController(IMedicineService medicineService,IPharmacistService pharmacistService)
         {
             _medicineService = medicineService;
+            _pharmacistService = pharmacistService;
         }
 
         [HttpGet]
@@ -47,9 +50,27 @@ namespace E_PharmaHub.Controllers
             if (medicine == null)
                 return BadRequest("Medicine data is required.");
 
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "User not authenticated." });
+
+            if (!User.IsInRole("Admin"))
+            {
+                var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
+                if (pharmacist == null)
+                    return NotFound(new { message = "Pharmacist profile not found." });
+
+                if (!pharmacist.IsApproved)
+                    return Forbid("Your account is pending admin approval.");
+            }
+
             await _medicineService.AddMedicineAsync(medicine, image);
             return CreatedAtAction(nameof(GetById), new { id = medicine.Id }, medicine);
         }
+
+
 
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist,Admin")]
@@ -61,9 +82,26 @@ namespace E_PharmaHub.Controllers
             if (medicine == null)
                 return BadRequest("Invalid medicine data.");
 
-            await _medicineService.UpdateMedicineAsync(id,medicine, image);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "User not authenticated." });
+
+            if (!User.IsInRole("Admin"))
+            {
+                var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
+                if (pharmacist == null)
+                    return NotFound(new { message = "Pharmacist profile not found." });
+
+                if (!pharmacist.IsApproved)
+                    return Forbid("Your account is pending admin approval.");
+            }
+
+            await _medicineService.UpdateMedicineAsync(id, medicine, image);
             return Ok(new { message = "Medicine updated successfully", medicine });
         }
+
 
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]

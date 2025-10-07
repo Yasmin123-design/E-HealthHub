@@ -17,13 +17,14 @@ namespace E_PharmaHub.UnitOfWorkes
 
         public IInventoryItemRepository IinventoryItem { get; }
 
-        public IGenericRepository<PharmacistProfile> PharmasistsProfile { get; }
+        public IPharmacistRepository PharmasistsProfile { get; }
 
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
             IReviewRepository reviewRepository,
             IDoctorRepository doctorRepository,
-            IInventoryItemRepository inventoryItemRepository
+            IInventoryItemRepository inventoryItemRepository,
+            IPharmacistRepository pharmacistRepository
             )
         {
             _context = context;
@@ -32,7 +33,7 @@ namespace E_PharmaHub.UnitOfWorkes
             Pharmacies = new PharmacyRepository(_context);
             Reviews = reviewRepository;
             Addresses = new AddressRepository(_context);
-            PharmasistsProfile = new PharmacistRepository(_context);
+            PharmasistsProfile = pharmacistRepository;
             Doctors = doctorRepository;
             Clinics = new ClinicRepository(_context);
             Donors = new DonorRepository(_context);

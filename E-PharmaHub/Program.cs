@@ -87,8 +87,9 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IPharmacyService, PharmacyService>();
             builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
             builder.Services.AddScoped<IGenericRepository<Clinic>, ClinicRepository>();
-            builder.Services.AddScoped<IGenericRepository<PharmacistProfile>, PharmacistRepository>();
+            //builder.Services.AddScoped<IGenericRepository<PharmacistProfile>, PharmacistRepository>();
             builder.Services.AddScoped<IClinicService, ClinicService>();
+            builder.Services.AddScoped<IPharmacistRepository, PharmacistRepository>();
             builder.Services.AddScoped<IPharmacistService, PharmacistService>();
             builder.Services.AddScoped<IMedicineService, MedicineService>();
             builder.Services.AddScoped<IDoctorService, DoctorService>();

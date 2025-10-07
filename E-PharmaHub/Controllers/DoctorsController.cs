@@ -71,9 +71,15 @@ namespace E_PharmaHub.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "User not authenticated." });
 
-            doctor.AppUserId = userId; 
+            var existingDoctor = await _doctorService.GetDoctorByUserIdAsync(userId);
+            if (existingDoctor == null)
+                return NotFound(new { message = "Doctor profile not found." });
 
-            ModelState.Remove("AppUserId"); 
+            if (!existingDoctor.IsApproved)
+                return Forbid("Your account is pending admin approval.");
+
+            doctor.AppUserId = userId;
+            ModelState.Remove("AppUserId");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -88,6 +94,7 @@ namespace E_PharmaHub.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
 
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]

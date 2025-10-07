@@ -11,22 +11,26 @@ namespace E_PharmaHub.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<AppUser> _userManager;
         private readonly IFileStorageService _fileStorage;
+        private readonly IDoctorRepository _doctorRepository;
 
-        public DoctorService(IUnitOfWork unitOfWork, UserManager<AppUser> userManager,IFileStorageService fileStorage)
+        public DoctorService(IUnitOfWork unitOfWork,IDoctorRepository doctorRepository, UserManager<AppUser> userManager,IFileStorageService fileStorage)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _fileStorage = fileStorage;
+            _doctorRepository = doctorRepository;
         }
-
+        public async Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId)
+        {
+            return await _doctorRepository.GetDoctorByUserIdAsync(userId);
+        }
         public async Task<AppUser> RegisterDoctorAsync(DoctorRegisterDto dto, IFormFile image)
         {
             var user = new AppUser
             {
                 UserName = dto.Email,
                 Email = dto.Email,
-                Role = UserRole.Doctor,
-                IsApproved = false
+                Role = UserRole.Doctor
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
@@ -68,7 +72,8 @@ namespace E_PharmaHub.Services
             {
                 AppUserId = user.Id,
                 ClinicId = clinic.Id,
-                Specialty = dto.Specialty
+                Specialty = dto.Specialty,
+                IsApproved = false
             };
 
             await _unitOfWork.Doctors.AddAsync(doctorProfile);

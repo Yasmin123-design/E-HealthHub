@@ -1,5 +1,6 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
+using E_PharmaHub.Repositories;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
@@ -11,16 +12,18 @@ namespace E_PharmaHub.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IFileStorageService _fileStorage;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPharmacistRepository _pharmacistRepository;
 
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public PharmacistService(UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor,IFileStorageService fileStorage, IUnitOfWork unitOfWork)
+        public PharmacistService(UserManager<AppUser> userManager,IPharmacistRepository pharmacistRepository, IHttpContextAccessor httpContextAccessor,IFileStorageService fileStorage, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
             _httpContextAccessor = httpContextAccessor;
+            _pharmacistRepository = pharmacistRepository;
         }
 
         public async Task<AppUser> RegisterPharmacistAsync(PharmacistRegisterDto dto, IFormFile image)
@@ -30,7 +33,6 @@ namespace E_PharmaHub.Services
                 UserName = dto.Email,
                 Email = dto.Email,
                 Role = UserRole.Pharmacist,
-                IsApproved = false
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
@@ -71,7 +73,8 @@ namespace E_PharmaHub.Services
             {
                 AppUserId = user.Id,
                 PharmacyId = pharmacy.Id,
-                LicenseNumber = dto.LicenseNumber
+                LicenseNumber = dto.LicenseNumber,
+                IsApproved = false
             };
             await _unitOfWork.PharmasistsProfile.AddAsync(pharmacistProfile);
             await _unitOfWork.CompleteAsync();
@@ -93,6 +96,10 @@ namespace E_PharmaHub.Services
         public async Task<PharmacistProfile?> GetPharmacistByIdAsync(int id)
         {
             return await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);
+        }
+        public async Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId)
+        {
+            return await _pharmacistRepository.GetPharmacistByUserIdAsync(userId);
         }
 
         public async Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist)

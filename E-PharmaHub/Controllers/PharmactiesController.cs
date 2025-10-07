@@ -4,6 +4,7 @@ using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
 {
@@ -80,8 +81,24 @@ namespace E_PharmaHub.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                         ?? User.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "User not authenticated." });
+
             try
             {
+                if (!User.IsInRole("Admin"))
+                {
+                    var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
+                    if (pharmacist == null)
+                        return NotFound(new { message = "Pharmacist profile not found." });
+
+                    if (!pharmacist.IsApproved)
+                        return Forbid("Your account is pending admin approval.");
+                }
+
                 await _pharmacistService.UpdatePharmacistAsync(id, updated);
                 return Ok(new { message = "Pharmacist updated successfully." });
             }
@@ -93,7 +110,7 @@ namespace E_PharmaHub.Controllers
 
 
         [HttpDelete("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Pharmacist")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 
         public async Task<IActionResult> DeletePharmacist(int id)
         {

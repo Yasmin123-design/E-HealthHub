@@ -4,7 +4,7 @@ using System;
 
 namespace E_PharmaHub.Repositories
 {
-    public class PharmacistRepository : IGenericRepository<PharmacistProfile>
+    public class PharmacistRepository : IPharmacistRepository
     {
         private readonly EHealthDbContext _context;
 
@@ -44,6 +44,12 @@ namespace E_PharmaHub.Repositories
         public void Delete(PharmacistProfile entity)
         {
             _context.Pharmacists.Remove(entity);
+        }
+
+        public async Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId)
+        {
+            return await _context.Pharmacists
+                .FirstOrDefaultAsync(p => p.AppUserId == userId);
         }
     }
 }

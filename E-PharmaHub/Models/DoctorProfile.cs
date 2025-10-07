@@ -8,6 +8,7 @@ namespace E_PharmaHub.Models
         [Key] public int Id { get; set; }
         public string Specialty { get; set; }
         public int ClinicId { get; set; }
+        public bool IsApproved { get; set; } = false; 
         public virtual Clinic? Clinic { get; set; }
         public string? AppUserId { get; set; }
         public virtual AppUser? AppUser { get; set; }
