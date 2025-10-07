@@ -28,8 +28,9 @@ namespace E_PharmaHub.Repositories
         public async Task<DoctorProfile> GetByIdAsync(int id)
         {
             return await _context.DoctorProfiles
-                .Include(d => d.Clinic)
                 .Include(d => d.AppUser)
+                .Include(d => d.Clinic)
+                .ThenInclude(d => d.Address)
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
 
