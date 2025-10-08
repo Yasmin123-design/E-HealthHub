@@ -5,7 +5,7 @@ namespace E_PharmaHub.Models
     public class BloodRequest
     {
         [Key] public int Id { get; set; }
-        public string RequestedByUserId { get; set; } 
+        public string? RequestedByUserId { get; set; } 
         public BloodType RequiredType { get; set; }
         public string City { get; set; }
         public string HospitalName { get; set; }

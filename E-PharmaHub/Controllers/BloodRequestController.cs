@@ -1,6 +1,8 @@
 ﻿using E_PharmaHub.Models;
 using E_PharmaHub.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
 {
@@ -38,21 +40,40 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPost]
+        [Authorize] 
         public async Task<IActionResult> Create([FromBody] BloodRequest request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
+            request.RequestedByUserId = userId;
 
             var newRequest = await _bloodRequestService.AddRequestAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = newRequest.Id }, newRequest);
         }
 
+
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] BloodRequest updatedRequest)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
+            var existing = await _bloodRequestService.GetRequestByIdAsync(id);
+            if (existing == null) return NotFound("Blood request not found.");
+
+            if (existing.RequestedByUserId != userId)
+                return Forbid("You are not allowed to update this request.");
+
             var success = await _bloodRequestService.UpdateRequestAsync(id, updatedRequest);
-            if (!success) return NotFound();
+            if (!success) return BadRequest("Failed to update request.");
+
             return Ok("Updated successfully");
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
