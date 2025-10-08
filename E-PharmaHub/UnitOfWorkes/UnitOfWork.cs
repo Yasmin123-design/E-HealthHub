@@ -14,7 +14,7 @@ namespace E_PharmaHub.UnitOfWorkes
         public IAddressRepository Addresses { get; private set; }
         public IGenericRepository<Clinic> Clinics { get; }
         public IGenericRepository<DonorProfile> Donors { get; }
-
+        public IBloodRequestRepository BloodRequest { get; }
         public IInventoryItemRepository IinventoryItem { get; }
 
         public IPharmacistRepository PharmasistsProfile { get; }
@@ -25,7 +25,8 @@ namespace E_PharmaHub.UnitOfWorkes
             IDoctorRepository doctorRepository,
             IInventoryItemRepository inventoryItemRepository,
             IPharmacistRepository pharmacistRepository,
-            IAddressRepository addressRepository
+            IAddressRepository addressRepository,
+            IBloodRequestRepository bloodRequestRepository
             )
         {
             _context = context;
@@ -33,6 +34,7 @@ namespace E_PharmaHub.UnitOfWorkes
             IinventoryItem = inventoryItemRepository;
             Pharmacies = new PharmacyRepository(_context);
             Reviews = reviewRepository;
+            BloodRequest = bloodRequestRepository;
             Addresses = addressRepository;
             PharmasistsProfile = pharmacistRepository;
             Doctors = doctorRepository;
