@@ -129,7 +129,30 @@ namespace E_PharmaHub.Controllers
 
             return Ok(result);
         }
+        [HttpGet("{id}/alternatives")]
+        public async Task<IActionResult> GetAlternatives(int id)
+        {
+            var alternatives = await _inventoryService.GetAlternativeMedicinesAsync(id);
 
+            if (!alternatives.Any())
+                return NotFound(new { message = "No alternative medicines found." });
+
+            return Ok(alternatives.Select(a => new
+            {
+                a.Medication.Id,
+                a.Medication.BrandName,
+                a.Medication.GenericName,
+                a.Medication.ATCCode,
+                a.Price,
+                a.Quantity,
+                Pharmacy = new
+                {
+                    a.Pharmacy.Id,
+                    a.Pharmacy.Name,
+                    a.Pharmacy.Address.City
+                }
+            }));
+        }
         [HttpGet("pharmacy/{pharmacyId}")]
         public async Task<IActionResult> GetByPharmacy(int pharmacyId)
         {
