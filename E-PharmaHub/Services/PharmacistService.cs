@@ -121,13 +121,26 @@ namespace E_PharmaHub.Services
         }
         public async Task<bool> ApprovePharmacistAsync(int id)
         {
-            return await _unitOfWork.PharmasistsProfile.ApprovePharmacistAsync(id);
+            var result = await _unitOfWork.PharmasistsProfile.ApprovePharmacistAsync(id);
+
+            if (!result)
+                return false;
+
+            await _unitOfWork.CompleteAsync(); 
+            return true;
         }
 
         public async Task<bool> RejectPharmacistAsync(int id)
         {
-            return await _unitOfWork.PharmasistsProfile.RejectPharmacistAsync(id);
+            var result = await _unitOfWork.PharmasistsProfile.RejectPharmacistAsync(id);
+
+            if (!result)
+                return false;
+
+            await _unitOfWork.CompleteAsync();
+            return true;
         }
+
         public async Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist, IFormFile? newImage)
         {
             var existing = await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);

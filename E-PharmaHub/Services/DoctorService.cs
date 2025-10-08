@@ -106,13 +106,26 @@ namespace E_PharmaHub.Services
         }
         public async Task<bool> ApproveDoctorAsync(int id)
         {
-            return await _unitOfWork.Doctors.ApproveDoctorAsync(id);
+            var result = await _unitOfWork.Doctors.ApproveDoctorAsync(id);
+
+            if (!result)
+                return false;
+
+            await _unitOfWork.CompleteAsync(); 
+            return true;
         }
 
         public async Task<bool> RejectDoctorAsync(int id)
         {
-            return await _unitOfWork.Doctors.RejectDoctorAsync(id);
+            var result = await _unitOfWork.Doctors.RejectDoctorAsync(id);
+
+            if (!result)
+                return false;
+
+            await _unitOfWork.CompleteAsync(); 
+            return true;
         }
+
         public async Task<IEnumerable<DoctorProfile>> GetDoctorsBySpecialtyAsync(string specialty)
         {
             return await _unitOfWork.Doctors.GetDoctorsBySpecialtyAsync(specialty);
