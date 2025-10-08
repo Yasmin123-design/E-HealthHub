@@ -46,6 +46,8 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<Medication>> SearchByNameAsync(string name)
         {
             return await _context.Medications
+                .Include(x => x.Inventories)
+                .ThenInclude(x => x.Pharmacy)
                 .Where(m => m.BrandName.Contains(name) || m.GenericName.Contains(name))
                 .ToListAsync();
         }
