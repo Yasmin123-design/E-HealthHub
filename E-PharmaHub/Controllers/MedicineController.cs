@@ -35,7 +35,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist,Admin")]
         public async Task<IActionResult> Add([FromForm] MedicineDto dto, IFormFile? image)
         {
             if (!ModelState.IsValid)
@@ -54,10 +54,14 @@ namespace E_PharmaHub.Controllers
             if (!pharmacist.IsApproved)
                 return Forbid("Your account is pending admin approval.");
 
-            await _medicineService.AddMedicineWithInventoryAsync(dto, image, pharmacist.PharmacyId);
+            var result = await _medicineService.AddMedicineWithInventoryAsync(dto, image, pharmacist.PharmacyId);
 
-            return Ok(new { message = "Medicine added successfully" });
+            if (!result.Success)
+                return BadRequest(new { message = result.Message });
+
+            return Ok(new { message = result.Message });
         }
+
 
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist")]

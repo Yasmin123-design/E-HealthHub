@@ -107,8 +107,14 @@ namespace E_PharmaHub.Services
             return await _unitOfWork.Medicines.GetNearestPharmaciesWithMedicationAsync(medicationName, userLat, userLng);
 
         }
-        public async Task AddMedicineWithInventoryAsync(MedicineDto dto, IFormFile? image, int pharmacyId)
+        public async Task<(bool Success, string Message)> AddMedicineWithInventoryAsync(MedicineDto dto, IFormFile? image, int pharmacyId)
         {
+            var existingMedicine = await _unitOfWork.Medicines
+                .FindAsync(m => m.BrandName.ToLower() == dto.BrandName.ToLower());
+
+            if (existingMedicine != null)
+                return (false, $"Medicine '{dto.BrandName}' already exists.");
+
             var medicine = new Medication
             {
                 BrandName = dto.BrandName,
@@ -135,7 +141,10 @@ namespace E_PharmaHub.Services
 
             await _unitOfWork.IinventoryItem.AddAsync(inventoryItem);
             await _unitOfWork.CompleteAsync();
+
+            return (true, "Medicine added successfully.");
         }
+
 
     }
 

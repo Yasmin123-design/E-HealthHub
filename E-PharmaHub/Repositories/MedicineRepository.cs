@@ -1,6 +1,7 @@
 ﻿using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq.Expressions;
 
 namespace E_PharmaHub.Repositories
 {
@@ -19,7 +20,10 @@ namespace E_PharmaHub.Repositories
                     .ThenInclude(i => i.Pharmacy)
                 .ToListAsync();
         }
-
+        public async Task<Medication?> FindAsync(Expression<Func<Medication, bool>> predicate)
+        {
+            return await _context.Medications.FirstOrDefaultAsync(predicate);
+        }
         public async Task<Medication> GetByIdAsync(int id)
         {
             return await _context.Medications

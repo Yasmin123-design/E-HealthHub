@@ -11,7 +11,7 @@ namespace E_PharmaHub.Services
         Task DeleteMedicineAsync(int id, int? pharmacyId);
         Task<IEnumerable<Medication>> GetMedicinesByPharmacyIdAsync(int pharmacyId);
 
-        Task AddMedicineWithInventoryAsync(MedicineDto dto, IFormFile? image, int pharmacyId);
+        Task<(bool Success, string Message)> AddMedicineWithInventoryAsync(MedicineDto dto, IFormFile? image, int pharmacyId);
         Task<IEnumerable<Medication>> SearchMedicinesByNameAsync(string name);
         Task<IEnumerable<Pharmacy>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng);
     }
