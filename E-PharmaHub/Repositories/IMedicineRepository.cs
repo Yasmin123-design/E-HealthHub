@@ -10,5 +10,6 @@ namespace E_PharmaHub.Repositories
         Task<IEnumerable<Pharmacy>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng);
         Task<IEnumerable<Medication>> GetMedicinesByPharmacyIdAsync(int pharmacyId);
 
+
     }
 }

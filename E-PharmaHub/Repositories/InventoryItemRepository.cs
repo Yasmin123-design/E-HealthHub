@@ -20,7 +20,25 @@ namespace E_PharmaHub.Repositories
                 .Include(i => i.Pharmacy)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<InventoryItem>> GetAlternativeMedicinesAsync(int medicineId)
+        {
+            var originalMedicine = await _context.Medications.FindAsync(medicineId);
+            if (originalMedicine == null)
+                return Enumerable.Empty<InventoryItem>();
 
+            var alternatives = await _context.InventoryItems
+                .Include(i => i.Medication)
+                .Include(i => i.Pharmacy)
+                .ThenInclude(i => i.Address)
+                .Where(i =>
+                    i.Medication.Id != medicineId && (
+                    i.Medication.GenericName == originalMedicine.GenericName ||
+                    i.Medication.ATCCode == originalMedicine.ATCCode)
+                )
+                .ToListAsync();
+
+            return alternatives;
+        }
         public async Task<InventoryItem> GetByIdAsync(int id)
         {
             return await _context.InventoryItems

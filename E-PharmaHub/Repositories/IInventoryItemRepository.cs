@@ -5,6 +5,7 @@ namespace E_PharmaHub.Repositories
 {
     public interface IInventoryItemRepository : IGenericRepository<InventoryItem>
     {
+        Task<IEnumerable<InventoryItem>> GetAlternativeMedicinesAsync(int medicineId);
         Task<IEnumerable<InventoryItem>> GetByPharmacyIdAsync(int pharmacyId);
         Task<IEnumerable<InventoryItem>> GetByMedicationIdAsync(int medicationId);
         Task<InventoryItem?> FindAsync(Expression<Func<InventoryItem, bool>> predicate);

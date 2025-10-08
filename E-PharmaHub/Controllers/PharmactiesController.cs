@@ -13,10 +13,11 @@ namespace E_PharmaHub.Controllers
     public class PharmactiesController : ControllerBase
     {
         private readonly IPharmacistService _pharmacistService;
-
-        public PharmactiesController(IPharmacistService pharmacistService)
+        private readonly IInventoryService _inventoryService;
+        public PharmactiesController(IPharmacistService pharmacistService,IInventoryService inventoryService)
         {
             _pharmacistService = pharmacistService;
+            _inventoryService = inventoryService;
         }
 
         [HttpPost("register")]
@@ -96,6 +97,30 @@ namespace E_PharmaHub.Controllers
             {
                 return BadRequest(new { error = ex.Message });
             }
+        }
+        [HttpGet("{id}/alternatives")]
+        public async Task<IActionResult> GetAlternatives(int id)
+        {
+            var alternatives = await _inventoryService.GetAlternativeMedicinesAsync(id);
+
+            if (!alternatives.Any())
+                return NotFound(new { message = "No alternative medicines found." });
+
+            return Ok(alternatives.Select(a => new
+            {
+                a.Medication.Id,
+                a.Medication.BrandName,
+                a.Medication.GenericName,
+                a.Medication.ATCCode,
+                a.Price,
+                a.Quantity,
+                Pharmacy = new
+                {
+                    a.Pharmacy.Id,
+                    a.Pharmacy.Name,
+                    a.Pharmacy.Address.City
+                }
+            }));
         }
 
 
