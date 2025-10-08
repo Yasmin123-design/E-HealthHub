@@ -14,35 +14,28 @@ namespace E_PharmaHub.Controllers
     {
         private readonly IMedicineService _medicineService;
         private readonly IPharmacistService _pharmacistService;
+        private readonly IInventoryService _inventoryService;
 
-        public MedicineController(IMedicineService medicineService,IPharmacistService pharmacistService)
+        public MedicineController(IMedicineService medicineService,
+            IPharmacistService pharmacistService,
+            IInventoryService inventoryService)
         {
             _medicineService = medicineService;
             _pharmacistService = pharmacistService;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var medicines = await _medicineService.GetAllMedicinesAsync();
-
-            if (!medicines.Any())
-                return NotFound("No medicines found.");
-
-            return Ok(medicines);
+            _inventoryService = inventoryService;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var medicine = await _medicineService.GetMedicineByIdAsync(id);
+            var medicine = await _inventoryService.GetInventoryItemByIdAsync(id);
             if (medicine == null)
                 return NotFound($"Medicine with ID {id} not found.");
             return Ok(medicine);
         }
 
         [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist,Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist")]
         public async Task<IActionResult> Add([FromForm] MedicineDto dto, IFormFile? image)
         {
             if (!ModelState.IsValid)
@@ -67,7 +60,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist,Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist")]
         public async Task<IActionResult> Update(int id, [FromForm] MedicineDto dto, IFormFile? image)
         {
             if (!ModelState.IsValid)
