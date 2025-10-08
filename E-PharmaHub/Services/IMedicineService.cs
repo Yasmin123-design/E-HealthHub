@@ -7,7 +7,6 @@ namespace E_PharmaHub.Services
     {
         Task<IEnumerable<Medication>> GetAllMedicinesAsync();
         Task<Medication> GetMedicineByIdAsync(int id);
-        Task AddMedicineAsync(Medication medicine, IFormFile? imageFile);
         Task UpdateMedicineAsync(int id, MedicineDto dto, IFormFile? image, int? pharmacyId);
         Task DeleteMedicineAsync(int id, int? pharmacyId);
         Task<IEnumerable<Medication>> GetMedicinesByPharmacyIdAsync(int pharmacyId);

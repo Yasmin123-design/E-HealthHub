@@ -66,9 +66,6 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message = "Medicine added successfully" });
         }
 
-
-
-
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist,Admin")]
         public async Task<IActionResult> Update(int id, [FromForm] MedicineDto dto, IFormFile? image)

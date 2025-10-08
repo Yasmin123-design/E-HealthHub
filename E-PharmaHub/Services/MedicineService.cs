@@ -25,18 +25,6 @@ namespace E_PharmaHub.Services
             return await _unitOfWork.Medicines.GetByIdAsync(id);
         }
 
-
-        public async Task AddMedicineAsync(Medication medicine, IFormFile? imageFile)
-        {
-            if (imageFile != null)
-            {
-                medicine.ImagePath = await _fileStorage.SaveFileAsync(imageFile, "medicines");
-            }
-
-            await _unitOfWork.Medicines.AddAsync(medicine);
-            await _unitOfWork.CompleteAsync();
-        }
-
         public async Task UpdateMedicineAsync(int id, MedicineDto dto, IFormFile? image, int? pharmacyId)
         {
             var existingMedicine = await _unitOfWork.Medicines.GetByIdAsync(id)
@@ -62,8 +50,8 @@ namespace E_PharmaHub.Services
 
                 if (inventory != null)
                 {
-                    inventory.Price = dto.Price ?? inventory.Price;
-                    inventory.Quantity = dto.Quantity ?? inventory.Quantity;
+                    inventory.Price = dto.Price;
+                    inventory.Quantity = dto.Quantity;
                     inventory.LastUpdated = DateTime.UtcNow;
 
                     _unitOfWork.IinventoryItem.Update(inventory);
