@@ -1,5 +1,6 @@
 ﻿using E_PharmaHub.Models;
 using E_PharmaHub.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -40,7 +41,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPost]
-        [Authorize] 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Create([FromBody] BloodRequest request)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
