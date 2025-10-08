@@ -18,6 +18,8 @@ namespace E_PharmaHub.Services
         Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId);
 
         Task DeletePharmacistAsync(int id);
+        Task<bool> ApprovePharmacistAsync(int id);
+        Task<bool> RejectPharmacistAsync(int id);
 
     }
 

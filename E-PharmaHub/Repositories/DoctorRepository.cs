@@ -55,5 +55,24 @@ namespace E_PharmaHub.Repositories
                 .Where(d => d.Specialty == specialty)
                 .ToListAsync();
         }
+        public async Task<bool> ApproveDoctorAsync(int id)
+        {
+            var doctor = await _context.DoctorProfiles.FindAsync(id);
+            if (doctor == null || doctor.IsApproved)
+                return false;
+
+            doctor.IsApproved = true;
+            return true;
+        }
+
+        public async Task<bool> RejectDoctorAsync(int id)
+        {
+            var doctor = await _context.DoctorProfiles.FindAsync(id);
+            if (doctor == null || !doctor.IsApproved)
+                return false;
+
+            doctor.IsApproved = false;
+            return true;
+        }
     }
 }

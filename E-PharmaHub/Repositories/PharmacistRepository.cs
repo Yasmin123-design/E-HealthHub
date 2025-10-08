@@ -51,5 +51,24 @@ namespace E_PharmaHub.Repositories
             return await _context.Pharmacists
                 .FirstOrDefaultAsync(p => p.AppUserId == userId);
         }
+        public async Task<bool> ApprovePharmacistAsync(int id)
+        {
+            var pharmacist = await _context.Pharmacists.FindAsync(id);
+            if (pharmacist == null || pharmacist.IsApproved)
+                return false;
+
+            pharmacist.IsApproved = true;
+            return true;
+        }
+
+        public async Task<bool> RejectPharmacistAsync(int id)
+        {
+            var pharmacist = await _context.Pharmacists.FindAsync(id);
+            if (pharmacist == null || !pharmacist.IsApproved)
+                return false;
+
+            pharmacist.IsApproved = false;
+            return true;
+        }
     }
 }

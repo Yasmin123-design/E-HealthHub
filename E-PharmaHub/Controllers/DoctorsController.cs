@@ -111,5 +111,28 @@ namespace E_PharmaHub.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> ApproveDoctor(int id)
+        {
+            var result = await _doctorService.ApproveDoctorAsync(id);
+            if (!result)
+                return NotFound(new { message = "Doctor not found or already approved." });
+
+            return Ok(new { message = "Doctor approved successfully." });
+        }
+
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [HttpPut("reject/{id}")]
+        public async Task<IActionResult> RejectDoctor(int id)
+        {
+            var result = await _doctorService.RejectDoctorAsync(id);
+            if (!result)
+                return NotFound(new { message = "Doctor not found or already rejected." });
+
+            return Ok(new { message = "Doctor rejected successfully." });
+        }
+
     }
 }

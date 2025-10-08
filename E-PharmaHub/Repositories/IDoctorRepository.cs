@@ -6,6 +6,8 @@ namespace E_PharmaHub.Repositories
     {
         Task<IEnumerable<DoctorProfile>> GetDoctorsBySpecialtyAsync(string specialty);
         Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId);
+        Task<bool> ApproveDoctorAsync(int id);
+        Task<bool> RejectDoctorAsync(int id);
 
     }
 }
