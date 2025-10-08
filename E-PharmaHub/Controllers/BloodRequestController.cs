@@ -57,7 +57,7 @@ namespace E_PharmaHub.Controllers
 
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Update(int id, [FromBody] BloodRequest updatedRequest)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
