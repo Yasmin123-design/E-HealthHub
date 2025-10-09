@@ -12,9 +12,11 @@ namespace E_PharmaHub.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<DonorProfile>> GetByFilterAsync(BloodType? type, string? city)
+        public async Task<IEnumerable<DonorReadDto>> GetByFilterAsync(BloodType? type, string? city)
         {
-            var query = _context.DonorProfiles.AsQueryable();
+            var query = _context.DonorProfiles
+                .Include(d => d.AppUser)
+                .AsQueryable();
 
             if (type.HasValue)
                 query = query.Where(d => d.BloodType == type.Value);
@@ -22,8 +24,19 @@ namespace E_PharmaHub.Repositories
             if (!string.IsNullOrEmpty(city))
                 query = query.Where(d => d.City.ToLower() == city.ToLower());
 
-            return await query.Include(d => d.AppUser).ToListAsync();
+            return await query
+                .Select(d => new DonorReadDto
+                {
+                    Id = d.Id,
+                    Email = d.AppUser.Email,
+                    BloodType = d.BloodType.ToString(),
+                    City = d.City,
+                    IsAvailable = d.IsAvailable,
+                    LastDonationDate = d.LastDonationDate
+                })
+                .ToListAsync();
         }
+
 
         public async Task<DonorProfile?> GetByUserIdAsync(string userId)
         {

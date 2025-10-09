@@ -6,7 +6,7 @@ namespace E_PharmaHub.Services
     public interface IDonorService
     {
         Task<IEnumerable<DonorReadDto>> GetAllDetailsAsync();
-        Task<IEnumerable<DonorProfile>> GetByFilterAsync(BloodType? type, string? city);
+        Task<IEnumerable<DonorReadDto>> GetByFilterAsync(BloodType? type, string? city);
         Task<DonorProfile?> GetByUserIdAsync(string userId);
         Task<DonorProfile> RegisterAsync(DonorRegisterDto donor);
         Task<bool> UpdateAvailabilityAsync(string userId, bool isAvailable);
