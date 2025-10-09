@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 
 namespace E_PharmaHub.Repositories
 {
@@ -7,5 +8,7 @@ namespace E_PharmaHub.Repositories
         Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId);
         Task<bool> ApprovePharmacistAsync(int id);
         Task<bool> RejectPharmacistAsync(int id);
+        Task<IEnumerable<PharmacistReadDto>> GetAllDetailsAsync();
+        Task<PharmacistReadDto?> GetByIdDetailsAsync(int id);
     }
 }

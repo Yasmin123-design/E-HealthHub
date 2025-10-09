@@ -5,10 +5,10 @@ namespace E_PharmaHub.Services
 {
     public interface IDoctorService
     {
-        Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId);
         Task<AppUser> RegisterDoctorAsync(DoctorRegisterDto dto, IFormFile image);
-        Task<DoctorProfile?> GetDoctorByIdAsync(int id);
-        Task<IEnumerable<DoctorProfile>> GetDoctorsBySpecialtyAsync(string specialty);
+        Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty);
+        Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId);
+        Task<DoctorReadDto?> GetByIdDetailsAsync(int id);
         Task UpdateDoctorAsync(int id, DoctorProfile updatedDoctor, IFormFile? newImage);
         Task DeleteDoctorAsync(int id);
 

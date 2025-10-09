@@ -20,7 +20,7 @@ namespace E_PharmaHub.Services
             _fileStorage = fileStorage;
             _doctorRepository = doctorRepository;
         }
-        public async Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId)
+        public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
         {
             return await _doctorRepository.GetDoctorByUserIdAsync(userId);
         }
@@ -104,11 +104,6 @@ namespace E_PharmaHub.Services
         }
 
 
-
-        public async Task<DoctorProfile?> GetDoctorByIdAsync(int id)
-        {
-            return await _unitOfWork.Doctors.GetByIdAsync(id);
-        }
         public async Task<bool> ApproveDoctorAsync(int id)
         {
             var result = await _unitOfWork.Doctors.ApproveDoctorAsync(id);
@@ -131,7 +126,7 @@ namespace E_PharmaHub.Services
             return true;
         }
 
-        public async Task<IEnumerable<DoctorProfile>> GetDoctorsBySpecialtyAsync(string specialty)
+        public async Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty)
         {
             return await _unitOfWork.Doctors.GetDoctorsBySpecialtyAsync(specialty);
         }
@@ -210,18 +205,10 @@ namespace E_PharmaHub.Services
             await _unitOfWork.CompleteAsync();
         }
 
-        //public async Task<bool> ApproveDoctorAsync(string doctorUserId)
-        //{
-        //    var doctor = await _unitOfWork.DoctorRepository.GetDoctorWithClinicAsync(doctorUserId);
-        //    if (doctor == null) return false;
-
-        //    var user = await _userManager.FindByIdAsync(doctorUserId);
-        //    if (user == null) return false;
-
-        //    user.IsApproved = true;
-        //    var result = await _userManager.UpdateAsync(user);
-        //    return result.Succeeded;
-        //}
+        public async Task<DoctorReadDto?> GetByIdDetailsAsync(int id)
+        {
+            return await _unitOfWork.Doctors.GetByIdDetailsAsync(id);
+        }
     }
 
 }

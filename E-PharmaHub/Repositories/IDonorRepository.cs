@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 
 namespace E_PharmaHub.Repositories
 {
@@ -7,5 +8,6 @@ namespace E_PharmaHub.Repositories
         Task<IEnumerable<DonorProfile>> GetByFilterAsync(BloodType? type, string? city);
         Task<DonorProfile?> GetByUserIdAsync(string userId);
         Task<bool> UpdateAvailabilityAsync(string userId, bool isAvailable);
+        Task<IEnumerable<DonorReadDto>> GetAllDetailsAsync();
     }
 }

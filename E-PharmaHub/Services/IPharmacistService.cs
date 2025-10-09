@@ -9,9 +9,8 @@ namespace E_PharmaHub.Services
 
         Task AddPharmacistAsync(PharmacistProfile pharmacist);
 
-        Task<IEnumerable<PharmacistProfile>> GetAllPharmacistsAsync();
-
-        Task<PharmacistProfile?> GetPharmacistByIdAsync(int id);
+        Task<IEnumerable<PharmacistReadDto>> GetAllPharmacistsAsync();
+        Task<PharmacistReadDto?> GetPharmacistByIdAsync(int id);
 
         Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist,IFormFile? newImage);
 

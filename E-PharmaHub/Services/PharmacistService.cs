@@ -112,15 +112,6 @@ namespace E_PharmaHub.Services
             await _unitOfWork.CompleteAsync();
         }
 
-        public async Task<IEnumerable<PharmacistProfile>> GetAllPharmacistsAsync()
-        {
-            return await _unitOfWork.PharmasistsProfile.GetAllAsync();
-        }
-
-        public async Task<PharmacistProfile?> GetPharmacistByIdAsync(int id)
-        {
-            return await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);
-        }
         public async Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId)
         {
             return await _pharmacistRepository.GetPharmacistByUserIdAsync(userId);
@@ -247,6 +238,16 @@ namespace E_PharmaHub.Services
 
             _unitOfWork.PharmasistsProfile.Delete(pharmacist);
             await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task<IEnumerable<PharmacistReadDto>> GetAllPharmacistsAsync()
+        {
+            return await _unitOfWork.PharmasistsProfile.GetAllDetailsAsync();
+        }
+
+        public async Task<PharmacistReadDto?> GetPharmacistByIdAsync(int id)
+        {
+            return await _unitOfWork.PharmasistsProfile.GetByIdDetailsAsync(id);
         }
     }
 

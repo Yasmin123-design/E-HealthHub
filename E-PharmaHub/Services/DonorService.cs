@@ -16,9 +16,9 @@ namespace E_PharmaHub.Services
             _userManager = userManager;
         }
 
-        public async Task<IEnumerable<DonorProfile>> GetAllAsync()
+        public async Task<IEnumerable<DonorReadDto>> GetAllDetailsAsync()
         {
-            return await _unitOfWork.Donors.GetAllAsync();
+            return await _unitOfWork.Donors.GetAllDetailsAsync();
         }
 
         public async Task<IEnumerable<DonorProfile>> GetByFilterAsync(BloodType? type, string? city)

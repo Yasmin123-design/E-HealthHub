@@ -22,7 +22,7 @@ namespace E_PharmaHub.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var donors = await _donorService.GetAllAsync();
+            var donors = await _donorService.GetAllDetailsAsync();
             return Ok(donors);
         }
 

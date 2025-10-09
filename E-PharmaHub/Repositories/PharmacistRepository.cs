@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -29,6 +30,45 @@ namespace E_PharmaHub.Repositories
                 .Include(p => p.AppUser)
                 .Include(p => p.Pharmacy)
                 .FirstOrDefaultAsync(p => p.Id == id);
+        }
+        public async Task<IEnumerable<PharmacistReadDto>> GetAllDetailsAsync()
+        {
+            return await _context.Pharmacists
+                .Include(p => p.AppUser)
+                .Include(p => p.Pharmacy)
+                .ThenInclude(ph => ph.Address)
+                .Select(p => new PharmacistReadDto
+                {
+                    Id = p.Id,
+                    Email = p.AppUser.Email,
+                    LicenseNumber = p.LicenseNumber,
+                    IsApproved = p.IsApproved,
+                    PharmacyName = p.Pharmacy.Name,
+                    PharmacyPhone = p.Pharmacy.Phone,
+                    PharmacyImagePath = p.Pharmacy.ImagePath,
+                    City = p.Pharmacy.Address.City
+                })
+                .ToListAsync();
+        }
+        public async Task<PharmacistReadDto?> GetByIdDetailsAsync(int id)
+        {
+            return await _context.Pharmacists
+                .Include(p => p.AppUser)
+                .Include(p => p.Pharmacy)
+                .ThenInclude(ph => ph.Address)
+                .Where(p => p.Id == id)
+                .Select(p => new PharmacistReadDto
+                {
+                    Id = p.Id,
+                    Email = p.AppUser.Email,
+                    LicenseNumber = p.LicenseNumber,
+                    IsApproved = p.IsApproved,
+                    PharmacyName = p.Pharmacy.Name,
+                    PharmacyPhone = p.Pharmacy.Phone,
+                    PharmacyImagePath = p.Pharmacy.ImagePath,
+                    City = p.Pharmacy.Address.City
+                })
+                .FirstOrDefaultAsync();
         }
 
         public async Task AddAsync(PharmacistProfile entity)

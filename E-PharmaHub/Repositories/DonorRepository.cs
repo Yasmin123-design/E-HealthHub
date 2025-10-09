@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Repositories
@@ -39,12 +40,26 @@ namespace E_PharmaHub.Repositories
             donor.IsAvailable = isAvailable;
             return true;
         }
-        public async Task<IEnumerable<DonorProfile>> GetAllAsync()
+        public async Task<IEnumerable<DonorProfile>> GetAllAsync() 
+        { 
+            return await _context.DonorProfiles.Include(d => d.AppUser).ToListAsync();
+        }
+        public async Task<IEnumerable<DonorReadDto>> GetAllDetailsAsync()
         {
             return await _context.DonorProfiles
                 .Include(d => d.AppUser)
+                .Select(d => new DonorReadDto
+                {
+                    Id = d.Id,
+                    Email = d.AppUser.Email,
+                    BloodType = d.BloodType.ToString(),
+                    City = d.City,
+                    IsAvailable = d.IsAvailable,
+                    LastDonationDate = d.LastDonationDate
+                })
                 .ToListAsync();
         }
+
 
         public async Task<DonorProfile> GetByIdAsync(int id)
         {

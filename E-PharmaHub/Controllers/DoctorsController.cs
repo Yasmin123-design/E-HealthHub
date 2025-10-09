@@ -48,7 +48,7 @@ namespace E_PharmaHub.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDoctorById(int id)
         {
-            var doctor = await _doctorService.GetDoctorByIdAsync(id);
+            var doctor = await _doctorService.GetByIdDetailsAsync(id);
             if (doctor == null)
                 return NotFound(new { message = "Doctor not found." });
 
