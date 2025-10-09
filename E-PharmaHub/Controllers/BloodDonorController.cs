@@ -36,15 +36,26 @@ namespace E_PharmaHub.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] DonorRegisterDto dto)
         {
-            var result = await _donorService.RegisterAsync(dto);
-            return Ok(new
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
             {
-                message = "Doctor registered successfully! Awaiting admin approval.",
-                userId = result.AppUserId,
-                email = result.AppUser.Email,
-                role = result.AppUser.Role.ToString()
-            });
+                var result = await _donorService.RegisterAsync(dto);
+                return Ok(new
+                {
+                    message = "Donor registered successfully! Awaiting admin approval.",
+                    userId = result.AppUserId,
+                    email = result.AppUser.Email,
+                    role = result.AppUser.Role.ToString()
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
 
 
         [HttpPut("availability")]

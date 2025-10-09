@@ -39,9 +39,10 @@ namespace E_PharmaHub.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(new { message = ex.Message });
             }
         }
+
 
 
         [HttpGet("{id}")]

@@ -26,6 +26,10 @@ namespace E_PharmaHub.Services
         }
         public async Task<AppUser> RegisterDoctorAsync(DoctorRegisterDto dto, IFormFile image)
         {
+            var existingUser = await _userManager.FindByEmailAsync(dto.Email);
+            if (existingUser != null)
+                throw new Exception("This email is already registered. Please use another one.");
+
             var user = new AppUser
             {
                 UserName = dto.Email,
@@ -98,6 +102,7 @@ namespace E_PharmaHub.Services
 
             return user;
         }
+
 
 
         public async Task<DoctorProfile?> GetDoctorByIdAsync(int id)

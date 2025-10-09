@@ -33,28 +33,35 @@ namespace E_PharmaHub.Services
 
         public async Task<DonorProfile> RegisterAsync(DonorRegisterDto dto)
         {
+            var existingUser = await _userManager.FindByEmailAsync(dto.Email);
+            if (existingUser != null)
+                throw new Exception("This email is already registered.");
+
             var user = new AppUser
             {
                 UserName = dto.Email,
                 Email = dto.Email,
                 Role = UserRole.Donor
             };
-            var donor = new DonorProfile
-            {
-                City = dto.City,
-                BloodType = dto.BloodType,
-                IsAvailable = true
-            };
+
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
-                throw new Exception("Failed to create user: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+                throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
 
-            donor.AppUserId = user.Id;
+            var donor = new DonorProfile
+            {
+                AppUserId = user.Id,
+                BloodType = dto.BloodType,
+                City = dto.City,
+                IsAvailable = true
+            };
+
             await _unitOfWork.Donors.AddAsync(donor);
             await _unitOfWork.CompleteAsync();
 
             return donor;
         }
+
 
         public async Task<bool> UpdateAvailabilityAsync(string userId, bool isAvailable)
         {
