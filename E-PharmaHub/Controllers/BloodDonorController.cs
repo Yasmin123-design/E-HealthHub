@@ -37,7 +37,13 @@ namespace E_PharmaHub.Controllers
         public async Task<IActionResult> Register([FromBody] DonorRegisterDto dto)
         {
             var result = await _donorService.RegisterAsync(dto);
-            return Ok(result);
+            return Ok(new
+            {
+                message = "Doctor registered successfully! Awaiting admin approval.",
+                userId = result.Id,
+                email = result.AppUser.Email,
+                role = result.AppUser.Role.ToString()
+            });
         }
 
 
