@@ -48,8 +48,8 @@ namespace E_PharmaHub.Controllers
             }
             else
             {
-                if (model.Role != UserRole.RegularUser && model.Role != UserRole.Donor)
-                    return BadRequest("Invalid role selection. You can only register as RegularUser or Donor.");
+                if (model.Role != UserRole.RegularUser)
+                    return BadRequest("Invalid role selection. You can only register as RegularUser");
             }
 
             var user = new AppUser

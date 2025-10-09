@@ -1,6 +1,11 @@
-﻿namespace E_PharmaHub.Repositories
+﻿using E_PharmaHub.Models;
+
+namespace E_PharmaHub.Repositories
 {
-    public interface IDonorRepository
+    public interface IDonorRepository : IGenericRepository<DonorProfile>
     {
+        Task<IEnumerable<DonorProfile>> GetByFilterAsync(BloodType? type, string? city);
+        Task<DonorProfile?> GetByUserIdAsync(string userId);
+        Task<bool> UpdateAvailabilityAsync(string userId, bool isAvailable);
     }
 }

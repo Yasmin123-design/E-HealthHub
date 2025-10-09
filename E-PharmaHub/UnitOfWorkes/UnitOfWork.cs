@@ -13,7 +13,7 @@ namespace E_PharmaHub.UnitOfWorkes
         public IGenericRepository<Pharmacy> Pharmacies { get; private set; }
         public IAddressRepository Addresses { get; private set; }
         public IGenericRepository<Clinic> Clinics { get; }
-        public IGenericRepository<DonorProfile> Donors { get; }
+        public IDonorRepository Donors { get; }
         public IBloodRequestRepository BloodRequest { get; }
         public IInventoryItemRepository IinventoryItem { get; }
 
@@ -26,7 +26,8 @@ namespace E_PharmaHub.UnitOfWorkes
             IInventoryItemRepository inventoryItemRepository,
             IPharmacistRepository pharmacistRepository,
             IAddressRepository addressRepository,
-            IBloodRequestRepository bloodRequestRepository
+            IBloodRequestRepository bloodRequestRepository,
+            IDonorRepository donorRepository
             )
         {
             _context = context;
@@ -39,7 +40,7 @@ namespace E_PharmaHub.UnitOfWorkes
             PharmasistsProfile = pharmacistRepository;
             Doctors = doctorRepository;
             Clinics = new ClinicRepository(_context);
-            Donors = new DonorRepository(_context);
+            Donors = donorRepository;
         }
 
         public async Task<int> CompleteAsync()

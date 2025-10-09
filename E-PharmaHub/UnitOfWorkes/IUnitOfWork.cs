@@ -9,10 +9,11 @@ namespace E_PharmaHub.UnitOfWorkes
         IPharmacistRepository PharmasistsProfile { get; }
         IGenericRepository<Pharmacy> Pharmacies { get; }
         IGenericRepository<Clinic> Clinics { get; }
-        IGenericRepository<DonorProfile> Donors { get; }
+        IDonorRepository Donors { get; }
         IReviewRepository Reviews { get; }
         IInventoryItemRepository IinventoryItem { get; }
         IDoctorRepository Doctors { get; }
+
         IBloodRequestRepository BloodRequest { get; }
         IAddressRepository Addresses { get; }
         Task<int> CompleteAsync();
