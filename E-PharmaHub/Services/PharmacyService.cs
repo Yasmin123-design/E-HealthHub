@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
 
 namespace E_PharmaHub.Services
@@ -14,15 +15,15 @@ namespace E_PharmaHub.Services
             _fileStorage = fileStorage;
         }
 
-        public async Task<IEnumerable<Pharmacy>> GetAllPharmaciesAsync()
+        public async Task<IEnumerable<PharmacySimpleDto>> GetAllPharmaciesAsync()
         {
-            var pharmacies = await _unitOfWork.Pharmacies.GetAllAsync();
-            return pharmacies ?? Enumerable.Empty<Pharmacy>();
+            var pharmacies = await _unitOfWork.Pharmacies.GetAllBriefAsync();
+            return pharmacies ?? Enumerable.Empty<PharmacySimpleDto>();
         }
 
-        public async Task<Pharmacy> GetPharmacyByIdAsync(int id)
+        public async Task<PharmacySimpleDto> GetPharmacyByIdAsync(int id)
         {
-            return await _unitOfWork.Pharmacies.GetByIdAsync(id);
+            return await _unitOfWork.Pharmacies.GetByIdBriefAsync(id);
         }
 
         public async Task AddPharmacyAsync(Pharmacy pharmacy, IFormFile imageFile)

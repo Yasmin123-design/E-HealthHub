@@ -1,9 +1,10 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Repositories
 {
-    public class PharmacyRepository : IGenericRepository<Pharmacy>
+    public class PharmacyRepository : IPharmacyRepository
     {
         private readonly EHealthDbContext _context;
 
@@ -45,5 +46,37 @@ namespace E_PharmaHub.Repositories
             _context.Pharmacies.Remove(entity);
         }
 
+        public async Task<IEnumerable<PharmacySimpleDto>> GetAllBriefAsync()
+        {
+            var pharmacies = await _context.Pharmacies
+                    .Include(p => p.Address)
+                    .Select(p => new PharmacySimpleDto
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Phone = p.Phone,
+                        Rating = p.Rating,
+                        City = p.Address.City,
+                        ImagePath = p.ImagePath
+                    })
+                    .ToListAsync();
+            return pharmacies;
+        }
+
+        public async Task<PharmacySimpleDto> GetByIdBriefAsync(int id)
+        {
+            return  _context.Pharmacies
+                    .Include(p => p.Address)
+                    .Select(p => new PharmacySimpleDto
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Phone = p.Phone,
+                        Rating = p.Rating,
+                        City = p.Address.City,
+                        ImagePath = p.ImagePath
+                    })
+                    .FirstOrDefault(x => x.Id == id);
+        }
     }
 }

@@ -3,8 +3,6 @@ using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stripe.Checkout;
-using Stripe.Climate;
 
 namespace E_PharmaHub.Controllers
 {

@@ -10,7 +10,7 @@ namespace E_PharmaHub.UnitOfWorkes
         public IMedicineRepository Medicines { get; }
         public IReviewRepository Reviews { get; }
         public IDoctorRepository Doctors { get; }
-        public IGenericRepository<Pharmacy> Pharmacies { get; private set; }
+        public IPharmacyRepository Pharmacies { get; private set; }
         public IAddressRepository Addresses { get; private set; }
         public IGenericRepository<Clinic> Clinics { get; }
         public IDonorRepository Donors { get; }
@@ -32,14 +32,15 @@ namespace E_PharmaHub.UnitOfWorkes
             IBloodRequestRepository bloodRequestRepository,
             IDonorRepository donorRepository,
             IDonorMatchRepository donorMatchRepository,
-            IPaymentRepository paymentRepository
+            IPaymentRepository paymentRepository,
+            IPharmacyRepository pharmacyRepository
             )
         {
             _context = context;
             Payments = paymentRepository;
             Medicines = medicineRepository;
             IinventoryItem = inventoryItemRepository;
-            Pharmacies = new PharmacyRepository(_context);
+            Pharmacies = pharmacyRepository;
             Reviews = reviewRepository;
             BloodRequest = bloodRequestRepository;
             Addresses = addressRepository;

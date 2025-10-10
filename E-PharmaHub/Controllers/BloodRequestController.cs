@@ -77,6 +77,8 @@ namespace E_PharmaHub.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         public async Task<IActionResult> Delete(int id)
         {
             var success = await _bloodRequestService.DeleteRequestAsync(id);
