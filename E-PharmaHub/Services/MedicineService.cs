@@ -102,7 +102,7 @@ namespace E_PharmaHub.Services
             return await _unitOfWork.Medicines.GetMedicinesByPharmacyIdAsync(pharmacyId);
         }
 
-        public async Task<IEnumerable<Pharmacy>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng)
+        public async Task<IEnumerable<NearestPharmacyDTO>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng)
         {
             return await _unitOfWork.Medicines.GetNearestPharmaciesWithMedicationAsync(medicationName, userLat, userLng);
 

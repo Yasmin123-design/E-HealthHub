@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq.Expressions;
@@ -64,28 +65,46 @@ namespace E_PharmaHub.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Pharmacy>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng)
+        public async Task<IEnumerable<NearestPharmacyDTO>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng)
         {
             var pharmacies = await _context.Pharmacies
                 .Include(p => p.Address)
                 .Include(p => p.Inventory)
                     .ThenInclude(i => i.Medication)
-                .Where(p => p.Inventory.Any(i => i.Medication.BrandName.Contains(medicationName)
-                                              || i.Medication.GenericName.Contains(medicationName)))
+                .Where(p => p.Inventory.Any(i =>
+                    i.Medication.BrandName.Contains(medicationName) ||
+                    i.Medication.GenericName.Contains(medicationName)))
                 .ToListAsync();
 
-            //Haversine Formula
-            return pharmacies.OrderBy(p =>
+            // Haversine Formula
+            var result = pharmacies.Select(p =>
             {
+                var medication = p.Inventory.FirstOrDefault(i =>
+                    i.Medication.BrandName.Contains(medicationName) ||
+                    i.Medication.GenericName.Contains(medicationName))?.Medication;
+
                 var dLat = (p.Address.Latitude ?? 0 - userLat) * Math.PI / 180;
-                var dLng = (p.Address.Longitude ?? 0  - userLng) * Math.PI / 180;
+                var dLng = (p.Address.Longitude ?? 0 - userLng) * Math.PI / 180;
                 var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                        Math.Cos(userLat * Math.PI / 180) * Math.Cos(p.Address.Latitude ?? 0 * Math.PI / 180) *
+                        Math.Cos(userLat * Math.PI / 180) * Math.Cos((p.Address.Latitude ?? 0) * Math.PI / 180) *
                         Math.Sin(dLng / 2) * Math.Sin(dLng / 2);
                 var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-                return 6371 * c; 
+                var distance = 6371 * c;
+
+                return new NearestPharmacyDTO
+                {
+                    PharmacyName = p.Name,
+                    City = p.Address?.City,
+                    Street = p.Address?.Street,
+                    Phone = p.Phone,
+                    MedicationName = medication?.BrandName ?? medicationName,
+                    DistanceKm = Math.Round(distance, 2)
+                };
             });
+
+            return result.OrderBy(r => r.DistanceKm);
         }
+
     }
 
 }
