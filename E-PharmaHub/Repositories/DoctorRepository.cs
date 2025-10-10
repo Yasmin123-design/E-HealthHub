@@ -13,6 +13,16 @@ namespace E_PharmaHub.Repositories
             _context = context;
         }
 
+        public async Task MarkAsPaid(string userId)
+        {
+            var doctor = await _context.DoctorProfiles
+                .FirstOrDefaultAsync(d => d.AppUserId == userId);
+
+            if (doctor == null)
+                throw new Exception("Doctor profile not found.");
+
+            doctor.HasPaid = true;
+        }
         public async Task<IEnumerable<DoctorProfile>> GetAllAsync()
         {
             return await _context.DoctorProfiles
@@ -112,17 +122,27 @@ namespace E_PharmaHub.Repositories
                 return false;
 
             doctor.IsApproved = true;
+            doctor.IsRejected = false;
             return true;
         }
 
         public async Task<bool> RejectDoctorAsync(int id)
         {
             var doctor = await _context.DoctorProfiles.FindAsync(id);
-            if (doctor == null || !doctor.IsApproved)
+            if (doctor == null || doctor.IsRejected)
                 return false;
 
+            doctor.IsRejected = true;
             doctor.IsApproved = false;
             return true;
+        }
+
+        public async Task<DoctorProfile> GetDoctorByIdAsync(int id)
+        {
+            return  _context.DoctorProfiles
+                          .Include(d => d.Clinic)
+                          .Include(d => d.AppUser)
+                          .FirstOrDefault(x => x.Id == id);
         }
     }
 }

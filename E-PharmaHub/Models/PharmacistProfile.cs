@@ -7,7 +7,9 @@ namespace E_PharmaHub.Models
         [Key]
         public int Id { get; set; }
         public int PharmacyId { get; set; }
-        public bool IsApproved { get; set; } = false; 
+        public bool IsApproved { get; set; } = false;
+        public bool IsRejected { get; set; } = false;
+        public bool HasPaid { get; set; } = false;
 
         public string? AppUserId { get; set; }
 

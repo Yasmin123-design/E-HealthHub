@@ -3,6 +3,7 @@ using E_PharmaHub.Models;
 using E_PharmaHub.Repositories;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Services
 {
@@ -94,7 +95,9 @@ namespace E_PharmaHub.Services
                 AppUserId = user.Id,
                 ClinicId = clinic.Id,
                 Specialty = dto.Specialty,
-                IsApproved = false
+                IsApproved = false,
+                HasPaid = false 
+
             };
 
             await _unitOfWork.Doctors.AddAsync(doctorProfile);
@@ -125,7 +128,11 @@ namespace E_PharmaHub.Services
             await _unitOfWork.CompleteAsync(); 
             return true;
         }
-
+        public async Task MarkAsPaid(string userId)
+        {
+            await _unitOfWork.Doctors.MarkAsPaid(userId);
+            await _unitOfWork.CompleteAsync();
+        }
         public async Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty)
         {
             return await _unitOfWork.Doctors.GetDoctorsBySpecialtyAsync(specialty);
@@ -208,6 +215,11 @@ namespace E_PharmaHub.Services
         public async Task<DoctorReadDto?> GetByIdDetailsAsync(int id)
         {
             return await _unitOfWork.Doctors.GetByIdDetailsAsync(id);
+        }
+
+        public async Task<DoctorProfile> GetDoctorByIdAsync(int id)
+        {
+            return await _unitOfWork.Doctors.GetByIdAsync(id);
         }
     }
 

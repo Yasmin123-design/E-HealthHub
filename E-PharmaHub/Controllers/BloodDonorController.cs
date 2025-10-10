@@ -56,8 +56,6 @@ namespace E_PharmaHub.Controllers
             }
         }
 
-
-
         [HttpPut("availability")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> UpdateAvailability([FromBody] bool isAvailable)
@@ -67,6 +65,7 @@ namespace E_PharmaHub.Controllers
             if (!success) return NotFound("Donor not found.");
             return Ok("Availability updated successfully.");
         }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Roles ="Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

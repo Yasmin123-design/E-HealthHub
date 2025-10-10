@@ -18,6 +18,9 @@ namespace E_PharmaHub.UnitOfWorkes
         public IInventoryItemRepository IinventoryItem { get; }
 
         public IPharmacistRepository PharmasistsProfile { get; }
+        public IDonorMatchRepository donorMatches { get; }
+
+        public IPaymentRepository Payments { get; }
 
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
@@ -27,10 +30,13 @@ namespace E_PharmaHub.UnitOfWorkes
             IPharmacistRepository pharmacistRepository,
             IAddressRepository addressRepository,
             IBloodRequestRepository bloodRequestRepository,
-            IDonorRepository donorRepository
+            IDonorRepository donorRepository,
+            IDonorMatchRepository donorMatchRepository,
+            IPaymentRepository paymentRepository
             )
         {
             _context = context;
+            Payments = paymentRepository;
             Medicines = medicineRepository;
             IinventoryItem = inventoryItemRepository;
             Pharmacies = new PharmacyRepository(_context);
@@ -41,6 +47,7 @@ namespace E_PharmaHub.UnitOfWorkes
             Doctors = doctorRepository;
             Clinics = new ClinicRepository(_context);
             Donors = donorRepository;
+            donorMatches = donorMatchRepository;
         }
 
         public async Task<int> CompleteAsync()

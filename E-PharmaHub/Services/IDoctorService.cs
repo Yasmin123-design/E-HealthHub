@@ -9,6 +9,9 @@ namespace E_PharmaHub.Services
         Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty);
         Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId);
         Task<DoctorReadDto?> GetByIdDetailsAsync(int id);
+        Task<DoctorProfile> GetDoctorByIdAsync(int id);
+        Task MarkAsPaid(string userId);
+
         Task UpdateDoctorAsync(int id, DoctorProfile updatedDoctor, IFormFile? newImage);
         Task DeleteDoctorAsync(int id);
 

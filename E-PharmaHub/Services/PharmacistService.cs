@@ -95,7 +95,9 @@ namespace E_PharmaHub.Services
                 AppUserId = user.Id,
                 PharmacyId = pharmacy.Id,
                 LicenseNumber = dto.LicenseNumber,
-                IsApproved = false
+                IsApproved = false,
+                HasPaid = false  
+
             };
 
             await _unitOfWork.PharmasistsProfile.AddAsync(pharmacistProfile);
@@ -111,7 +113,11 @@ namespace E_PharmaHub.Services
             await _unitOfWork.PharmasistsProfile.AddAsync(pharmacist);
             await _unitOfWork.CompleteAsync();
         }
-
+        public async Task MarkAsPaid(string userId)
+        {
+            await _unitOfWork.PharmasistsProfile.MarkAsPaid(userId);
+            await _unitOfWork.CompleteAsync();
+        }
         public async Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId)
         {
             return await _pharmacistRepository.GetPharmacistByUserIdAsync(userId);
@@ -248,6 +254,10 @@ namespace E_PharmaHub.Services
         public async Task<PharmacistReadDto?> GetPharmacistByIdAsync(int id)
         {
             return await _unitOfWork.PharmasistsProfile.GetByIdDetailsAsync(id);
+        }
+        public async Task<PharmacistProfile?> GetPharmacistProfileByIdAsync(int id)
+        {
+            return await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);
         }
     }
 

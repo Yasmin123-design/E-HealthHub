@@ -13,10 +13,12 @@ namespace E_PharmaHub.Controllers
     public class DoctorsController : ControllerBase
     {
         private readonly IDoctorService _doctorService;
+        private readonly IEmailSender _emailSender;
 
-        public DoctorsController(IDoctorService doctorService)
+        public DoctorsController(IDoctorService doctorService,IEmailSender emailSender)
         {
             _doctorService = doctorService;
+            _emailSender = emailSender;
         }
 
         [HttpPost("register")]
@@ -116,24 +118,63 @@ namespace E_PharmaHub.Controllers
         [HttpPut("approve/{id}")]
         public async Task<IActionResult> ApproveDoctor(int id)
         {
-            var result = await _doctorService.ApproveDoctorAsync(id);
-            if (!result)
-                return NotFound(new { message = "Doctor not found or already approved." });
+            var doctor = await _doctorService.GetDoctorByIdAsync(id);
+            if (doctor == null)
+                return NotFound(new { message = "Doctor not found." });
 
-            return Ok(new { message = "Doctor approved successfully." });
+            if (doctor.IsApproved)
+                return BadRequest(new { message = "Doctor already approved." });
+
+            if (doctor.IsRejected)
+                return BadRequest(new { message = "Doctor was rejected before. Cannot approve now." });
+
+            var result = await _doctorService.ApproveDoctorAsync(id);
+
+            if (!result)
+                return BadRequest(new { message = "Failed to approve doctor." });
+
+            await _emailSender.SendEmailAsync(
+                doctor.AppUser.Email,
+                "Account Approved",
+                $"Hello {doctor.AppUser.Email},<br/>Your account has been accepted by admin."
+
+            );
+
+            return Ok(new { message = "Doctor approved successfully and email sent." });
         }
+
 
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("reject/{id}")]
         public async Task<IActionResult> RejectDoctor(int id)
         {
-            var result = await _doctorService.RejectDoctorAsync(id);
-            if (!result)
-                return NotFound(new { message = "Doctor not found or already rejected." });
+            var doctor = await _doctorService.GetDoctorByIdAsync(id);
+            if (doctor == null)
+                return NotFound(new { message = "Doctor not found." });
 
-            return Ok(new { message = "Doctor rejected successfully." });
+            if (doctor.IsRejected)
+                return BadRequest(new { message = "Doctor already rejected." });
+
+            if (doctor.IsApproved)
+                return BadRequest(new { message = "Doctor already approved, cannot reject." });
+
+            var result = await _doctorService.RejectDoctorAsync(id);
+
+            if (!result)
+                return BadRequest(new { message = "Failed to reject doctor." });
+
+            await _emailSender.SendEmailAsync(
+                doctor.AppUser.Email,
+                "Account Rejected",
+               $"Hello {doctor.AppUser.Email},<br/>Your account has been rejected by admin."
+
+            );
+
+            return Ok(new { message = "Doctor rejected successfully and email sent." });
         }
+
+
 
     }
 }

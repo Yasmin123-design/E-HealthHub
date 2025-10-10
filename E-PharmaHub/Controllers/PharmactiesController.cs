@@ -13,9 +13,11 @@ namespace E_PharmaHub.Controllers
     public class PharmactiesController : ControllerBase
     {
         private readonly IPharmacistService _pharmacistService;
-        public PharmactiesController(IPharmacistService pharmacistService)
+        private readonly IEmailSender _emailSender;
+        public PharmactiesController(IPharmacistService pharmacistService,IEmailSender emailSender)
         {
             _pharmacistService = pharmacistService;
+            _emailSender = emailSender;
         }
 
         [HttpPost("register")]
@@ -117,23 +119,61 @@ namespace E_PharmaHub.Controllers
         [HttpPut("approve/{id}")]
         public async Task<IActionResult> ApprovePharmacist(int id)
         {
+            var pharmacist = await _pharmacistService.GetPharmacistProfileByIdAsync(id);
+            if (pharmacist == null)
+                return NotFound(new { message = "Pharmacist not found." });
+
+            if (pharmacist.IsApproved)
+                return BadRequest(new { message = "Pharmacist already approved." });
+
+            if (pharmacist.IsRejected)
+                return BadRequest(new { message = "Pharmacist was rejected before. Cannot approve." });
+
             var result = await _pharmacistService.ApprovePharmacistAsync(id);
             if (!result)
-                return BadRequest(new { message = "Pharmacist not found or already approved." });
+                return BadRequest(new { message = "Failed to approve pharmacist." });
 
-            return Ok(new { message = "Pharmacist approved successfully." });
+            await _emailSender.SendEmailAsync(
+                pharmacist.AppUser.Email,
+                "Account Approved",
+               $"Hello {pharmacist.AppUser.Email},<br/>Your account has been accepted by admin."
+
+            );
+
+            return Ok(new { message = "Pharmacist approved successfully and email sent." });
         }
+
+
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("reject/{id}")]
         public async Task<IActionResult> RejectPharmacist(int id)
         {
+            var pharmacist = await _pharmacistService.GetPharmacistProfileByIdAsync(id);
+            if (pharmacist == null)
+                return NotFound(new { message = "Pharmacist not found." });
+
+            if (pharmacist.IsRejected)
+                return BadRequest(new { message = "Pharmacist already rejected." });
+
+            if (pharmacist.IsApproved)
+                return BadRequest(new { message = "Pharmacist already approved, cannot reject." });
+
             var result = await _pharmacistService.RejectPharmacistAsync(id);
             if (!result)
-                return BadRequest(new { message = "Pharmacist not found or already rejected." });
+                return BadRequest(new { message = "Failed to reject pharmacist." });
 
-            return Ok(new { message = "Pharmacist rejected successfully." });
+            await _emailSender.SendEmailAsync(
+                pharmacist.AppUser.Email,
+                "Account Rejected",
+               $"Hello {pharmacist.AppUser.Email},<br/>Your account has been rejected by admin."
+
+            );
+
+            return Ok(new { message = "Pharmacist rejected successfully and email sent." });
         }
+
+
 
 
     }

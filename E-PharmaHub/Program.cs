@@ -10,6 +10,7 @@ using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Stripe;
 
 namespace E_PharmaHub
 {
@@ -76,7 +77,7 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IMedicineService, MedicineService>();
 
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-            builder.Services.AddScoped<IReviewService, ReviewService>();
+            builder.Services.AddScoped<E_PharmaHub.Services.IReviewService, E_PharmaHub.Services.ReviewService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
@@ -87,6 +88,9 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IBloodRequestService, BloodRequestService>();
             builder.Services.AddScoped<IAddressService, AddressService>();
             builder.Services.AddScoped<IPharmacyService, PharmacyService>();
+            builder.Services.AddScoped<IStripePaymentService, StripePaymentService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
             builder.Services.AddScoped<IGenericRepository<Clinic>, ClinicRepository>();
             builder.Services.AddScoped<IClinicService, ClinicService>();
@@ -98,6 +102,7 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IDoctorService, DoctorService>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
             builder.Services.AddScoped<IInventoryItemRepository, InventoryItemRepository>();
+            builder.Services.AddScoped<IDonorMatchRepository, DonorMatchRepository>();
             builder.Services.AddHttpContextAccessor();
 
 
@@ -117,6 +122,7 @@ namespace E_PharmaHub
               options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
               options.JsonSerializerOptions.WriteIndented = true;
             });
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 
