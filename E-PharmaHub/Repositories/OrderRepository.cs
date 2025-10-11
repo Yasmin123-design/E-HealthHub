@@ -22,7 +22,26 @@ namespace E_PharmaHub.Repositories
                     .ThenInclude(i => i.Medication)
                 .ToListAsync();
         }
+        public async Task<Order?> GetPendingOrderByUserAsync(string userId, int pharmacyId)
+        {
+            return await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o =>
+                    o.UserId == userId &&
+                    o.PharmacyId == pharmacyId &&
+                    o.Status == OrderStatus.Pending);
+        }
 
+        public async Task MarkAsPaid(string userId)
+        {
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(d => d.UserId == userId);
+
+            if (order == null)
+                throw new Exception("Doctor profile not found.");
+
+            order.PaymentStatus = PaymentStatus.Paid;
+        }
         public async Task<Order?> GetByIdAsync(int id)
         {
             return await _context.Orders

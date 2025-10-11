@@ -10,7 +10,7 @@ namespace E_PharmaHub.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IDoctorService _doctorService;
         private readonly IPharmacistService _pharmacistService;
-        //private readonly IOrderService _orderService;
+        private readonly IOrderService _orderService;
 
         public PaymentService(
             IUnitOfWork unitOfWork,
@@ -72,9 +72,9 @@ namespace E_PharmaHub.Services
                         await _pharmacistService.MarkAsPaid(clientRefId);
                         break;
 
-                        //case "Order":
-                        //    await _orderService.MarkPaymentAsComplete(clientRefId);
-                        //    break;
+                    case "Order":
+                        await _orderService.MarkAsPaid(clientRefId);
+                        break;
                 }
             }
 
