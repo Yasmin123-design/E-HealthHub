@@ -18,7 +18,10 @@ namespace E_PharmaHub.Models
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Payment> Payments { get; set; }
+
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<Clinic> Clinics { get; set; }

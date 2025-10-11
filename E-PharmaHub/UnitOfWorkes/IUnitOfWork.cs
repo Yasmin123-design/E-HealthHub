@@ -11,7 +11,9 @@ namespace E_PharmaHub.UnitOfWorkes
         IGenericRepository<Clinic> Clinics { get; }
         IDonorRepository Donors { get; }
         IReviewRepository Reviews { get; }
+        ICartRepository Carts { get; }
         IInventoryItemRepository IinventoryItem { get; }
+        IOrderRepository Order { get; }
         IDoctorRepository Doctors { get; }
         IPaymentRepository Payments { get; }
 

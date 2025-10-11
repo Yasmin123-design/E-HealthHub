@@ -103,6 +103,11 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IInventoryService, InventoryService>();
             builder.Services.AddScoped<IInventoryItemRepository, InventoryItemRepository>();
             builder.Services.AddScoped<IDonorMatchRepository, DonorMatchRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<ICartService, CartService>();
+
             builder.Services.AddHttpContextAccessor();
 
 

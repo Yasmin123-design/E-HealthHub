@@ -93,6 +93,12 @@ namespace E_PharmaHub.Repositories
                 .Where(i => i.MedicationId == medicationId)
                 .ToListAsync();
         }
+        public async Task<InventoryItem?> GetByPharmacyAndMedicationAsync(int pharmacyId, int medicationId)
+        {
+            return await _context.InventoryItems
+                .FirstOrDefaultAsync(i => i.PharmacyId == pharmacyId && i.MedicationId == medicationId);
+        }
+
     }
 
 }

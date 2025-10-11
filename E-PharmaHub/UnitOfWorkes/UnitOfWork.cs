@@ -16,11 +16,12 @@ namespace E_PharmaHub.UnitOfWorkes
         public IDonorRepository Donors { get; }
         public IBloodRequestRepository BloodRequest { get; }
         public IInventoryItemRepository IinventoryItem { get; }
-
+        public ICartRepository Carts { get; }
         public IPharmacistRepository PharmasistsProfile { get; }
         public IDonorMatchRepository donorMatches { get; }
-
         public IPaymentRepository Payments { get; }
+
+        public IOrderRepository Order  { get; }
 
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
@@ -33,7 +34,9 @@ namespace E_PharmaHub.UnitOfWorkes
             IDonorRepository donorRepository,
             IDonorMatchRepository donorMatchRepository,
             IPaymentRepository paymentRepository,
-            IPharmacyRepository pharmacyRepository
+            IPharmacyRepository pharmacyRepository,
+            ICartRepository cartRepository ,
+            IOrderRepository orderRepository
             )
         {
             _context = context;
@@ -42,6 +45,7 @@ namespace E_PharmaHub.UnitOfWorkes
             IinventoryItem = inventoryItemRepository;
             Pharmacies = pharmacyRepository;
             Reviews = reviewRepository;
+            Carts = cartRepository;
             BloodRequest = bloodRequestRepository;
             Addresses = addressRepository;
             PharmasistsProfile = pharmacistRepository;
@@ -49,6 +53,7 @@ namespace E_PharmaHub.UnitOfWorkes
             Clinics = new ClinicRepository(_context);
             Donors = donorRepository;
             donorMatches = donorMatchRepository;
+            Order = orderRepository;
         }
 
         public async Task<int> CompleteAsync()
