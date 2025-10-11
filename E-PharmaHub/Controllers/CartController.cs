@@ -1,7 +1,6 @@
 ﻿using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -22,7 +21,7 @@ namespace E_PharmaHub.Controllers
         [HttpPost("add")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
 
-        public async Task<IActionResult> AddToCart(int medicationId,int pharmacyId, int quantity)
+        public async Task<IActionResult> AddToCart([FromQuery]int medicationId,[FromQuery]int pharmacyId,[FromQuery] int quantity)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _cartService.AddToCartAsync(userId, medicationId,pharmacyId, quantity);

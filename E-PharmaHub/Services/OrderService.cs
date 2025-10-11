@@ -20,7 +20,12 @@ namespace E_PharmaHub.Services
 
             var order = new Order
             {
+
                 UserId = userId,
+                City=dto.City,
+                Country = dto.Country,
+                Street = dto.Street,
+                PhoneNumber = dto.PhoneNumber,
                 PharmacyId = dto.PharmacyId,
                 TotalPrice = cart.Items.Sum(i => i.UnitPrice * i.Quantity),
                 Items = cart.Items.Select(i => new OrderItem
