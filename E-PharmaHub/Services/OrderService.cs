@@ -129,6 +129,8 @@ namespace E_PharmaHub.Services
 
         public async Task<bool> AcceptOrderAsync(int id)
         {
+            var order = _unitOfWork.Order.GetByIdAsync(id);
+            if (order == null) return false;
             await _unitOfWork.Order.UpdateStatusAsync(id, OrderStatus.Confirmed);
             await _unitOfWork.CompleteAsync();
             return true;

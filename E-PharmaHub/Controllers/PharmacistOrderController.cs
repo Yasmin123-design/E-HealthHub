@@ -68,7 +68,7 @@ namespace E_PharmaHub.Controllers
 
             var result = await _orderService.AcceptOrderAsync(id);
             if (!result)
-                return BadRequest("Failed to accept order.");
+                return BadRequest("Failed to accept order Maybe order not found.");
 
             return Ok("Order accepted successfully.");
         }
