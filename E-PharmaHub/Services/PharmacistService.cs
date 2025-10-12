@@ -139,7 +139,8 @@ namespace E_PharmaHub.Services
                 Id = pharmacist.Id,
                 Email = pharmacist.AppUser.Email,
                 PhoneNumber = pharmacist.AppUser.PhoneNumber,
-                PharmacyId = pharmacist.PharmacyId
+                PharmacyId = pharmacist.PharmacyId,
+                IsApproved = pharmacist.IsApproved
             };
         }
         public async Task<bool> RejectPharmacistAsync(int id)

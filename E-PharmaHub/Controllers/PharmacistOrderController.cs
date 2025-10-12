@@ -34,7 +34,7 @@ namespace E_PharmaHub.Controllers
             if (pharmacist == null || pharmacist.PharmacyId == null)
                 return BadRequest("No pharmacy found for this pharmacist.");
 
-            var orders = await _orderService.GetOrdersByPharmacyIdAsync(pharmacist.PharmacyId.Value);
+            var orders = await _orderService.GetOrdersByPharmacyIdAsync(pharmacist.PharmacyId);
             if (orders == null || !orders.Any())
                 return NotFound("No orders found for this pharmacy.");
 
