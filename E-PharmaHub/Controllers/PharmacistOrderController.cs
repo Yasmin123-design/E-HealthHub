@@ -60,34 +60,23 @@ namespace E_PharmaHub.Controllers
         [HttpPut("{id}/accept")]
         public async Task<IActionResult> AcceptOrder(int id)
         {
-            var pharmacistId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(pharmacistId);
+            var (success, message) = await _orderService.AcceptOrderAsync(id);
+            if (!success)
+                return BadRequest(message);
 
-            if (pharmacist == null || pharmacist.PharmacyId == null)
-                return BadRequest("No pharmacy found for this pharmacist.");
-
-            var result = await _orderService.AcceptOrderAsync(id);
-            if (!result)
-                return BadRequest("Failed to accept order Maybe order not found.");
-
-            return Ok("Order accepted successfully.");
+            return Ok(message);
         }
 
         [HttpPut("{id}/cancel")]
         public async Task<IActionResult> CancelOrder(int id)
         {
-            var pharmacistId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(pharmacistId);
+            var (success, message) = await _orderService.CancelOrderAsync(id);
+            if (!success)
+                return BadRequest(message);
 
-            if (pharmacist == null || pharmacist.PharmacyId == null)
-                return BadRequest("No pharmacy found for this pharmacist.");
-
-            var result = await _orderService.CancelOrderAsync(id);
-            if (!result)
-                return BadRequest("Failed to cancel order.");
-
-            return Ok("Order cancelled successfully.");
+            return Ok(message);
         }
+
     }
 }
 

@@ -127,21 +127,42 @@ namespace E_PharmaHub.Services
             };
         }
 
-        public async Task<bool> AcceptOrderAsync(int id)
+        public async Task<(bool Success, string Message)> AcceptOrderAsync(int id)
         {
-            var order = _unitOfWork.Order.GetByIdAsync(id);
-            if (order == null) return false;
-            await _unitOfWork.Order.UpdateStatusAsync(id, OrderStatus.Confirmed);
+            var order = await _unitOfWork.Order.GetByIdAsync(id);
+            if (order == null)
+                return (false, "Order not found.");
+
+            if (order.Status == OrderStatus.Confirmed)
+                return (false, "This order is already accepted.");
+
+            if (order.Status == OrderStatus.Cancelled)
+                return (false, "This order has been cancelled and cannot be accepted.");
+
+            order.Status = OrderStatus.Confirmed;
             await _unitOfWork.CompleteAsync();
-            return true;
+
+            return (true, "Order accepted successfully.");
         }
 
-        public async Task<bool> CancelOrderAsync(int id)
+        public async Task<(bool Success, string Message)> CancelOrderAsync(int id)
         {
-            await _unitOfWork.Order.UpdateStatusAsync(id, OrderStatus.Cancelled);
+            var order = await _unitOfWork.Order.GetByIdAsync(id);
+            if (order == null)
+                return (false, "Order not found.");
+
+            if (order.Status == OrderStatus.Confirmed)
+                return (false, "This order has already been accepted and cannot be cancelled.");
+
+            if (order.Status == OrderStatus.Cancelled)
+                return (false, "This order is already cancelled.");
+
+            order.Status = OrderStatus.Cancelled;
             await _unitOfWork.CompleteAsync();
-            return true;
+
+            return (true, "Order cancelled successfully.");
         }
+
 
         public async Task<IEnumerable<BriefOrderDto>> GetOrdersByPharmacyIdAsync(int pharmacyId)
         {
