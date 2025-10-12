@@ -193,6 +193,7 @@ namespace E_PharmaHub.Services
             return new BriefOrderDto
             {
                 Id = order.Id,
+                Email = order.User.Email,
                 PharmacyId = order.PharmacyId,
                 Status = order.Status.ToString(),
                 TotalPrice = order.TotalPrice,
