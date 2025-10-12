@@ -62,6 +62,7 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<Order>> GetByUserIdAsync(string userId)
         {
             return await _context.Orders
+                .Include(x => x.User)
                 .Include(o => o.Items)
                     .ThenInclude(i => i.Medication)
                 .Where(o => o.UserId == userId)
@@ -71,6 +72,7 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<Order>> GetByPharmacyId(int pharmacyId)
         {
             return await _context.Orders
+                .Include(x => x.User)
                 .Include(o => o.Items)
                 .ThenInclude(i => i.Medication)
                 .Where(o => o.PharmacyId == pharmacyId)

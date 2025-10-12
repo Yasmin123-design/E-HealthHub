@@ -114,6 +114,7 @@ namespace E_PharmaHub.Repositories
         public async Task<PharmacistProfile?> GetByUserIdAsync(string userId)
         {
             return await _context.Pharmacists
+                .Include(x => x.AppUser)
                 .Include(p => p.Pharmacy)
                 .FirstOrDefaultAsync(p => p.AppUserId == userId);
         }
