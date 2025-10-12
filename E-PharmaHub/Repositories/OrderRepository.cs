@@ -25,6 +25,7 @@ namespace E_PharmaHub.Repositories
         public async Task<Order?> GetPendingOrderByUserAsync(string userId, int pharmacyId)
         {
             return await _context.Orders
+                .Include(o => o.User)
                 .Include(o => o.Items)
                 .ThenInclude(i => i.Medication)
                 .FirstOrDefaultAsync(o =>
