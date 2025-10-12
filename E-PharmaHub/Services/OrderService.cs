@@ -85,6 +85,126 @@ namespace E_PharmaHub.Services
             await _unitOfWork.Order.MarkAsPaid(userId);
             await _unitOfWork.CompleteAsync();
         }
+        public async Task<IEnumerable<BriefOrderDto>> GetAllOrdersAsync()
+        {
+            var orders = await _unitOfWork.Order.GetAllAsync();
+
+            return orders.Select(o => new BriefOrderDto
+            {
+                Id = o.Id,
+                Email = o.User.Email,
+                TotalPrice = o.TotalPrice,
+                Status = o.Status.ToString(),
+                Items = o.Items.Select(i => new BriefOrderItemDto
+                {
+                    MedicationName = i.Medication.BrandName,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList()
+            });
+        }
+
+        public async Task<BriefOrderDto> GetOrderByIdAsync(int id)
+        {
+            var order = await _unitOfWork.Order.GetByIdAsync(id);
+
+            if (order == null)
+                return null;
+
+            return new BriefOrderDto
+            {
+                Id = order.Id,
+                Email = order.User.Email,
+                PharmacyId = order.PharmacyId,
+                TotalPrice = order.TotalPrice,
+                Status = order.Status.ToString(),
+                Items = order.Items.Select(i => new BriefOrderItemDto
+                {
+                    MedicationName = i.Medication.BrandName,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList()
+            };
+        }
+
+        public async Task<bool> AcceptOrderAsync(int id)
+        {
+            await _unitOfWork.Order.UpdateStatusAsync(id, OrderStatus.Confirmed);
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
+
+        public async Task<bool> CancelOrderAsync(int id)
+        {
+            await _unitOfWork.Order.UpdateStatusAsync(id, OrderStatus.Cancelled);
+            await _unitOfWork.CompleteAsync();
+            return true;
+        }
+
+        public async Task<IEnumerable<BriefOrderDto>> GetOrdersByPharmacyIdAsync(int pharmacyId)
+        {
+            var orders = await _unitOfWork.Order.GetByPharmacyId(pharmacyId);
+
+            return orders.Select(o => new BriefOrderDto
+            {
+                Id = o.Id,
+                Email = o.User?.Email ?? "N/A",
+                Status = o.Status.ToString(),
+                PharmacyId = o.PharmacyId,
+                TotalPrice = o.TotalPrice,
+                Items = o.Items.Select(i => new BriefOrderItemDto
+                {
+                    MedicationName = i.Medication.BrandName,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList()
+            }).ToList();
+        }
+
+        public async Task<BriefOrderDto?> GetPendingOrderByUserAsync(string userId, int pharmacyId)
+        {
+            var order = await _unitOfWork.Order.GetPendingOrderByUserAsync(userId, pharmacyId);
+            if (order == null)
+                return null;
+
+            return new BriefOrderDto
+            {
+                Id = order.Id,
+                PharmacyId = order.PharmacyId,
+                Status = order.Status.ToString(),
+                TotalPrice = order.TotalPrice,
+                Items = order.Items.Select(i => new BriefOrderItemDto
+                {
+                    MedicationName = i.Medication.BrandName,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList()
+            };
+        }
+
+        public async Task<IEnumerable<BriefOrderDto>> GetOrdersByUserIdAsync(string userId)
+        {
+            var orders = await _unitOfWork.Order.GetByUserIdAsync(userId);
+
+            if (orders == null || !orders.Any())
+                return new List<BriefOrderDto>();
+
+            return orders.Select(o => new BriefOrderDto
+            {
+                Id = o.Id,
+                Email = o.User?.Email ?? "N/A",
+                Status = o.Status.ToString(),
+                PharmacyId = o.PharmacyId,
+                TotalPrice = o.TotalPrice,
+                Items = o.Items.Select(i => new BriefOrderItemDto
+                {
+                    MedicationName = i.Medication.BrandName,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.UnitPrice
+                }).ToList()
+            }).ToList();
+        }
     }
 }
+
 

@@ -111,7 +111,12 @@ namespace E_PharmaHub.Repositories
             pharmacist.IsRejected = false;
             return true;
         }
-
+        public async Task<PharmacistProfile?> GetByUserIdAsync(string userId)
+        {
+            return await _context.Pharmacists
+                .Include(p => p.Pharmacy)
+                .FirstOrDefaultAsync(p => p.AppUserId == userId);
+        }
         public async Task<bool> RejectPharmacistAsync(int id)
         {
             var pharmacist = await _context.Pharmacists.FindAsync(id);

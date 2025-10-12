@@ -12,10 +12,10 @@ namespace E_PharmaHub.Services
         Task<PharmacistProfile?> GetPharmacistProfileByIdAsync(int id);
         Task<IEnumerable<PharmacistReadDto>> GetAllPharmacistsAsync();
         Task<PharmacistReadDto?> GetPharmacistByIdAsync(int id);
+        Task<PharmacistDto?> GetPharmacistByUserIdAsync(string userId);
 
         Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist,IFormFile? newImage);
 
-        Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId);
 
         Task DeletePharmacistAsync(int id);
         Task<bool> ApprovePharmacistAsync(int id);

@@ -10,5 +10,6 @@ namespace E_PharmaHub.Services
         Task AddPharmacyAsync(Pharmacy pharmacy , IFormFile imageFile);
         Task UpdatePharmacyAsync(int id , Pharmacy pharmacy , IFormFile imageFile);
         Task DeletePharmacyAsync(int id);
+
     }
 }

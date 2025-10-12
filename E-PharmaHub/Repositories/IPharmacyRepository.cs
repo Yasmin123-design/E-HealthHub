@@ -7,5 +7,6 @@ namespace E_PharmaHub.Repositories
     {
         Task<IEnumerable<PharmacySimpleDto>> GetAllBriefAsync();
         Task<PharmacySimpleDto> GetByIdBriefAsync(int id);
+
     }
 }

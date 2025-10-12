@@ -64,7 +64,7 @@ namespace E_PharmaHub.Services
             _unitOfWork.Pharmacies.Update(existing);
             await _unitOfWork.CompleteAsync();
         }
-
+        
         public async Task DeletePharmacyAsync(int id)
         {
             var pharmacy = await _unitOfWork.Pharmacies.GetByIdAsync(id);

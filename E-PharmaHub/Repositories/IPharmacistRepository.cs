@@ -11,5 +11,8 @@ namespace E_PharmaHub.Repositories
         Task<bool> RejectPharmacistAsync(int id);
         Task<IEnumerable<PharmacistReadDto>> GetAllDetailsAsync();
         Task<PharmacistReadDto?> GetByIdDetailsAsync(int id);
+        Task<PharmacistProfile?> GetByUserIdAsync(string userId);
+
+
     }
 }

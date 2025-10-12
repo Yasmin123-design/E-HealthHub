@@ -118,10 +118,6 @@ namespace E_PharmaHub.Services
             await _unitOfWork.PharmasistsProfile.MarkAsPaid(userId);
             await _unitOfWork.CompleteAsync();
         }
-        public async Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId)
-        {
-            return await _pharmacistRepository.GetPharmacistByUserIdAsync(userId);
-        }
         public async Task<bool> ApprovePharmacistAsync(int id)
         {
             var result = await _unitOfWork.PharmasistsProfile.ApprovePharmacistAsync(id);
@@ -132,7 +128,20 @@ namespace E_PharmaHub.Services
             await _unitOfWork.CompleteAsync(); 
             return true;
         }
+        public async Task<PharmacistDto?> GetPharmacistByUserIdAsync(string userId)
+        {
+            var pharmacist = await _unitOfWork.PharmasistsProfile.GetByUserIdAsync(userId);
+            if (pharmacist == null)
+                return null;
 
+            return new PharmacistDto
+            {
+                Id = pharmacist.Id,
+                Email = pharmacist.AppUser.Email,
+                PhoneNumber = pharmacist.AppUser.PhoneNumber,
+                PharmacyId = pharmacist.PharmacyId
+            };
+        }
         public async Task<bool> RejectPharmacistAsync(int id)
         {
             var result = await _unitOfWork.PharmasistsProfile.RejectPharmacistAsync(id);
