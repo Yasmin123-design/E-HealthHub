@@ -143,16 +143,17 @@ namespace E_PharmaHub.Services
             if (payment == null)
                 return (false, "No payment found for this order.");
 
-            if (payment.Status == PaymentStatus.Captured)
-                return (false, "Payment already captured.");
+            if (payment.Status == PaymentStatus.Succeeded)
+                return (false, "Payment already Paid Successfully.");
 
             try
             {
                 var paymentIntentService = new Stripe.PaymentIntentService();
                 await paymentIntentService.CaptureAsync(payment.ProviderTransactionId);
 
-                payment.Status = PaymentStatus.Captured;
+                payment.Status = PaymentStatus.Succeeded;
                 order.Status = OrderStatus.Confirmed;
+                order.PaymentStatus = PaymentStatus.Paid;
                 await _unitOfWork.CompleteAsync();
 
                 return (true, "Order accepted and payment captured successfully.");
@@ -187,6 +188,8 @@ namespace E_PharmaHub.Services
 
                 payment.Status = PaymentStatus.Refunded;
                 order.Status = OrderStatus.Cancelled;
+                order.PaymentStatus = PaymentStatus.Refunded;
+
                 await _unitOfWork.CompleteAsync();
 
                 return (true, "Order cancelled and payment authorization voided successfully.");

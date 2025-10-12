@@ -5,7 +5,8 @@
         Paid,
         Failed,
         Captured,
-        Refunded
+        Refunded,
+        Succeeded
     }
 
 }

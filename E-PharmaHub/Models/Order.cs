@@ -9,6 +9,7 @@ namespace E_PharmaHub.Models
 
         public string UserId { get; set; }
         public int PharmacyId { get; set; }
+        public int? PaymentId { get; set; }
 
         [Required, MaxLength(100)]
         public string Country { get; set; }

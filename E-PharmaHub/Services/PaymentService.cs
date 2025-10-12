@@ -27,64 +27,75 @@ namespace E_PharmaHub.Services
         public async Task<object> VerifySessionAsync(string sessionId)
         {
             var stripeService = new SessionService();
-            var session = await stripeService.GetAsync(sessionId);
-
-            if (session.PaymentStatus != "paid")
+            var session = await stripeService.GetAsync(sessionId, new SessionGetOptions
             {
-                return new
-                {
-                    status = session.PaymentStatus,
-                    sessionId,
-                    message = "Payment not completed yet."
-                };
-            }
+                Expand = new List<string> { "payment_intent" }
+            });
+
+            var paymentIntentId = session.PaymentIntentId ?? session.PaymentIntent?.ToString();
+            var paymentIntentService = new Stripe.PaymentIntentService();
+            var paymentIntent = await paymentIntentService.GetAsync(paymentIntentId);
 
             var payment = await _unitOfWork.Payments.GetByProviderTransactionIdAsync(session.Id);
-            if (payment != null && payment.Status == PaymentStatus.Paid)
+            if (payment == null)
             {
                 return new
                 {
-                    status = session.PaymentStatus,
+                    status = "not_found",
                     sessionId,
-                    message = "Payment already processed."
+                    message = "Payment record not found for this session."
                 };
             }
 
-            if (payment != null && payment.Status == PaymentStatus.Pending)
+            string intentStatus = paymentIntent.Status;
+            string message;
+
+            switch (intentStatus)
             {
-                await _unitOfWork.Payments.MarkAsSuccess(session.Id);
-                await _unitOfWork.CompleteAsync();
+                case "requires_capture":
+                    payment.Status = PaymentStatus.Captured; 
+                    message = "Payment authorized successfully (awaiting pharmacist approval).";
+                    break;
+
+                case "succeeded":
+                    payment.Status = PaymentStatus.Paid; 
+                    message = "Payment captured successfully.";
+                    break;
+
+                case "requires_payment_method":
+                case "requires_confirmation":
+                    payment.Status = PaymentStatus.Pending;
+                    message = "Payment not completed yet.";
+                    break;
+
+                case "canceled":
+                    payment.Status = PaymentStatus.Failed;
+                    message = "Payment was canceled.";
+                    break;
+
+                default:
+                    payment.Status = PaymentStatus.Pending;
+                    message = $"Unhandled payment status: {intentStatus}.";
+                    break;
             }
+
+            payment.PaymentIntentId = paymentIntentId;
+            await _unitOfWork.CompleteAsync();
 
             string clientRefId = session.Metadata.ContainsKey("ClientReferenceId")
                                  ? session.Metadata["ClientReferenceId"]
                                  : null;
 
-            if (clientRefId != null && session.Metadata.TryGetValue("PaymentFor", out var paymentFor))
-            {
-                switch (paymentFor)
-                {
-                    case "DoctorRegistration":
-                        await _doctorService.MarkAsPaid(clientRefId);
-                        break;
-
-                    case "PharmacistRegistration":
-                        await _pharmacistService.MarkAsPaid(clientRefId);
-                        break;
-
-                    case "Order":
-                        await _orderService.MarkAsPaid(clientRefId);
-                        break;
-                }
-            }
-
             return new
             {
-                status = session.PaymentStatus,
+                status = intentStatus,
                 sessionId,
-                message = "Payment verified successfully."
+                paymentIntentId,
+                message
             };
         }
+
+
 
     }
 }

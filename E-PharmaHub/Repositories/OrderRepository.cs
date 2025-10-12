@@ -46,11 +46,12 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<Order?> GetByIdAsync(int id)
         {
-            return await _context.Orders
+            var orders =  await _context.Orders
                 .Include(x => x.User)
                 .Include(o => o.Items)
                     .ThenInclude(i => i.Medication)
                 .FirstOrDefaultAsync(o => o.Id == id);
+            return orders;
         }
         public async Task UpdateStatusAsync(int orderId, OrderStatus status)
         {
