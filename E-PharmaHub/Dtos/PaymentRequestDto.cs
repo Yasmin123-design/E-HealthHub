@@ -7,6 +7,5 @@ namespace E_PharmaHub.Dtos
         public string ReferenceId { get; set; }
         public PaymentForType PaymentFor { get; set; }
         public decimal Amount { get; set; }
-        public string UserId { get; set; } 
     }
 }

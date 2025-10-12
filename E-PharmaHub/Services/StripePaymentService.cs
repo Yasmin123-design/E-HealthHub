@@ -60,7 +60,7 @@ namespace E_PharmaHub.Services
                 ProviderTransactionId = session.Id,   
                 Status = PaymentStatus.Pending,
                 Amount = dto.Amount,
-                PayerUserId = dto.UserId
+                PayerUserId = dto.ReferenceId
             };
 
             await _unitOfWork.Payments.AddAsync(payment);

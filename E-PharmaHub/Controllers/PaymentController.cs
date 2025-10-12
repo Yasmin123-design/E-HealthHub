@@ -3,6 +3,7 @@ using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
 {
@@ -24,6 +25,11 @@ namespace E_PharmaHub.Controllers
 
         public async Task<IActionResult> CreatePaymentSession([FromBody] PaymentRequestDto dto)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized("User not found");
+
+            dto.ReferenceId = userId;
             var result = await _stripePaymentService.CreateCheckoutSessionAsync(dto);
             return Ok(result);
         }

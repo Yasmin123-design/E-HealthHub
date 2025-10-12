@@ -1,7 +1,6 @@
 ﻿using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
 using Stripe.Checkout;
-using Stripe.Climate;
 
 namespace E_PharmaHub.Services
 {
@@ -15,13 +14,14 @@ namespace E_PharmaHub.Services
         public PaymentService(
             IUnitOfWork unitOfWork,
             IDoctorService doctorService,
-            IPharmacistService pharmacistService
+            IPharmacistService pharmacistService,
+            IOrderService orderService
            )
         {
             _unitOfWork = unitOfWork;
             _doctorService = doctorService;
             _pharmacistService = pharmacistService;
-            //_orderService = orderService;
+            _orderService = orderService;
         }
 
         public async Task<object> VerifySessionAsync(string sessionId)
