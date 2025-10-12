@@ -26,6 +26,7 @@ namespace E_PharmaHub.Repositories
         {
             return await _context.Orders
                 .Include(o => o.Items)
+                .ThenInclude(i => i.Medication)
                 .FirstOrDefaultAsync(o =>
                     o.UserId == userId &&
                     o.PharmacyId == pharmacyId &&
