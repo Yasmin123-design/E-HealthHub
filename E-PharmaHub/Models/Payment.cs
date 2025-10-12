@@ -6,6 +6,7 @@ namespace E_PharmaHub.Models
     {
         [Key]
         public int Id { get; set; }
+        public string PaymentIntentId { get; set; }
         public string ReferenceId { get; set; }
         public PaymentForType PaymentFor { get; set; }
         public string ProviderTransactionId { get; set; }

@@ -23,41 +23,49 @@ namespace E_PharmaHub.Services
             {
                 PaymentMethodTypes = new List<string> { "card" },
                 LineItems = new List<SessionLineItemOptions>
+        {
+            new()
+            {
+                PriceData = new SessionLineItemPriceDataOptions
                 {
-                    new()
+                    UnitAmountDecimal = dto.Amount * 100,
+                    Currency = "usd",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
-                        PriceData = new SessionLineItemPriceDataOptions
-                        {
-                            UnitAmountDecimal = dto.Amount * 100, 
-                            Currency = "usd",
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = dto.PaymentFor.ToString()
-                            }
-                        },
-                        Quantity = 1
+                        Name = dto.PaymentFor.ToString()
                     }
                 },
+                Quantity = 1
+            }
+        },
                 Mode = "payment",
-                // front
+
+                PaymentIntentData = new SessionPaymentIntentDataOptions
+                {
+                    CaptureMethod = "manual", 
+                    Metadata = new Dictionary<string, string>
+            {
+                { "PaymentFor", dto.PaymentFor.ToString() },
+                { "ClientReferenceId", dto.ReferenceId },
+                { "UserId", dto.ReferenceId ?? "unknown" }
+            }
+                },
+
                 SuccessUrl = "http://localhost:3000/payment-success?session_id={CHECKOUT_SESSION_ID}",
-                // front
                 CancelUrl = "http://localhost:3000/payment-cancel",
-                Metadata = new Dictionary<string, string>
-    {
-        { "PaymentFor", dto.PaymentFor.ToString() },
-        { "ClientReferenceId", dto.ReferenceId }
-    }
             };
 
             var service = new SessionService();
             var session = await service.CreateAsync(options);
 
+            var paymentIntentId = session.PaymentIntentId; 
+
             var payment = new Payment
             {
-                ReferenceId = dto.ReferenceId,        
+                ReferenceId = dto.ReferenceId,
                 PaymentFor = dto.PaymentFor,
-                ProviderTransactionId = session.Id,   
+                ProviderTransactionId = session.Id,
+                PaymentIntentId = paymentIntentId,  
                 Status = PaymentStatus.Pending,
                 Amount = dto.Amount,
                 PayerUserId = dto.ReferenceId
@@ -65,11 +73,13 @@ namespace E_PharmaHub.Services
 
             await _unitOfWork.Payments.AddAsync(payment);
             await _unitOfWork.CompleteAsync();
+
             return new StripeSessionResponseDto
             {
                 CheckoutUrl = session.Url,
                 SessionId = session.Id
             };
         }
+
     }
 }

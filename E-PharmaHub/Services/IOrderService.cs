@@ -7,6 +7,8 @@ namespace E_PharmaHub.Services
     {
         Task<CartResult> CheckoutAsync(string userId, CheckoutDto dto);
         Task MarkAsPaid(string userId);
+        Task<(bool Success, string Message)> MarkAsDeliveredAsync(int orderId);
+
         Task<IEnumerable<BriefOrderDto>> GetAllOrdersAsync();
         Task<BriefOrderDto> GetOrderByIdAsync(int id);
         Task<(bool Success, string Message)> AcceptOrderAsync(int id);

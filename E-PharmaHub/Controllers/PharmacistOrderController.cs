@@ -76,6 +76,15 @@ namespace E_PharmaHub.Controllers
 
             return Ok(message);
         }
+        [HttpPut("{id}/delivered")]
+        public async Task<IActionResult> MarkAsDelivered(int id)
+        {
+            var (success, message) = await _orderService.MarkAsDeliveredAsync(id);
+            if (!success)
+                return BadRequest(message);
+
+            return Ok(message);
+        }
 
     }
 }

@@ -139,11 +139,30 @@ namespace E_PharmaHub.Services
             if (order.Status == OrderStatus.Cancelled)
                 return (false, "This order has been cancelled and cannot be accepted.");
 
-            order.Status = OrderStatus.Confirmed;
-            await _unitOfWork.CompleteAsync();
+            var payment = await _unitOfWork.Payments.GetByReferenceIdAsync(order.Id.ToString());
+            if (payment == null)
+                return (false, "No payment found for this order.");
 
-            return (true, "Order accepted successfully.");
+            if (payment.Status == PaymentStatus.Captured)
+                return (false, "Payment already captured.");
+
+            try
+            {
+                var paymentIntentService = new Stripe.PaymentIntentService();
+                await paymentIntentService.CaptureAsync(payment.ProviderTransactionId);
+
+                payment.Status = PaymentStatus.Captured;
+                order.Status = OrderStatus.Confirmed;
+                await _unitOfWork.CompleteAsync();
+
+                return (true, "Order accepted and payment captured successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to capture payment: {ex.Message}");
+            }
         }
+
 
         public async Task<(bool Success, string Message)> CancelOrderAsync(int id)
         {
@@ -157,11 +176,27 @@ namespace E_PharmaHub.Services
             if (order.Status == OrderStatus.Cancelled)
                 return (false, "This order is already cancelled.");
 
-            order.Status = OrderStatus.Cancelled;
-            await _unitOfWork.CompleteAsync();
+            var payment = await _unitOfWork.Payments.GetByReferenceIdAsync(order.Id.ToString());
+            if (payment == null)
+                return (false, "No payment found for this order.");
 
-            return (true, "Order cancelled successfully.");
+            try
+            {
+                var paymentIntentService = new Stripe.PaymentIntentService();
+                await paymentIntentService.CancelAsync(payment.ProviderTransactionId);
+
+                payment.Status = PaymentStatus.Refunded;
+                order.Status = OrderStatus.Cancelled;
+                await _unitOfWork.CompleteAsync();
+
+                return (true, "Order cancelled and payment authorization voided successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to cancel payment: {ex.Message}");
+            }
         }
+
 
 
         public async Task<IEnumerable<BriefOrderDto>> GetOrdersByPharmacyIdAsync(int pharmacyId)
@@ -204,6 +239,26 @@ namespace E_PharmaHub.Services
                     UnitPrice = i.UnitPrice
                 }).ToList()
             };
+        }
+        public async Task<(bool Success, string Message)> MarkAsDeliveredAsync(int orderId)
+        {
+            var order = await _unitOfWork.Order.GetByIdAsync(orderId);
+            if (order == null)
+                return (false, "Order not found.");
+
+            if (order.Status == OrderStatus.Delivered)
+                return (false, "Order is already marked as delivered.");
+
+            if (order.Status == OrderStatus.Cancelled)
+                return (false, "Cannot mark a cancelled order as delivered.");
+
+            if (order.Status != OrderStatus.Confirmed)
+                return (false, "Only confirmed orders can be marked as delivered.");
+
+            await _unitOfWork.Order.UpdateStatusAsync(orderId, OrderStatus.Delivered);
+            await _unitOfWork.CompleteAsync();
+
+            return (true, "Order marked as delivered successfully.");
         }
 
         public async Task<IEnumerable<BriefOrderDto>> GetOrdersByUserIdAsync(string userId)

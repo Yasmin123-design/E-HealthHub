@@ -9,9 +9,9 @@ namespace E_PharmaHub.Repositories
         Task<Order?> GetByIdAsync(int id);
         Task<IEnumerable<Order>> GetByUserIdAsync(string userId);
         Task<IEnumerable<Order>> GetByPharmacyId(int pharmacyId);
+        Task UpdateStatusAsync(int orderId, OrderStatus newStatus);
         Task MarkAsPaid(string userId);
         Task<Order?> GetPendingOrderByUserAsync(string userId, int pharmacyId);
-        Task UpdateStatusAsync(int orderId, OrderStatus status);
 
     }
 }
