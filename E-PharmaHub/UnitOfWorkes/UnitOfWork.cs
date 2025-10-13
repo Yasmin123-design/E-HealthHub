@@ -20,8 +20,11 @@ namespace E_PharmaHub.UnitOfWorkes
         public IPharmacistRepository PharmasistsProfile { get; }
         public IDonorMatchRepository donorMatches { get; }
         public IPaymentRepository Payments { get; }
-
         public IOrderRepository Order  { get; }
+
+        public IFavoriteMedicationRepository Favorite { get; }
+
+        public IFavouriteClinicRepository FavouriteClinic { get; }
 
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
@@ -36,7 +39,9 @@ namespace E_PharmaHub.UnitOfWorkes
             IPaymentRepository paymentRepository,
             IPharmacyRepository pharmacyRepository,
             ICartRepository cartRepository ,
-            IOrderRepository orderRepository
+            IOrderRepository orderRepository,
+            IFavoriteMedicationRepository favoriteMedicationRepository,
+            IFavouriteClinicRepository favouriteClinicRepository
             )
         {
             _context = context;
@@ -54,6 +59,8 @@ namespace E_PharmaHub.UnitOfWorkes
             Donors = donorRepository;
             donorMatches = donorMatchRepository;
             Order = orderRepository;
+            Favorite = favoriteMedicationRepository;
+            FavouriteClinic = favouriteClinicRepository;
         }
 
         public async Task<int> CompleteAsync()

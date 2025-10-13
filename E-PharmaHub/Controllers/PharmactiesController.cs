@@ -13,11 +13,9 @@ namespace E_PharmaHub.Controllers
     public class PharmactiesController : ControllerBase
     {
         private readonly IPharmacistService _pharmacistService;
-        private readonly IEmailSender _emailSender;
-        public PharmactiesController(IPharmacistService pharmacistService,IEmailSender emailSender)
+        public PharmactiesController(IPharmacistService pharmacistService)
         {
             _pharmacistService = pharmacistService;
-            _emailSender = emailSender;
         }
 
         [HttpPost("register")]

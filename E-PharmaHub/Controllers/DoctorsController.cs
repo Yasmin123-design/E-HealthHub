@@ -13,14 +13,11 @@ namespace E_PharmaHub.Controllers
     public class DoctorsController : ControllerBase
     {
         private readonly IDoctorService _doctorService;
-        private readonly IEmailSender _emailSender;
 
-        public DoctorsController(IDoctorService doctorService,
-            IEmailSender emailSender
+        public DoctorsController(IDoctorService doctorService
             )
         {
             _doctorService = doctorService;
-            _emailSender = emailSender;
         }
 
         [HttpPost("register")]

@@ -21,7 +21,8 @@ namespace E_PharmaHub.Models
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Payment> Payments { get; set; }
-
+        public DbSet<FavoriteMedication> FavoriteMedications { get; set; }
+        public DbSet<FavoriteClinic> FavoriteClinics { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<Clinic> Clinics { get; set; }

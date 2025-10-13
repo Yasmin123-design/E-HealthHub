@@ -3,7 +3,6 @@ using E_PharmaHub.Models;
 using E_PharmaHub.Repositories;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Security.Claims;
 
 namespace E_PharmaHub.Services
@@ -13,7 +12,6 @@ namespace E_PharmaHub.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IFileStorageService _fileStorage;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IPharmacistRepository _pharmacistRepository;
         private readonly IStripePaymentService _stripePaymentService;
         private readonly IPaymentService _paymentService;
         private readonly IEmailSender _emailSender;
@@ -22,7 +20,6 @@ namespace E_PharmaHub.Services
         private readonly IUnitOfWork _unitOfWork;
 
         public PharmacistService(UserManager<AppUser> userManager,
-            IPharmacistRepository pharmacistRepository,
             IHttpContextAccessor httpContextAccessor,
             IFileStorageService fileStorage,
             IUnitOfWork unitOfWork,
@@ -35,7 +32,6 @@ namespace E_PharmaHub.Services
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
             _httpContextAccessor = httpContextAccessor;
-            _pharmacistRepository = pharmacistRepository;
             _stripePaymentService = stripePaymentService;
             _paymentService = paymentService;
             _emailSender = emailSender;
