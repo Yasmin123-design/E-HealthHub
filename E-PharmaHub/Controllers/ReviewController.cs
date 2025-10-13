@@ -38,26 +38,6 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message = "Review added successfully" });
         }
 
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllReviews()
-        {
-            var reviews = await _reviewService.GetAllReviewsAsync();
-            if (!reviews.Any())
-                return Ok(new { message = "No reviews found." });
-
-            return Ok(reviews);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetReviewById(int id)
-        {
-            var review = await _reviewService.GetReviewByIdAsync(id);
-            if (review == null)
-                return NotFound(new { message = "Review not found." });
-
-            return Ok(review);
-        }
-
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
         public async Task<IActionResult> UpdateReview(int id, [FromBody] Review updatedReview)

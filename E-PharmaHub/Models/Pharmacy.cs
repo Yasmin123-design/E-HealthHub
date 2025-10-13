@@ -18,9 +18,6 @@ namespace E_PharmaHub.Models
         [StringLength(15, ErrorMessage = "Phone number can't exceed 15 digits.")]
         public string Phone { get; set; }
 
-        [Range(0, 5, ErrorMessage = "Rating must be between 0 and 5.")]
-        public double? Rating { get; set; }
-
         [StringLength(255, ErrorMessage = "Image path too long.")]
         public string? ImagePath { get; set; }
 

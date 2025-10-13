@@ -55,7 +55,6 @@ namespace E_PharmaHub.Repositories
                         Id = p.Id,
                         Name = p.Name,
                         Phone = p.Phone,
-                        Rating = p.Rating,
                         City = p.Address.City,
                         ImagePath = p.ImagePath
                     })
@@ -72,7 +71,6 @@ namespace E_PharmaHub.Repositories
                         Id = p.Id,
                         Name = p.Name,
                         Phone = p.Phone,
-                        Rating = p.Rating,
                         City = p.Address.City,
                         ImagePath = p.ImagePath
                     })

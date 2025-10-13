@@ -78,8 +78,6 @@ namespace E_PharmaHub.Services
 
             existingReview.Rating = updatedReview.Rating;
             existingReview.Comment = updatedReview.Comment;
-            existingReview.PharmacyId = updatedReview.PharmacyId;
-            existingReview.MedicationId = updatedReview.MedicationId;
 
             _unitOfWork.Reviews.Update(existingReview);
             await _unitOfWork.CompleteAsync();
