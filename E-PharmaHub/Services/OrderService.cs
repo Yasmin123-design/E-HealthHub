@@ -184,7 +184,7 @@ namespace E_PharmaHub.Services
             try
             {
                 var paymentIntentService = new Stripe.PaymentIntentService();
-                await paymentIntentService.CancelAsync(payment.ProviderTransactionId);
+                await paymentIntentService.CancelAsync(payment.PaymentIntentId);
 
                 payment.Status = PaymentStatus.Refunded;
                 order.Status = OrderStatus.Cancelled;
