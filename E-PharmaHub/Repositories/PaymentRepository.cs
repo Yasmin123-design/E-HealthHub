@@ -39,5 +39,10 @@ namespace E_PharmaHub.Repositories
         {
             await _context.Payments.AddAsync(payment);
         }
+
+        public async Task<Payment> GetByIdAsync(int id)
+        {
+            return await _context.Payments.FirstOrDefaultAsync(p => p.Id == id);
+        }
     }
 }
