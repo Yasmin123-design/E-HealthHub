@@ -126,8 +126,6 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message });
         }
 
-
-
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("reject/{id}")]
         public async Task<IActionResult> RejectPharmacist(int id)

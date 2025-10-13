@@ -143,7 +143,7 @@ namespace E_PharmaHub.Services
             if (payment == null)
                 return (false, "Payment not found for this order.");
 
-            if (payment.Status == PaymentStatus.Succeeded)
+            if (payment.Status == PaymentStatus.Paid)
                 return (false, "Payment already Paid Successfully.");
 
             try
