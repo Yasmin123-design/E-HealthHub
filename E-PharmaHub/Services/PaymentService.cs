@@ -7,21 +7,13 @@ namespace E_PharmaHub.Services
     public class PaymentService : IPaymentService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IDoctorService _doctorService;
-        private readonly IPharmacistService _pharmacistService;
-        private readonly IOrderService _orderService;
+
 
         public PaymentService(
-            IUnitOfWork unitOfWork,
-            IDoctorService doctorService,
-            IPharmacistService pharmacistService,
-            IOrderService orderService
+            IUnitOfWork unitOfWork
            )
         {
             _unitOfWork = unitOfWork;
-            _doctorService = doctorService;
-            _pharmacistService = pharmacistService;
-            _orderService = orderService;
         }
 
         public async Task<object> VerifySessionAsync(string sessionId)

@@ -58,7 +58,6 @@ namespace E_PharmaHub.Services
             var service = new SessionService();
             var session = await service.CreateAsync(options);
 
-            // 👇 نجيب الـ session تاني بعد الإنشاء عشان ناخد الـ PaymentIntentId
             session = await service.GetAsync(session.Id, new SessionGetOptions
             {
                 Expand = new List<string> { "payment_intent" }
@@ -71,7 +70,7 @@ namespace E_PharmaHub.Services
                 ReferenceId = dto.ReferenceId,
                 PaymentFor = dto.PaymentFor,
                 ProviderTransactionId = session.Id,
-                PaymentIntentId = paymentIntentId,  // ✅ هيبقى فيه قيمة دلوقتي
+                PaymentIntentId = paymentIntentId,  
                 Status = PaymentStatus.Pending,
                 Amount = dto.Amount,
                 PayerUserId = dto.ReferenceId
@@ -79,15 +78,17 @@ namespace E_PharmaHub.Services
 
             await _unitOfWork.Payments.AddAsync(payment);
             await _unitOfWork.CompleteAsync();
-            if (dto.PaymentFor == PaymentForType.Order  && int.TryParse(dto.ReferenceId, out var orderId))
+
+            if (dto.PaymentFor == PaymentForType.Order && dto.OrderId.HasValue)
             {
-                var order = await _unitOfWork.Order.GetByIdAsync(orderId);
+                var order = await _unitOfWork.Order.GetByIdAsync(dto.OrderId.Value);
                 if (order != null)
                 {
                     order.PaymentId = payment.Id;
                     await _unitOfWork.CompleteAsync();
                 }
             }
+
             return new StripeSessionResponseDto
             {
                 CheckoutUrl = session.Url,
