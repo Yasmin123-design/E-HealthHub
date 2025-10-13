@@ -18,8 +18,8 @@ namespace E_PharmaHub.Services
 
 
         Task DeletePharmacistAsync(int id);
-        Task<bool> ApprovePharmacistAsync(int id);
-        Task<bool> RejectPharmacistAsync(int id);
+        Task<(bool success, string message)> RejectPharmacistAsync(int pharmacistId);
+        Task<(bool success, string message)> ApprovePharmacistAsync(int pharmacistId);
 
     }
 

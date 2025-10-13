@@ -119,28 +119,11 @@ namespace E_PharmaHub.Controllers
         [HttpPut("approve/{id}")]
         public async Task<IActionResult> ApprovePharmacist(int id)
         {
-            var pharmacist = await _pharmacistService.GetPharmacistProfileByIdAsync(id);
-            if (pharmacist == null)
-                return NotFound(new { message = "Pharmacist not found." });
+            var (success, message) = await _pharmacistService.ApprovePharmacistAsync(id);
+            if (!success)
+                return BadRequest(new { message });
 
-            if (pharmacist.IsApproved)
-                return BadRequest(new { message = "Pharmacist already approved." });
-
-            if (pharmacist.IsRejected)
-                return BadRequest(new { message = "Pharmacist was rejected before. Cannot approve." });
-
-            var result = await _pharmacistService.ApprovePharmacistAsync(id);
-            if (!result)
-                return BadRequest(new { message = "Failed to approve pharmacist." });
-
-            await _emailSender.SendEmailAsync(
-                pharmacist.AppUser.Email,
-                "Account Approved",
-               $"Hello {pharmacist.AppUser.Email},<br/>Your account has been accepted by admin."
-
-            );
-
-            return Ok(new { message = "Pharmacist approved successfully and email sent." });
+            return Ok(new { message });
         }
 
 
@@ -149,28 +132,11 @@ namespace E_PharmaHub.Controllers
         [HttpPut("reject/{id}")]
         public async Task<IActionResult> RejectPharmacist(int id)
         {
-            var pharmacist = await _pharmacistService.GetPharmacistProfileByIdAsync(id);
-            if (pharmacist == null)
-                return NotFound(new { message = "Pharmacist not found." });
+            var (success, message) = await _pharmacistService.RejectPharmacistAsync(id);
+            if (!success)
+                return BadRequest(new { message });
 
-            if (pharmacist.IsRejected)
-                return BadRequest(new { message = "Pharmacist already rejected." });
-
-            if (pharmacist.IsApproved)
-                return BadRequest(new { message = "Pharmacist already approved, cannot reject." });
-
-            var result = await _pharmacistService.RejectPharmacistAsync(id);
-            if (!result)
-                return BadRequest(new { message = "Failed to reject pharmacist." });
-
-            await _emailSender.SendEmailAsync(
-                pharmacist.AppUser.Email,
-                "Account Rejected",
-               $"Hello {pharmacist.AppUser.Email},<br/>Your account has been rejected by admin."
-
-            );
-
-            return Ok(new { message = "Pharmacist rejected successfully and email sent." });
+            return Ok(new { message });
         }
 
 

@@ -3,6 +3,7 @@ using E_PharmaHub.Models;
 using E_PharmaHub.Repositories;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Security.Claims;
 
 namespace E_PharmaHub.Services
@@ -13,17 +14,31 @@ namespace E_PharmaHub.Services
         private readonly IFileStorageService _fileStorage;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPharmacistRepository _pharmacistRepository;
+        private readonly IStripePaymentService _stripePaymentService;
+        private readonly IPaymentService _paymentService;
+        private readonly IEmailSender _emailSender;
 
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public PharmacistService(UserManager<AppUser> userManager,IPharmacistRepository pharmacistRepository, IHttpContextAccessor httpContextAccessor,IFileStorageService fileStorage, IUnitOfWork unitOfWork)
+        public PharmacistService(UserManager<AppUser> userManager,
+            IPharmacistRepository pharmacistRepository,
+            IHttpContextAccessor httpContextAccessor,
+            IFileStorageService fileStorage,
+            IUnitOfWork unitOfWork,
+            IStripePaymentService stripePaymentService,
+            IPaymentService paymentService,
+            IEmailSender emailSender
+            )
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
             _httpContextAccessor = httpContextAccessor;
             _pharmacistRepository = pharmacistRepository;
+            _stripePaymentService = stripePaymentService;
+            _paymentService = paymentService;
+            _emailSender = emailSender;
         }
 
         public async Task<AppUser> RegisterPharmacistAsync(PharmacistRegisterDto dto, IFormFile image)
@@ -118,16 +133,6 @@ namespace E_PharmaHub.Services
             await _unitOfWork.PharmasistsProfile.MarkAsPaid(userId);
             await _unitOfWork.CompleteAsync();
         }
-        public async Task<bool> ApprovePharmacistAsync(int id)
-        {
-            var result = await _unitOfWork.PharmasistsProfile.ApprovePharmacistAsync(id);
-
-            if (!result)
-                return false;
-
-            await _unitOfWork.CompleteAsync(); 
-            return true;
-        }
         public async Task<PharmacistDto?> GetPharmacistByUserIdAsync(string userId)
         {
             var pharmacist = await _unitOfWork.PharmasistsProfile.GetByUserIdAsync(userId);
@@ -143,15 +148,77 @@ namespace E_PharmaHub.Services
                 IsApproved = pharmacist.IsApproved
             };
         }
-        public async Task<bool> RejectPharmacistAsync(int id)
+
+        public async Task<(bool success, string message)> ApprovePharmacistAsync(int pharmacistId)
         {
-            var result = await _unitOfWork.PharmasistsProfile.RejectPharmacistAsync(id);
+            var pharmacist = await _unitOfWork.PharmasistsProfile.GetByIdAsync(pharmacistId);
+            if (pharmacist == null)
+                return (false, "Pharmacist not found.");
 
-            if (!result)
-                return false;
+            if (pharmacist.IsApproved)
+                return (false, "Pharmacist already approved.");
 
+            if (pharmacist.IsRejected)
+                return (false, "Pharmacist was rejected before.");
+
+            pharmacist.IsApproved = true;
+            pharmacist.IsRejected = false;
             await _unitOfWork.CompleteAsync();
-            return true;
+
+            var payment = await _paymentService.GetByReferenceIdAsync(pharmacist.AppUserId);
+            if (payment != null && !string.IsNullOrEmpty(payment.PaymentIntentId))
+            {
+                var captured = await _stripePaymentService.CapturePaymentAsync(payment.PaymentIntentId);
+                if (captured)
+                {
+                    payment.Status = PaymentStatus.Paid;
+                    await _unitOfWork.CompleteAsync();
+                }
+            }
+
+            await _emailSender.SendEmailAsync(
+                pharmacist.AppUser.Email,
+                "Account Approved",
+                $"Hello {pharmacist.AppUser.Email},<br/>Your pharmacist account has been approved by admin. Welcome aboard!"
+            );
+
+            return (true, "Pharmacist approved successfully and payment captured.");
+        }
+
+        public async Task<(bool success, string message)> RejectPharmacistAsync(int pharmacistId)
+        {
+            var pharmacist = await _unitOfWork.PharmasistsProfile.GetByIdAsync(pharmacistId);
+            if (pharmacist == null)
+                return (false, "Pharmacist not found.");
+
+            if (pharmacist.IsRejected)
+                return (false, "Pharmacist already rejected.");
+
+            if (pharmacist.IsApproved)
+                return (false, "Pharmacist already approved, cannot reject.");
+
+            pharmacist.IsApproved = false;
+            pharmacist.IsRejected = true;
+            await _unitOfWork.CompleteAsync();
+
+            var payment = await _paymentService.GetByReferenceIdAsync(pharmacist.AppUserId);
+            if (payment != null && !string.IsNullOrEmpty(payment.PaymentIntentId))
+            {
+                var canceled = await _stripePaymentService.CancelPaymentAsync(payment.PaymentIntentId);
+                if (canceled)
+                {
+                    payment.Status = PaymentStatus.Refunded;
+                    await _unitOfWork.CompleteAsync();
+                }
+            }
+
+            await _emailSender.SendEmailAsync(
+                pharmacist.AppUser.Email,
+                "Account Rejected",
+                $"Hello {pharmacist.AppUser.Email},<br/>We regret to inform you that your pharmacist account was rejected by admin."
+            );
+
+            return (true, "Pharmacist rejected successfully and payment refunded.");
         }
 
         public async Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist, IFormFile? newImage)
