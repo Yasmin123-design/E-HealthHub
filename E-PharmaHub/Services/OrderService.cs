@@ -139,9 +139,9 @@ namespace E_PharmaHub.Services
             if (order.Status == OrderStatus.Cancelled)
                 return (false, "This order has been cancelled and cannot be accepted.");
 
-            var payment = await _unitOfWork.Payments.GetByReferenceIdAsync(order.Id.ToString());
+            var payment = await _unitOfWork.Payments.GetByIdAsync(order.PaymentId.Value);
             if (payment == null)
-                return (false, "No payment found for this order.");
+                return (false, "Payment not found for this order.");
 
             if (payment.Status == PaymentStatus.Succeeded)
                 return (false, "Payment already Paid Successfully.");
