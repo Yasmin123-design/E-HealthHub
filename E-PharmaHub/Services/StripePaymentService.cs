@@ -16,7 +16,6 @@ namespace E_PharmaHub.Services
             Stripe.StripeConfiguration.ApiKey = _config["Stripe:SecretKey"];
             _unitOfWork = unitOfWork;
         }
-
         public async Task<StripeSessionResponseDto> CreateCheckoutSessionAsync(PaymentRequestDto dto)
         {
             var options = new SessionCreateOptions
@@ -28,7 +27,7 @@ namespace E_PharmaHub.Services
             {
                 PriceData = new SessionLineItemPriceDataOptions
                 {
-                    UnitAmountDecimal = dto.Amount * 100,
+                    UnitAmountDecimal = dto.Amount * 100, // Stripe بيحسب بالسنت
                     Currency = "usd",
                     ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
@@ -40,13 +39,14 @@ namespace E_PharmaHub.Services
         },
                 Mode = "payment",
 
+                // 👇 أهم حاجة: نستخدم manual علشان نحجز المبلغ فقط (Hold)
                 PaymentIntentData = new SessionPaymentIntentDataOptions
                 {
                     CaptureMethod = "manual",
                     Metadata = new Dictionary<string, string>
             {
                 { "PaymentFor", dto.PaymentFor.ToString() },
-                { "ClientReferenceId", dto.ReferenceId },
+                { "OrderId", dto.OrderId?.ToString() ?? "none" },
                 { "UserId", dto.ReferenceId ?? "unknown" }
             }
                 },
@@ -58,27 +58,30 @@ namespace E_PharmaHub.Services
             var service = new SessionService();
             var session = await service.CreateAsync(options);
 
+            // 👇 ضروري نعمل expand للـ PaymentIntent علشان نجيب الـ ID
             session = await service.GetAsync(session.Id, new SessionGetOptions
             {
                 Expand = new List<string> { "payment_intent" }
             });
 
-            var paymentIntentId = session.PaymentIntentId ?? session.PaymentIntent?.ToString();
+            var paymentIntentId = session.PaymentIntentId;
 
+            // 🔹 نحفظ عملية الدفع في قاعدة البيانات
             var payment = new Payment
             {
-                ReferenceId = dto.ReferenceId,
-                PaymentFor = dto.PaymentFor,
-                ProviderTransactionId = session.Id,
-                PaymentIntentId = paymentIntentId,  
-                Status = PaymentStatus.Pending,
+                ReferenceId = dto.ReferenceId,          // عادةً ده بيكون UserId أو identifier
+                PaymentFor = dto.PaymentFor,            // Order, Subscription, etc.
+                ProviderTransactionId = session.Id,     // Stripe Session ID
+                PaymentIntentId = paymentIntentId,      // مهم جدًا في capture / cancel
+                Status = PaymentStatus.Pending,         // يعني تم الحجز بس مش الدفع
                 Amount = dto.Amount,
-                PayerUserId = dto.ReferenceId
+                PayerUserId = dto.ReferenceId           // غالبًا UserId
             };
 
             await _unitOfWork.Payments.AddAsync(payment);
             await _unitOfWork.CompleteAsync();
 
+            // 🔹 نربط الدفع بالطلب
             if (dto.PaymentFor == PaymentForType.Order && dto.OrderId.HasValue)
             {
                 var order = await _unitOfWork.Order.GetByIdAsync(dto.OrderId.Value);
@@ -95,6 +98,85 @@ namespace E_PharmaHub.Services
                 SessionId = session.Id
             };
         }
+
+        //public async Task<StripeSessionResponseDto> CreateCheckoutSessionAsync(PaymentRequestDto dto)
+        //{
+        //    var options = new SessionCreateOptions
+        //    {
+        //        PaymentMethodTypes = new List<string> { "card" },
+        //        LineItems = new List<SessionLineItemOptions>
+        //{
+        //    new()
+        //    {
+        //        PriceData = new SessionLineItemPriceDataOptions
+        //        {
+        //            UnitAmountDecimal = dto.Amount * 100,
+        //            Currency = "usd",
+        //            ProductData = new SessionLineItemPriceDataProductDataOptions
+        //            {
+        //                Name = dto.PaymentFor.ToString()
+        //            }
+        //        },
+        //        Quantity = 1
+        //    }
+        //},
+        //        Mode = "payment",
+
+        //        PaymentIntentData = new SessionPaymentIntentDataOptions
+        //        {
+        //            CaptureMethod = "manual",
+        //            Metadata = new Dictionary<string, string>
+        //    {
+        //        { "PaymentFor", dto.PaymentFor.ToString() },
+        //        { "ClientReferenceId", dto.ReferenceId },
+        //        { "UserId", dto.ReferenceId ?? "unknown" }
+        //    }
+        //        },
+
+        //        SuccessUrl = "http://localhost:3000/payment-success?session_id={CHECKOUT_SESSION_ID}",
+        //        CancelUrl = "http://localhost:3000/payment-cancel",
+        //    };
+
+        //    var service = new SessionService();
+        //    var session = await service.CreateAsync(options);
+
+        //    session = await service.GetAsync(session.Id, new SessionGetOptions
+        //    {
+        //        Expand = new List<string> { "payment_intent" }
+        //    });
+
+        //    var paymentIntentId = session.PaymentIntentId ?? session.PaymentIntent?.ToString();
+
+        //    var payment = new Payment
+        //    {
+        //        ReferenceId = dto.ReferenceId,
+        //        PaymentFor = dto.PaymentFor,
+        //        ProviderTransactionId = session.Id,
+        //        PaymentIntentId = paymentIntentId,  
+        //        Status = PaymentStatus.Pending,
+        //        Amount = dto.Amount,
+        //        PayerUserId = dto.ReferenceId
+        //    };
+
+        //    await _unitOfWork.Payments.AddAsync(payment);
+        //    await _unitOfWork.CompleteAsync();
+
+        //    if (dto.PaymentFor == PaymentForType.Order && dto.OrderId.HasValue)
+        //    {
+        //        var order = await _unitOfWork.Order.GetByIdAsync(dto.OrderId.Value);
+        //        if (order != null)
+        //        {
+        //            order.PaymentId = payment.Id;
+        //            await _unitOfWork.CompleteAsync();
+        //        }
+        //    }
+
+        //    return new StripeSessionResponseDto
+        //    {
+        //        CheckoutUrl = session.Url,
+        //        SessionId = session.Id
+        //    };
+        //}
 
 
     }

@@ -149,7 +149,7 @@ namespace E_PharmaHub.Services
             try
             {
                 var paymentIntentService = new Stripe.PaymentIntentService();
-                await paymentIntentService.CaptureAsync(payment.ProviderTransactionId);
+                await paymentIntentService.CaptureAsync(payment.PaymentIntentId);
 
                 payment.Status = PaymentStatus.Succeeded;
                 order.Status = OrderStatus.Confirmed;
