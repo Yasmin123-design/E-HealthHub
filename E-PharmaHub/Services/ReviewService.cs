@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
 
 namespace E_PharmaHub.Services
@@ -46,15 +47,31 @@ namespace E_PharmaHub.Services
         }
 
 
-        public async Task<IEnumerable<Review>> GetReviewsByPharmacyIdAsync(int pharmacyId)
+        public async Task<IEnumerable<ReviewDto>> GetReviewsByPharmacyIdAsync(int pharmacyId)
         {
-            return await _unitOfWork.Reviews.GetReviewsByPharmacyIdAsync(pharmacyId);
+            var reviews = await _unitOfWork.Reviews.GetReviewsByPharmacyIdAsync(pharmacyId);
+
+            return reviews.Select(r => new ReviewDto
+            {
+                Rating = r.Rating,
+                Comment = r.Comment,
+                UserEmail = r.User.Email
+            });
         }
 
-        public async Task<IEnumerable<Review>> GetReviewsByMedicationIdAsync(int medicationId)
+        public async Task<IEnumerable<ReviewDto>> GetReviewsByMedicationIdAsync(int medicationId)
         {
-            return await _unitOfWork.Reviews.GetReviewsByMedicationIdAsync(medicationId);
+            var reviews = await _unitOfWork.Reviews.GetReviewsByMedicationIdAsync(medicationId);
+
+            return reviews.Select(r => new ReviewDto
+            {
+                Rating = r.Rating,
+                Comment = r.Comment,
+                UserEmail = r.User.Email
+            });
         }
+
+
 
         public async Task<double> GetAverageRatingForPharmacyAsync(int pharmacyId)
         {
