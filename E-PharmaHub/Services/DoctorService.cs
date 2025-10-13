@@ -3,6 +3,7 @@ using E_PharmaHub.Models;
 using E_PharmaHub.Repositories;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Services
@@ -13,12 +14,25 @@ namespace E_PharmaHub.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly IFileStorageService _fileStorage;
         private readonly IDoctorRepository _doctorRepository;
+        private readonly IStripePaymentService _stripePaymentService;
+        private readonly IPaymentService _paymentService;
+        private readonly IEmailSender _emailSender;
 
-        public DoctorService(IUnitOfWork unitOfWork,IDoctorRepository doctorRepository, UserManager<AppUser> userManager,IFileStorageService fileStorage)
+        public DoctorService(IUnitOfWork unitOfWork,
+            IDoctorRepository doctorRepository,
+            UserManager<AppUser> userManager,
+            IFileStorageService fileStorage,
+            IStripePaymentService stripePaymentService,
+            IPaymentService paymentService,
+            IEmailSender emailSender)
+            
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _fileStorage = fileStorage;
+            _stripePaymentService = stripePaymentService;
+            _paymentService = paymentService;
+            _emailSender = emailSender;
             _doctorRepository = doctorRepository;
         }
         public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
@@ -107,26 +121,76 @@ namespace E_PharmaHub.Services
         }
 
 
-        public async Task<bool> ApproveDoctorAsync(int id)
+        public async Task<(bool success, string message)> ApproveDoctorAsync(int doctorId)
         {
-            var result = await _unitOfWork.Doctors.ApproveDoctorAsync(id);
+            var doctor = await _doctorRepository.GetDoctorByIdAsync(doctorId);
+            if (doctor == null)
+                return (false, "Doctor not found.");
 
-            if (!result)
-                return false;
+            if (doctor.IsApproved)
+                return (false, "Doctor already approved.");
 
-            await _unitOfWork.CompleteAsync(); 
-            return true;
+            if (doctor.IsRejected)
+                return (false, "Doctor was rejected before.");
+
+            doctor.IsApproved = true;
+            doctor.IsRejected = false;
+            await _unitOfWork.CompleteAsync();
+
+            var payment = await _paymentService.GetByReferenceIdAsync(doctor.AppUserId);
+            if (payment != null && !string.IsNullOrEmpty(payment.PaymentIntentId))
+            {
+                var captured = await _stripePaymentService.CapturePaymentAsync(payment.PaymentIntentId);
+                if (captured)
+                {
+                    payment.Status = PaymentStatus.Paid;
+                    await _unitOfWork.CompleteAsync();
+                }
+            }
+
+            await _emailSender.SendEmailAsync(
+                doctor.AppUser.Email,
+                "Account Approved",
+                $"Hello {doctor.AppUser.Email},<br/>Your account has been accepted by admin."
+            );
+
+            return (true, "Doctor approved successfully and payment captured.");
         }
 
-        public async Task<bool> RejectDoctorAsync(int id)
+        public async Task<(bool success, string message)> RejectDoctorAsync(int doctorId)
         {
-            var result = await _unitOfWork.Doctors.RejectDoctorAsync(id);
+            var doctor = await _doctorRepository.GetDoctorByIdAsync(doctorId);
+            if (doctor == null)
+                return (false, "Doctor not found.");
 
-            if (!result)
-                return false;
+            if (doctor.IsRejected)
+                return (false, "Doctor already rejected.");
 
-            await _unitOfWork.CompleteAsync(); 
-            return true;
+            if (doctor.IsApproved)
+                return (false, "Doctor already approved, cannot reject.");
+
+            doctor.IsApproved = false;
+            doctor.IsRejected = true;
+            await _unitOfWork.CompleteAsync();
+
+            var payment = await _paymentService.GetByReferenceIdAsync(doctor.AppUserId);
+            if (payment != null && !string.IsNullOrEmpty(payment.PaymentIntentId))
+            {
+                var canceled = await _stripePaymentService.CancelPaymentAsync(payment.PaymentIntentId);
+                if (canceled)
+                {
+                    payment.Status = PaymentStatus.Refunded;
+                    await _unitOfWork.CompleteAsync();
+                }
+            }
+
+            await _emailSender.SendEmailAsync(
+                doctor.AppUser.Email,
+                "Account Rejected",
+                $"Hello {doctor.AppUser.Email},<br/>Your account has been rejected by admin."
+            );
+
+            return (true, "Doctor rejected successfully and payment canceled.");
         }
         public async Task MarkAsPaid(string userId)
         {

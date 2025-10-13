@@ -16,6 +16,11 @@ namespace E_PharmaHub.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<Payment> GetByReferenceIdAsync(string referenceId)
+        {
+            return await _unitOfWork.Payments.GetByReferenceIdAsync(referenceId);
+        }
+
         public async Task<object> VerifySessionAsync(string sessionId)
         {
             var stripeService = new SessionService();

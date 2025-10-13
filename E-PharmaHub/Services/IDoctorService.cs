@@ -15,7 +15,7 @@ namespace E_PharmaHub.Services
         Task UpdateDoctorAsync(int id, DoctorProfile updatedDoctor, IFormFile? newImage);
         Task DeleteDoctorAsync(int id);
 
-        Task<bool> ApproveDoctorAsync(int id);
-        Task<bool> RejectDoctorAsync(int id);
+        Task<(bool success, string message)> ApproveDoctorAsync(int doctorId);
+        Task<(bool success, string message)> RejectDoctorAsync(int doctorId);
     }
 }
