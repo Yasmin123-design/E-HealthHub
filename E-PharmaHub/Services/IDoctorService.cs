@@ -8,6 +8,8 @@ namespace E_PharmaHub.Services
         Task<AppUser> RegisterDoctorAsync(DoctorRegisterDto dto, IFormFile clinicImage, IFormFile doctorImage);
         Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty);
         Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId);
+        Task<DoctorProfile?> GetDoctorDetailsByUserIdAsync(string userId);
+
         Task<DoctorReadDto?> GetByIdDetailsAsync(int id);
         Task<DoctorProfile> GetDoctorByIdAsync(int id);
         Task MarkAsPaid(string userId);

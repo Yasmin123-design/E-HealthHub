@@ -301,6 +301,11 @@ namespace E_PharmaHub.Services
         {
             return await _unitOfWork.Doctors.GetByIdAsync(id);
         }
+
+        public async Task<DoctorProfile?> GetDoctorDetailsByUserIdAsync(string userId)
+        {
+            return await _doctorRepository.GetDoctorByUserIdAsync(userId);
+        }
     }
 
 }

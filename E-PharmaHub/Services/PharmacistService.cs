@@ -10,7 +10,6 @@ namespace E_PharmaHub.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IFileStorageService _fileStorage;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IStripePaymentService _stripePaymentService;
         private readonly IPaymentService _paymentService;
         private readonly IEmailSender _emailSender;
@@ -19,7 +18,6 @@ namespace E_PharmaHub.Services
         private readonly IUnitOfWork _unitOfWork;
 
         public PharmacistService(UserManager<AppUser> userManager,
-            IHttpContextAccessor httpContextAccessor,
             IFileStorageService fileStorage,
             IUnitOfWork unitOfWork,
             IStripePaymentService stripePaymentService,
@@ -30,7 +28,6 @@ namespace E_PharmaHub.Services
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
-            _httpContextAccessor = httpContextAccessor;
             _stripePaymentService = stripePaymentService;
             _paymentService = paymentService;
             _emailSender = emailSender;
@@ -300,6 +297,14 @@ namespace E_PharmaHub.Services
         public async Task<PharmacistProfile?> GetPharmacistProfileByIdAsync(int id)
         {
             return await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);
+        }
+
+        public async Task<PharmacistProfile?> GetPharmacistProfileByUserIdAsync(string userId)
+        {
+            var pharmacist = await _unitOfWork.PharmasistsProfile.GetByUserIdAsync(userId);
+            if (pharmacist == null)
+                return null;
+            return pharmacist;
         }
     }
 

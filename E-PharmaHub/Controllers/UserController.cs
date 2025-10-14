@@ -23,13 +23,17 @@ namespace E_PharmaHub.Controllers
         private readonly IConfiguration _config;
         private readonly IEmailSender _emailSender;
         private readonly IUserService _userService;
+        private readonly IDoctorService _doctorService;
+        private readonly IPharmacistService _pharmacistService;
 
         public UserController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             IConfiguration config,
             IEmailSender emailSender,
-            IUserService userService
+            IUserService userService,
+            IDoctorService doctorService,
+            IPharmacistService pharmacistService
             )
         {
             _userManager = userManager;
@@ -37,6 +41,8 @@ namespace E_PharmaHub.Controllers
             _config = config;
             _emailSender = emailSender;
             _userService = userService;
+            _doctorService = doctorService;
+            _pharmacistService = pharmacistService;
         }
 
         [HttpPost("register")]
@@ -82,22 +88,62 @@ namespace E_PharmaHub.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null) return Unauthorized("Invalid credentials , email not found");
+            if (user == null)
+                return Unauthorized(new { message = "Invalid credentials ❌ – Email not found" });
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-
-            if (!result.Succeeded) return Unauthorized("Invalid credentials , wrong password");
+            if (!result.Succeeded)
+                return Unauthorized(new { message = "Invalid credentials ❌ – Wrong password" });
 
             var roles = await _userManager.GetRolesAsync(user);
+
+            if (roles.Contains("Doctor"))
+            {
+                var doctorProfile = await _doctorService.GetDoctorDetailsByUserIdAsync(user.Id);
+
+                if (doctorProfile == null)
+                    return Unauthorized(new { message = "Doctor profile not found ⚠️" });
+
+                if (!doctorProfile.IsApproved)
+                {
+                    if (doctorProfile.IsRejected)
+                        return Unauthorized(new { message = "Your account was rejected ❌" });
+                    else
+                        return Unauthorized(new { message = "Your account is pending admin approval ⏳" });
+                }
+            }
+
+            if (roles.Contains("Pharmacist"))
+            {
+                var pharmacistProfile = await _pharmacistService.GetPharmacistProfileByUserIdAsync(user.Id);
+
+                if (pharmacistProfile == null)
+                    return Unauthorized(new { message = "Pharmacist profile not found ⚠️" });
+
+                if (!pharmacistProfile.IsApproved)
+                {
+                    if (pharmacistProfile.IsRejected)
+                        return Unauthorized(new { message = "Your account was rejected ❌" });
+                    else
+                        return Unauthorized(new { message = "Your account is pending admin approval ⏳" });
+                }
+            }
 
             var token = GenerateJwtToken(user, roles);
 
             return Ok(new
             {
+                message = "Login successful ✅",
                 token,
-                user = new { user.UserName, user.Email, Roles = roles }
+                user = new
+                {
+                    user.UserName,
+                    user.Email,
+                    Roles = roles
+                }
             });
         }
+
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)

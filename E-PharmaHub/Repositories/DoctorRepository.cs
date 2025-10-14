@@ -91,6 +91,15 @@ namespace E_PharmaHub.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<DoctorProfile?> GetDoctorProfileByIdAsync(int id)
+        {
+            return await _context.DoctorProfiles
+                .Include(d => d.AppUser)
+                .Include(d => d.Clinic)
+                .ThenInclude(c => c.Address)
+                .Where(d => d.Id == id)
+                .FirstOrDefaultAsync();
+        }
 
         public async Task AddAsync(DoctorProfile entity)
         {
@@ -105,6 +114,7 @@ namespace E_PharmaHub.Repositories
         {
             _context.DoctorProfiles.Remove(entity);
         }
+
         public async Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty)
         {
             return await _context.DoctorProfiles
