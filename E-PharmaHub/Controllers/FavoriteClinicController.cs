@@ -1,4 +1,6 @@
 ﻿using E_PharmaHub.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -6,6 +8,8 @@ namespace E_PharmaHub.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
     public class FavoriteClinicController : ControllerBase
     {
         private readonly IFavoriteClinicService _favoriteClinicService;
