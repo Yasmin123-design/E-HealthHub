@@ -3,6 +3,8 @@ using E_PharmaHub.Models;
 using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -20,18 +22,21 @@ namespace E_PharmaHub.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _config;
         private readonly IEmailSender _emailSender;
+        private readonly IUserService _userService;
 
         public UserController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             IConfiguration config,
-            IEmailSender emailSender
+            IEmailSender emailSender,
+            IUserService userService
             )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
             _emailSender = emailSender;
+            _userService = userService;
         }
 
         [HttpPost("register")]
@@ -215,6 +220,60 @@ namespace E_PharmaHub.Controllers
             return Ok(new { token, user = new { user.UserName, user.Email, Roles = roles } });
         }
 
+        [HttpGet("profile")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
 
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var profile = await _userService.GetUserProfileAsync(userId);
+
+            if (profile == null)
+                return NotFound(new { message = "User not found ❌" });
+
+            return Ok(profile);
+        }
+
+        [HttpPut("update-profile")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
+        public async Task<IActionResult> UpdateProfile([FromForm] UserUpdateDto dto)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var (success, message) = await _userService.UpdateUserProfileAsync(userId, dto);
+
+            if (!success)
+                return BadRequest(new { message });
+
+            return Ok(new { message });
+        }
+
+        [HttpPost("upload-picture")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
+        public async Task<IActionResult> UploadProfilePicture(IFormFile image)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var (success, message) = await _userService.UploadProfilePictureAsync(userId, image);
+
+            if (!success)
+                return BadRequest(new { message });
+
+            return Ok(new { message });
+        }
+
+        [HttpDelete("delete")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var (success, message) = await _userService.DeleteAccountAsync(userId);
+
+            if (!success)
+                return BadRequest(new { message });
+
+            return Ok(new { message });
+        }
     }
 }

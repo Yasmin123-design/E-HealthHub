@@ -27,6 +27,8 @@ namespace E_PharmaHub.UnitOfWorkes
 
         public IClinicRepository Clinics { get; }
 
+        public IUserRepository Useres { get; }
+
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
             IReviewRepository reviewRepository,
@@ -43,7 +45,8 @@ namespace E_PharmaHub.UnitOfWorkes
             IOrderRepository orderRepository,
             IFavoriteMedicationRepository favoriteMedicationRepository,
             IFavouriteClinicRepository favouriteClinicRepository,
-            IClinicRepository clinicRepository
+            IClinicRepository clinicRepository,
+            IUserRepository userRepository
             )
         {
             _context = context;
@@ -64,6 +67,7 @@ namespace E_PharmaHub.UnitOfWorkes
             Favorite = favoriteMedicationRepository;
             FavouriteClinic = favouriteClinicRepository;
             Clinics = clinicRepository;
+            Useres = userRepository;
         }
 
         public async Task<int> CompleteAsync()

@@ -8,6 +8,8 @@ namespace E_PharmaHub.Models
     {
         public UserRole Role { get; set; } = UserRole.RegularUser;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? ProfileImage { get; set; }
+
         public virtual DonorProfile? DonorProfile { get; set; }
         public virtual PharmacistProfile? PharmacistProfile { get; set; }
         public virtual DoctorProfile? DoctorProfile { get; set; }
