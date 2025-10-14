@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Email { get; set; }
+        public string? PharmacistImage { get; set; }
         public string LicenseNumber { get; set; }
         public bool IsApproved { get; set; }
         public string PharmacyName { get; set; }

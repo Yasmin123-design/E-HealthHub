@@ -21,14 +21,17 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromForm] DoctorRegisterDto dto, IFormFile image)
+        public async Task<IActionResult> Register([FromForm] DoctorRegisterDto dto,
+            IFormFile clinicImage,
+            IFormFile doctorImage
+            )
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                var user = await _doctorService.RegisterDoctorAsync(dto, image);
+                var user = await _doctorService.RegisterDoctorAsync(dto, clinicImage,doctorImage);
 
                 return Ok(new
                 {
@@ -65,7 +68,7 @@ namespace E_PharmaHub.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDoctorWithClinicWithAddressRelated(int id, [FromForm] DoctorProfile doctor, IFormFile? image)
+        public async Task<IActionResult> UpdateDoctorWithClinicWithAddressRelated(int id, [FromForm] DoctorProfile doctor, IFormFile? clinicImage,IFormFile? doctorImage)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                          ?? User.FindFirst("sub")?.Value;
@@ -88,7 +91,7 @@ namespace E_PharmaHub.Controllers
 
             try
             {
-                await _doctorService.UpdateDoctorAsync(id, doctor, image);
+                await _doctorService.UpdateDoctorAsync(id, doctor, clinicImage,doctorImage);
                 return Ok(new { message = "Doctor updated successfully." });
             }
             catch (Exception ex)

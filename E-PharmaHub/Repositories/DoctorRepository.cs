@@ -47,7 +47,8 @@ namespace E_PharmaHub.Repositories
                     ClinicName = d.Clinic.Name,
                     ClinicPhone = d.Clinic.Phone,
                     ClinicImagePath = d.Clinic.ImagePath,
-                    City = d.Clinic.Address.City
+                    City = d.Clinic.Address.City,
+                    DoctorImage=d.Image
                 })
                 .FirstOrDefaultAsync();
         }
@@ -75,7 +76,8 @@ namespace E_PharmaHub.Repositories
                     ClinicName = d.Clinic.Name,
                     ClinicPhone = d.Clinic.Phone,
                     ClinicImagePath = d.Clinic.ImagePath,
-                    City = d.Clinic.Address.City
+                    City = d.Clinic.Address.City,
+                    DoctorImage=d.Image
                 })
                 .FirstOrDefaultAsync();
         }
@@ -110,7 +112,8 @@ namespace E_PharmaHub.Repositories
                     ClinicName = d.Clinic.Name,
                     ClinicPhone = d.Clinic.Phone,
                     ClinicImagePath = d.Clinic.ImagePath,
-                    City = d.Clinic.Address.City
+                    City = d.Clinic.Address.City,
+                    DoctorImage=d.Image
                 })
                 .ToListAsync();
         }

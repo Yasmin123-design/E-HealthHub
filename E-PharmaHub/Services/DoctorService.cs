@@ -3,8 +3,6 @@ using E_PharmaHub.Models;
 using E_PharmaHub.Repositories;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Services
 {
@@ -39,7 +37,7 @@ namespace E_PharmaHub.Services
         {
             return await _doctorRepository.GetDoctorByUserIdAsync(userId);
         }
-        public async Task<AppUser> RegisterDoctorAsync(DoctorRegisterDto dto, IFormFile image)
+        public async Task<AppUser> RegisterDoctorAsync(DoctorRegisterDto dto, IFormFile clinicImage,IFormFile doctorImage)
         {
             var existingUser = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUser != null)
@@ -87,10 +85,10 @@ namespace E_PharmaHub.Services
                 await _unitOfWork.CompleteAsync();
             }
 
-            string imagePath = null;
-            if (image != null)
+            string clinicImagePath = null;
+            if (clinicImage != null)
             {
-                imagePath = await _fileStorage.SaveFileAsync(image, "clinics");
+                clinicImagePath = await _fileStorage.SaveFileAsync(clinicImage, "clinics");
             }
 
             var clinic = new Clinic
@@ -98,11 +96,15 @@ namespace E_PharmaHub.Services
                 Name = dto.ClinicName,
                 Phone = dto.ClinicPhone,
                 AddressId = address.Id,
-                ImagePath = imagePath
+                ImagePath = clinicImagePath
             };
 
             await _unitOfWork.Clinics.AddAsync(clinic);
             await _unitOfWork.CompleteAsync();
+
+            string doctorImagePath = null;
+            if (doctorImage != null)
+                doctorImagePath = await _fileStorage.SaveFileAsync(doctorImage, "doctors");
 
             var doctorProfile = new DoctorProfile
             {
@@ -110,7 +112,8 @@ namespace E_PharmaHub.Services
                 ClinicId = clinic.Id,
                 Specialty = dto.Specialty,
                 IsApproved = false,
-                HasPaid = false 
+                HasPaid = false,
+                Image = doctorImagePath
 
             };
 
@@ -202,7 +205,7 @@ namespace E_PharmaHub.Services
             return await _unitOfWork.Doctors.GetDoctorsBySpecialtyAsync(specialty);
         }
 
-        public async Task UpdateDoctorAsync(int id, DoctorProfile updatedDoctor, IFormFile? newImage)
+        public async Task UpdateDoctorAsync(int id, DoctorProfile updatedDoctor, IFormFile? newClinicImage , IFormFile? newDoctorImage)
         {
             var existing = await _unitOfWork.Doctors.GetByIdAsync(id);
             if (existing == null)
@@ -231,14 +234,20 @@ namespace E_PharmaHub.Services
                 address.Longitude = updatedDoctor.Clinic.Address.Longitude ?? address.Longitude;
             }
 
-            if (newImage != null)
+            if (newClinicImage != null)
             {
                 if (!string.IsNullOrEmpty(clinic.ImagePath))
                     _fileStorage.DeleteFile(clinic.ImagePath);
 
-                clinic.ImagePath = await _fileStorage.SaveFileAsync(newImage, "clinics");
+                clinic.ImagePath = await _fileStorage.SaveFileAsync(newClinicImage, "clinics");
             }
+            if (newDoctorImage != null)
+            {
+                if (!string.IsNullOrEmpty(existing.Image))
+                    _fileStorage.DeleteFile(existing.Image);
 
+                existing.Image = await _fileStorage.SaveFileAsync(newDoctorImage, "Doctors");
+            }
             _unitOfWork.Doctors.Update(existing);
             _unitOfWork.Clinics.Update(clinic);
             _unitOfWork.Addresses.Update(address);

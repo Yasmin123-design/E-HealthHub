@@ -56,7 +56,8 @@ namespace E_PharmaHub.Repositories
                     PharmacyName = p.Pharmacy.Name,
                     PharmacyPhone = p.Pharmacy.Phone,
                     PharmacyImagePath = p.Pharmacy.ImagePath,
-                    City = p.Pharmacy.Address.City
+                    City = p.Pharmacy.Address.City,
+                    PharmacistImage = p.Image
                 })
                 .ToListAsync();
         }
@@ -76,7 +77,8 @@ namespace E_PharmaHub.Repositories
                     PharmacyName = p.Pharmacy.Name,
                     PharmacyPhone = p.Pharmacy.Phone,
                     PharmacyImagePath = p.Pharmacy.ImagePath,
-                    City = p.Pharmacy.Address.City
+                    City = p.Pharmacy.Address.City,
+                    PharmacistImage = p.Image
                 })
                 .FirstOrDefaultAsync();
         }

@@ -37,7 +37,7 @@ namespace E_PharmaHub.Services
             _emailSender = emailSender;
         }
 
-        public async Task<AppUser> RegisterPharmacistAsync(PharmacistRegisterDto dto, IFormFile image)
+        public async Task<AppUser> RegisterPharmacistAsync(PharmacistRegisterDto dto, IFormFile pharmacyImage, IFormFile pharmacistImage)
         {
             var existingUser = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUser != null)
@@ -85,10 +85,10 @@ namespace E_PharmaHub.Services
                 await _unitOfWork.CompleteAsync();
             }
 
-            string? imagePath = null;
-            if (image != null && image.Length > 0)
+            string? pharmacyImagePath = null;
+            if (pharmacyImage != null && pharmacyImage.Length > 0)
             {
-                imagePath = await _fileStorage.SaveFileAsync(image, "pharmacies");
+                pharmacyImagePath = await _fileStorage.SaveFileAsync(pharmacyImage, "pharmacies");
             }
 
             var pharmacy = new Pharmacy
@@ -96,16 +96,22 @@ namespace E_PharmaHub.Services
                 Name = dto.PharmacyName,
                 Phone = dto.PhoneNumber,
                 AddressId = address.Id,
-                ImagePath = imagePath
+                ImagePath = pharmacyImagePath
             };
             await _unitOfWork.Pharmacies.AddAsync(pharmacy);
             await _unitOfWork.CompleteAsync();
 
+            string? pharmacistImagePath = null;
+            if (pharmacistImage != null && pharmacistImage.Length > 0)
+            {
+                pharmacistImagePath = await _fileStorage.SaveFileAsync(pharmacistImage, "pharmacistes");
+            }
             var pharmacistProfile = new PharmacistProfile
             {
                 AppUserId = user.Id,
                 PharmacyId = pharmacy.Id,
                 LicenseNumber = dto.LicenseNumber,
+                Image = pharmacistImagePath,
                 IsApproved = false,
                 HasPaid = false  
 
@@ -217,7 +223,7 @@ namespace E_PharmaHub.Services
             return (true, "Pharmacist rejected successfully and payment refunded.");
         }
 
-        public async Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist, IFormFile? newImage)
+        public async Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist, IFormFile? newPharmacyImage, IFormFile? newPharmacistImage)
         {
             var existing = await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);
             if (existing == null)
@@ -274,24 +280,31 @@ namespace E_PharmaHub.Services
                 }
             }
 
-            string imagePath = pharmacy.ImagePath;
-            if (newImage != null && newImage.Length > 0)
+            string imagePharmacyPath = pharmacy.ImagePath;
+            if (newPharmacyImage != null && newPharmacyImage.Length > 0)
             {
-                imagePath = await _fileStorage.SaveFileAsync(newImage, "pharmacies");
+                imagePharmacyPath = await _fileStorage.SaveFileAsync(newPharmacyImage, "pharmacies");
             }
 
             pharmacy.Name = updatedPharmacist.Pharmacy?.Name ?? pharmacy.Name;
             pharmacy.Phone = updatedPharmacist.Pharmacy?.Phone ?? pharmacy.Phone;
             pharmacy.AddressId = address.Id;
-            pharmacy.ImagePath = imagePath ?? pharmacy.ImagePath;
+            pharmacy.ImagePath = imagePharmacyPath ?? pharmacy.ImagePath;
 
             _unitOfWork.Pharmacies.Update(pharmacy);
 
-            existing.LicenseNumber = updatedPharmacist.LicenseNumber ?? existing.LicenseNumber;
-            existing.PharmacyId = pharmacy.Id;
 
             if (isAdmin)
                 existing.IsApproved = updatedPharmacist.IsApproved;
+
+            string imagePharmacistPath = existing.Image;
+            if (newPharmacistImage != null && newPharmacistImage.Length > 0)
+            {
+                imagePharmacistPath = await _fileStorage.SaveFileAsync(newPharmacistImage, "pharmacistes");
+            }
+            existing.LicenseNumber = updatedPharmacist.LicenseNumber ?? existing.LicenseNumber;
+            existing.PharmacyId = pharmacy.Id;
+            existing.Image = imagePharmacistPath;
 
             _unitOfWork.PharmasistsProfile.Update(existing);
             await _unitOfWork.CompleteAsync();

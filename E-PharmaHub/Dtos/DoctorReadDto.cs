@@ -9,7 +9,8 @@
 
         public string ClinicName { get; set; }
         public string ClinicPhone { get; set; }
-        public string ClinicImagePath { get; set; }
+        public string? ClinicImagePath { get; set; }
+        public string? DoctorImage { get; set; }
         public string City { get; set; }
     }
 

@@ -6,7 +6,7 @@ namespace E_PharmaHub.Services
     public interface IPharmacistService
     {
         Task MarkAsPaid(string userId);
-        Task<AppUser> RegisterPharmacistAsync(PharmacistRegisterDto dto, IFormFile image);
+        Task<AppUser> RegisterPharmacistAsync(PharmacistRegisterDto dto, IFormFile pharmacyImage, IFormFile pharmacistImage);
 
         Task AddPharmacistAsync(PharmacistProfile pharmacist);
         Task<PharmacistProfile?> GetPharmacistProfileByIdAsync(int id);
@@ -14,7 +14,7 @@ namespace E_PharmaHub.Services
         Task<PharmacistReadDto?> GetPharmacistByIdAsync(int id);
         Task<PharmacistDto?> GetPharmacistByUserIdAsync(string userId);
 
-        Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist,IFormFile? newImage);
+        Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist, IFormFile? newPharmacyImage, IFormFile? newPharmacistImage);
 
 
         Task DeletePharmacistAsync(int id);
