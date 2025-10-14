@@ -1,6 +1,7 @@
-﻿using E_PharmaHub.Services;
-using Microsoft.AspNetCore.Http;
+﻿using E_PharmaHub.Models;
+using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
 {
@@ -16,28 +17,28 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddToFavorites(string userId, int clinicId)
+        public async Task<IActionResult> AddToFavorites(int clinicId)
         {
-            var result = await _favoriteClinicService.AddToFavoritesAsync(userId, clinicId);
-            if (!result) return BadRequest("Clinic is already in favorites.");
 
-            return Ok("Clinic added to favorites successfully.");
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var result = await _favoriteClinicService.AddToFavoritesAsync(userId, clinicId);
+            return result ? Ok("Added to favorites.") : BadRequest("Already in favorites.");
         }
 
         [HttpDelete("remove")]
-        public async Task<IActionResult> RemoveFromFavorites(string userId, int clinicId)
+        public async Task<IActionResult> RemoveFromFavorites(int clinicId)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var result = await _favoriteClinicService.RemoveFromFavoritesAsync(userId, clinicId);
-            if (!result) return NotFound("Clinic not found in favorites.");
-
-            return Ok("Clinic removed from favorites successfully.");
+            return result ? Ok("Removed from favorites.") : NotFound("Not found in favorites.");
         }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetUserFavorites(string userId)
+        public async Task<IActionResult> GetUserFavorites()
         {
-            var favorites = await _favoriteClinicService.GetUserFavoritesAsync(userId);
-            return Ok(favorites);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var favs = await _favoriteClinicService.GetUserFavoritesAsync(userId);
+            return Ok(favs);
         }
     }
 }
