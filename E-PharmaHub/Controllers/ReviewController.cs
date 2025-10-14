@@ -109,5 +109,26 @@ namespace E_PharmaHub.Controllers
             var rating = await _reviewService.GetAverageRatingForMedicationAsync(medicationId);
             return Ok(new { averageRating = rating });
         }
+
+        [HttpGet("top-pharmacies")]
+        public async Task<IActionResult> GetTopPharmacies()
+        {
+            var result = await _reviewService.GetTopRatedPharmaciesAsync();
+            return Ok(new { message = "🏥 Top 3 Rated Pharmacies", data = result });
+        }
+
+        [HttpGet("top-doctors")]
+        public async Task<IActionResult> GetTopDoctors()
+        {
+            var result = await _reviewService.GetTopRatedDoctorsAsync();
+            return Ok(new { message = "👨‍⚕️ Top 3 Rated Doctors", data = result });
+        }
+
+        [HttpGet("top-medications")]
+        public async Task<IActionResult> GetTopMedications()
+        {
+            var result = await _reviewService.GetTopRatedMedicationsAsync();
+            return Ok(new { message = "💊 Top 3 Rated Medications", data = result });
+        }
     }
 }

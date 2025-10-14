@@ -74,6 +74,33 @@ namespace E_PharmaHub.Repositories
                 .Where(r => r.MedicationId == medicationId)
                 .AverageAsync(r => (double?)r.Rating) ?? 0;
         }
+        public async Task<IEnumerable<Pharmacy>> GetTopRatedPharmaciesAsync(int count)
+        {
+            return await _context.Pharmacies
+                .Include(p => p.Reviews)
+                .OrderByDescending(p => p.Reviews.Average(r => (double?)r.Rating) ?? 0)
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<DoctorProfile>> GetTopRatedDoctorsAsync(int count)
+        {
+            return await _context.DoctorProfiles
+                .Include(d => d.Reviews)
+                .Include(d => d.AppUser)
+                .OrderByDescending(d => d.Reviews.Average(r => (double?)r.Rating) ?? 0)
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Medication>> GetTopRatedMedicationsAsync(int count)
+        {
+            return await _context.Medications
+                .Include(m => m.Reviews)
+                .OrderByDescending(m => m.Reviews.Average(r => (double?)r.Rating) ?? 0)
+                .Take(count)
+                .ToListAsync();
+        }
     }
 
 }

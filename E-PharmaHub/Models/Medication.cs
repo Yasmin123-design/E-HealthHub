@@ -29,5 +29,7 @@ namespace E_PharmaHub.Models
 
         public virtual ICollection<InventoryItem>? Inventories { get; set; }
         public virtual ICollection<AlternativeMedication>? Alternatives { get; set; }
+        public virtual ICollection<Review>? Reviews { get; set; }
+
     }
 }

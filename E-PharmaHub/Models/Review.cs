@@ -10,6 +10,7 @@ namespace E_PharmaHub.Models
         public string? UserId { get; set; }
 
         public int? PharmacyId { get; set; }
+        public int? DoctorId { get; set; }
         public int? MedicationId { get; set; }
 
         [Required(ErrorMessage = "Rating is required.")]
@@ -23,6 +24,7 @@ namespace E_PharmaHub.Models
 
         public virtual AppUser? User { get; set; }
         public virtual Pharmacy? Pharmacy { get; set; }
+        public virtual DoctorProfile? Doctor { get; set; }
         public virtual Medication? Medication { get; set; }
     }
 }

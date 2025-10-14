@@ -101,6 +101,47 @@ namespace E_PharmaHub.Services
 
             return true;
         }
+        public async Task<IEnumerable<Pharmacy>> GetTopRatedPharmaciesAsync(int count)
+        {
+            return await _unitOfWork.Reviews.GetTopRatedPharmaciesAsync(count);
+        }
+        public async Task<IEnumerable<object>> GetTopRatedPharmaciesAsync()
+        {
+            var pharmacies = await _unitOfWork.Reviews.GetTopRatedPharmaciesAsync(3);
+            return pharmacies.Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.ImagePath,
+                AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0
+            });
+        }
+
+        public async Task<IEnumerable<object>> GetTopRatedDoctorsAsync()
+        {
+            var doctors = await _unitOfWork.Reviews.GetTopRatedDoctorsAsync(3);
+            return doctors.Select(d => new
+            {
+                d.Id,
+                DoctorName = d.AppUser?.UserName,
+                d.Specialty,
+                d.Image,
+                AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0
+            });
+        }
+
+        public async Task<IEnumerable<object>> GetTopRatedMedicationsAsync()
+        {
+            var meds = await _unitOfWork.Reviews.GetTopRatedMedicationsAsync(3);
+            return meds.Select(m => new
+            {
+                m.Id,
+                m.BrandName,
+                m.GenericName,
+                m.ImagePath,
+                AverageRating = m.Reviews.Any() ? m.Reviews.Average(r => r.Rating) : 0
+            });
+        }
     }
 
 }

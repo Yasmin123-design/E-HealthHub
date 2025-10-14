@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace E_PharmaHub.Models
 {
@@ -19,5 +18,7 @@ namespace E_PharmaHub.Models
         public virtual Clinic? Clinic { get; set; }
         public string? AppUserId { get; set; }
         public virtual AppUser? AppUser { get; set; }
+        public virtual ICollection<Review>? Reviews { get; set; }
+
     }
 }
