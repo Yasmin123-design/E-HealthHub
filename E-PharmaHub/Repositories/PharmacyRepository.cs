@@ -14,7 +14,7 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<Pharmacy?> GetPharmacyByPharmacistUserIdAsync(string userId)
         {
-            return await _context.PharmacistProfiles
+            return await _context.Pharmacists
                 .Where(p => p.AppUserId == userId)
                 .Select(p => p.Pharmacy)
                 .FirstOrDefaultAsync();
