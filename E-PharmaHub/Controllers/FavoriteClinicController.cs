@@ -8,9 +8,9 @@ namespace E_PharmaHub.Controllers
     [ApiController]
     public class FavoriteClinicController : ControllerBase
     {
-        private readonly FavoriteClinicService _favoriteClinicService;
+        private readonly IFavoriteClinicService _favoriteClinicService;
 
-        public FavoriteClinicController(FavoriteClinicService favoriteClinicService)
+        public FavoriteClinicController(IFavoriteClinicService favoriteClinicService)
         {
             _favoriteClinicService = favoriteClinicService;
         }
