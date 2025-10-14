@@ -14,6 +14,32 @@ namespace E_PharmaHub.Services
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
         }
+        public async Task<bool> UpdatePharmacyAsync(string userId, PharmacyUpdateDto dto, IFormFile? image)
+        {
+            var pharmacy = await _unitOfWork.Pharmacies.GetPharmacyByPharmacistUserIdAsync(userId);
+            if (pharmacy == null)
+                return false;
+
+            if (!string.IsNullOrEmpty(dto.Name))
+                pharmacy.Name = dto.Name;
+
+            if (!string.IsNullOrEmpty(dto.Phone))
+                pharmacy.Phone = dto.Phone;
+
+            if (dto.AddressId.HasValue)
+                pharmacy.AddressId = dto.AddressId.Value;
+
+            if (image != null)
+            {
+                var imagePath = await _fileStorage.SaveFileAsync(image, "pharmacies");
+                pharmacy.ImagePath = imagePath;
+            }
+
+            _unitOfWork.Pharmacies.Update(pharmacy);
+            await _unitOfWork.CompleteAsync();
+
+            return true;
+        }
 
         public async Task<IEnumerable<PharmacySimpleDto>> GetAllPharmaciesAsync()
         {

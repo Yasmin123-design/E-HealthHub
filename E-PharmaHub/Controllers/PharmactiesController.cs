@@ -13,9 +13,11 @@ namespace E_PharmaHub.Controllers
     public class PharmactiesController : ControllerBase
     {
         private readonly IPharmacistService _pharmacistService;
-        public PharmactiesController(IPharmacistService pharmacistService)
+        private readonly IPharmacyService _pharmacyService;
+        public PharmactiesController(IPharmacistService pharmacistService,IPharmacyService pharmacyService)
         {
             _pharmacistService = pharmacistService;
+            _pharmacyService = pharmacyService;
         }
 
         [HttpPost("register")]
@@ -61,6 +63,21 @@ namespace E_PharmaHub.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist")]
+        [HttpPut("update-pharmacy")]
+        public async Task<IActionResult> UpdatePharmacy([FromForm] PharmacyUpdateDto dto, IFormFile? image)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var result = await _pharmacyService.UpdatePharmacyAsync(userId, dto, image);
+
+            if (!result)
+                return NotFound(new { message = "Pharmacy not found for this pharmacist." });
+
+            return Ok(new { message = "Pharmacy updated successfully ✅" });
+        }
+
 
         [HttpGet("all")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]

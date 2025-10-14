@@ -12,6 +12,13 @@ namespace E_PharmaHub.Repositories
         {
             _context = context;
         }
+        public async Task<Pharmacy?> GetPharmacyByPharmacistUserIdAsync(string userId)
+        {
+            return await _context.PharmacistProfiles
+                .Where(p => p.AppUserId == userId)
+                .Select(p => p.Pharmacy)
+                .FirstOrDefaultAsync();
+        }
 
         public async Task<IEnumerable<Pharmacy>> GetAllAsync()
         {

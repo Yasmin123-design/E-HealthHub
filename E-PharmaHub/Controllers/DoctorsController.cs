@@ -13,11 +13,13 @@ namespace E_PharmaHub.Controllers
     public class DoctorsController : ControllerBase
     {
         private readonly IDoctorService _doctorService;
+        private readonly IClinicService _clinicService;
 
-        public DoctorsController(IDoctorService doctorService
+        public DoctorsController(IDoctorService doctorService,IClinicService clinicService
             )
         {
             _doctorService = doctorService;
+            _clinicService = clinicService;
         }
 
         [HttpPost("register")]
@@ -65,6 +67,22 @@ namespace E_PharmaHub.Controllers
             var doctors = await _doctorService.GetDoctorsBySpecialtyAsync(specialty);
             return Ok(doctors);
         }
+
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+        [HttpPut("update-clinic")]
+        public async Task<IActionResult> UpdateClinic([FromForm] ClinicUpdateDto dto, IFormFile? image)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var result = await _clinicService.UpdateClinicAsync(userId, dto, image);
+
+            if (!result)
+                return NotFound(new { message = "Clinic not found for this doctor." });
+
+            return Ok(new { message = "Clinic updated successfully ✅" });
+        }
+
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
         [HttpPut("update-profile")]

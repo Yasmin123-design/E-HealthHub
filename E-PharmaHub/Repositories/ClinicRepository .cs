@@ -47,5 +47,13 @@ namespace E_PharmaHub.Repositories
                          .Include(c => c.Address)
                          .FirstOrDefaultAsync(c => c.Id == id);
         }
+        public async Task<Clinic?> GetClinicByDoctorUserIdAsync(string userId)
+        {
+            return await _context.DoctorProfiles
+                .Where(d => d.AppUserId == userId)
+                .Select(d => d.Clinic)
+                .FirstOrDefaultAsync();
+        }
+
     }
 }
