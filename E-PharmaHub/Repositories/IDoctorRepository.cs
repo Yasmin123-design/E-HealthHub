@@ -6,7 +6,8 @@ namespace E_PharmaHub.Repositories
     public interface IDoctorRepository : IGenericRepository<DoctorProfile>
     {
         Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty);
-        Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId);
+        Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId);
+        Task<DoctorReadDto?> GetDoctorByUserIdReadDtoAsync(string userId);
         Task<DoctorReadDto?> GetByIdDetailsAsync(int id);
         Task MarkAsPaid(string userId);
         Task<DoctorProfile> GetDoctorByIdAsync(int id);

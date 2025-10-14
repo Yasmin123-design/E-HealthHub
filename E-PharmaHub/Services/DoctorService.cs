@@ -35,7 +35,7 @@ namespace E_PharmaHub.Services
         }
         public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
         {
-            return await _doctorRepository.GetDoctorByUserIdAsync(userId);
+            return await _doctorRepository.GetDoctorByUserIdReadDtoAsync(userId);
         }
         public async Task<AppUser> RegisterDoctorAsync(DoctorRegisterDto dto, IFormFile clinicImage,IFormFile doctorImage)
         {
@@ -205,62 +205,69 @@ namespace E_PharmaHub.Services
             return await _unitOfWork.Doctors.GetDoctorsBySpecialtyAsync(specialty);
         }
 
-        public async Task UpdateDoctorAsync(int id, DoctorProfile updatedDoctor, IFormFile? newClinicImage , IFormFile? newDoctorImage)
+        public async Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto, IFormFile? doctorImage)
         {
-            var existing = await _unitOfWork.Doctors.GetByIdAsync(id);
-            if (existing == null)
-                throw new Exception("Doctor not found.");
+            var doctor = await _unitOfWork.Doctors.GetByIdAsync(
+                (await _unitOfWork.Doctors.GetDoctorByUserIdAsync(userId))?.Id ?? 0
+            );
 
-            var clinic = await _unitOfWork.Clinics.GetByIdAsync(existing.ClinicId);
-            if (clinic == null)
-                throw new Exception("Clinic not found.");
+            if (doctor == null)
+                return false;
 
-            var address = await _unitOfWork.Addresses.GetByIdAsync(clinic.AddressId);
-            if (address == null)
-                throw new Exception("Clinic address not found.");
+            if (!string.IsNullOrEmpty(dto.Specialty))
+                doctor.Specialty = dto.Specialty;
 
-            existing.Specialty = updatedDoctor.Specialty ?? existing.Specialty;
-
-            clinic.Name = updatedDoctor.Clinic?.Name ?? clinic.Name;
-            clinic.Phone = updatedDoctor.Clinic?.Phone ?? clinic.Phone;
-
-            if (updatedDoctor.Clinic?.Address != null)
+            if (doctorImage != null)
             {
-                address.Country = updatedDoctor.Clinic.Address.Country ?? address.Country;
-                address.City = updatedDoctor.Clinic.Address.City ?? address.City;
-                address.Street = updatedDoctor.Clinic.Address.Street ?? address.Street;
-                address.PostalCode = updatedDoctor.Clinic.Address.PostalCode ?? address.PostalCode;
-                address.Latitude = updatedDoctor.Clinic.Address.Latitude ?? address.Latitude;
-                address.Longitude = updatedDoctor.Clinic.Address.Longitude ?? address.Longitude;
+                if (!string.IsNullOrEmpty(doctor.Image))
+                    _fileStorage.DeleteFile(doctor.Image);
+
+                doctor.Image = await _fileStorage.SaveFileAsync(doctorImage, "doctors");
             }
 
-            if (newClinicImage != null)
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new Exception("User account not found.");
+
+            if (!string.IsNullOrEmpty(dto.Email) && dto.Email != user.Email)
             {
-                if (!string.IsNullOrEmpty(clinic.ImagePath))
-                    _fileStorage.DeleteFile(clinic.ImagePath);
+                var token = await _userManager.GenerateChangeEmailTokenAsync(user, dto.Email);
+                var emailResult = await _userManager.ChangeEmailAsync(user, dto.Email, token);
 
-                clinic.ImagePath = await _fileStorage.SaveFileAsync(newClinicImage, "clinics");
+                if (!emailResult.Succeeded)
+                    throw new Exception(string.Join(", ", emailResult.Errors.Select(e => e.Description)));
+
+                user.Email = dto.Email;
+                await _userManager.UpdateAsync(user);
             }
-            if (newDoctorImage != null)
+
+            if (!string.IsNullOrEmpty(dto.UserName) && dto.UserName != user.UserName)
             {
-                if (!string.IsNullOrEmpty(existing.Image))
-                    _fileStorage.DeleteFile(existing.Image);
-
-                existing.Image = await _fileStorage.SaveFileAsync(newDoctorImage, "Doctors");
+                user.UserName = dto.UserName;
+                await _userManager.UpdateAsync(user);
             }
-            _unitOfWork.Doctors.Update(existing);
-            _unitOfWork.Clinics.Update(clinic);
-            _unitOfWork.Addresses.Update(address);
 
+            if (!string.IsNullOrEmpty(dto.CurrentPassword) && !string.IsNullOrEmpty(dto.NewPassword))
+            {
+                var passResult = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+                if (!passResult.Succeeded)
+                    throw new Exception(string.Join(", ", passResult.Errors.Select(e => e.Description)));
+            }
+
+            _unitOfWork.Doctors.Update(doctor);
             await _unitOfWork.CompleteAsync();
+
+            return true;
         }
+
+
         public async Task DeleteDoctorAsync(int id)
         {
             var doctor = await _unitOfWork.Doctors.GetByIdAsync(id);
             if (doctor == null)
                 throw new Exception("Doctor not found.");
 
-            var clinic = await _unitOfWork.Clinics.GetByIdAsync(doctor.ClinicId);
+            var clinic = await _unitOfWork.Clinics.GetClinicByIdAsync(doctor.ClinicId);
             if (clinic != null)
             {
                 if (!string.IsNullOrEmpty(clinic.ImagePath))

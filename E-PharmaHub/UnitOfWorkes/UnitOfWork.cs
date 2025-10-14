@@ -12,7 +12,6 @@ namespace E_PharmaHub.UnitOfWorkes
         public IDoctorRepository Doctors { get; }
         public IPharmacyRepository Pharmacies { get; private set; }
         public IAddressRepository Addresses { get; private set; }
-        public IGenericRepository<Clinic> Clinics { get; }
         public IDonorRepository Donors { get; }
         public IBloodRequestRepository BloodRequest { get; }
         public IInventoryItemRepository IinventoryItem { get; }
@@ -25,6 +24,8 @@ namespace E_PharmaHub.UnitOfWorkes
         public IFavoriteMedicationRepository Favorite { get; }
 
         public IFavouriteClinicRepository FavouriteClinic { get; }
+
+        public IClinicRepository Clinics { get; }
 
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
@@ -41,7 +42,8 @@ namespace E_PharmaHub.UnitOfWorkes
             ICartRepository cartRepository ,
             IOrderRepository orderRepository,
             IFavoriteMedicationRepository favoriteMedicationRepository,
-            IFavouriteClinicRepository favouriteClinicRepository
+            IFavouriteClinicRepository favouriteClinicRepository,
+            IClinicRepository clinicRepository
             )
         {
             _context = context;
@@ -61,6 +63,7 @@ namespace E_PharmaHub.UnitOfWorkes
             Order = orderRepository;
             Favorite = favoriteMedicationRepository;
             FavouriteClinic = favouriteClinicRepository;
+            Clinics = clinicRepository;
         }
 
         public async Task<int> CompleteAsync()

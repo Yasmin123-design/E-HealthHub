@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Repositories
 {
-    public class ClinicRepository : IGenericRepository<Clinic>
+    public class ClinicRepository : IClinicRepository
     {
         private readonly EHealthDbContext _context;
 
@@ -41,5 +41,11 @@ namespace E_PharmaHub.Repositories
             _context.Clinics.Remove(entity);
         }
 
+        public async Task<Clinic> GetClinicByIdAsync(int? id)
+        {
+            return await _context.Clinics
+                         .Include(c => c.Address)
+                         .FirstOrDefaultAsync(c => c.Id == id);
+        }
     }
 }

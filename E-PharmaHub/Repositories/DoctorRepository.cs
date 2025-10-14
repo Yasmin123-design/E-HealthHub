@@ -31,7 +31,7 @@ namespace E_PharmaHub.Repositories
                 .ToListAsync();
         }
 
-        public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
+        public async Task<DoctorReadDto?> GetDoctorByUserIdReadDtoAsync(string userId)
         {
             return await _context.DoctorProfiles
                 .Include(d => d.AppUser)
@@ -50,6 +50,15 @@ namespace E_PharmaHub.Repositories
                     City = d.Clinic.Address.City,
                     DoctorImage=d.Image
                 })
+                .FirstOrDefaultAsync();
+        }
+        public async Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId)
+        {
+            return await _context.DoctorProfiles
+                .Include(d => d.AppUser)
+                .Include(d => d.Clinic)
+                .ThenInclude(c => c.Address)
+                .Where(d => d.AppUserId == userId)
                 .FirstOrDefaultAsync();
         }
         public async Task<DoctorProfile> GetByIdAsync(int id) 

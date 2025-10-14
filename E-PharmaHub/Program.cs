@@ -92,7 +92,7 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
-            builder.Services.AddScoped<IGenericRepository<Clinic>, ClinicRepository>();
+            builder.Services.AddScoped<IClinicRepository, ClinicRepository>();
             builder.Services.AddScoped<IClinicService, ClinicService>();
             builder.Services.AddScoped<IDonorRepository, DonorRepository>();
             builder.Services.AddScoped<IDonorService, DonorService>();

@@ -54,7 +54,7 @@ namespace E_PharmaHub.Controllers
 
             var user = new AppUser
             {
-                UserName = model.Email,
+                UserName = model.UserName,
                 Email = model.Email,
                 Role = model.Role,
             };

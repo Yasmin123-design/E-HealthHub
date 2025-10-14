@@ -67,42 +67,27 @@ namespace E_PharmaHub.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDoctorWithClinicWithAddressRelated(
-            int id, 
-            [FromForm] DoctorProfile doctor,
-            IFormFile? clinicImage,
-            IFormFile? doctorImage)
+        [HttpPut("update-profile")]
+        public async Task<IActionResult> UpdateProfile([FromForm] DoctorUpdateDto dto, IFormFile? doctorImage)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                         ?? User.FindFirst("sub")?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized(new { message = "User not authenticated." });
-
-            var existingDoctor = await _doctorService.GetDoctorByUserIdAsync(userId);
-            if (existingDoctor == null)
-                return NotFound(new { message = "Doctor profile not found." });
-
-            if (!existingDoctor.IsApproved)
-                return Forbid("Your account is pending admin approval.");
-
-            doctor.AppUserId = userId;
-            ModelState.Remove("AppUserId");
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             try
             {
-                await _doctorService.UpdateDoctorAsync(id, doctor, clinicImage,doctorImage);
-                return Ok(new { message = "Doctor updated successfully." });
+                var result = await _doctorService.UpdateDoctorProfileAsync(userId, dto, doctorImage);
+
+                if (!result)
+                    return NotFound(new { message = "Doctor profile not found." });
+
+                return Ok(new { message = "Doctor profile updated successfully ✅" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return BadRequest(new { message = ex.Message });
             }
         }
+
+
 
 
         [HttpDelete("{id}")]

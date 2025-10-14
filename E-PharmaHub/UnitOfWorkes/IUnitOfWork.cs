@@ -8,7 +8,7 @@ namespace E_PharmaHub.UnitOfWorkes
         IMedicineRepository Medicines { get; }
         IPharmacistRepository PharmasistsProfile { get; }
         IPharmacyRepository Pharmacies { get; }
-        IGenericRepository<Clinic> Clinics { get; }
+        IClinicRepository Clinics { get; }
         IDonorRepository Donors { get; }
         IReviewRepository Reviews { get; }
         IFavoriteMedicationRepository Favorite { get; }
