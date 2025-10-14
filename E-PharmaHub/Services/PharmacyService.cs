@@ -14,11 +14,11 @@ namespace E_PharmaHub.Services
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
         }
-        public async Task<bool> UpdatePharmacyAsync(string userId, PharmacyUpdateDto dto, IFormFile? image)
+        public async Task<(bool Success, string Message)> UpdatePharmacyAsync(string userId, PharmacyUpdateDto dto, IFormFile? image)
         {
             var pharmacy = await _unitOfWork.Pharmacies.GetPharmacyByPharmacistUserIdAsync(userId);
             if (pharmacy == null)
-                return false;
+                return (false, "Pharmacy not found.");
 
             if (!string.IsNullOrEmpty(dto.Name))
                 pharmacy.Name = dto.Name;
@@ -27,7 +27,13 @@ namespace E_PharmaHub.Services
                 pharmacy.Phone = dto.Phone;
 
             if (dto.AddressId.HasValue)
+            {
+                var addressExists = await _unitOfWork.Addresses.GetByIdAsync(dto.AddressId.Value);
+                if (addressExists == null)
+                    return (false, "The provided address does not exist ❌");
+
                 pharmacy.AddressId = dto.AddressId.Value;
+            }
 
             if (image != null)
             {
@@ -38,8 +44,9 @@ namespace E_PharmaHub.Services
             _unitOfWork.Pharmacies.Update(pharmacy);
             await _unitOfWork.CompleteAsync();
 
-            return true;
+            return (true, "Pharmacy updated successfully ✅");
         }
+
 
         public async Task<IEnumerable<PharmacySimpleDto>> GetAllPharmaciesAsync()
         {

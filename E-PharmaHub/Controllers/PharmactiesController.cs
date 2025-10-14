@@ -1,5 +1,4 @@
 ﻿using E_PharmaHub.Dtos;
-using E_PharmaHub.Models;
 using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -69,14 +68,17 @@ namespace E_PharmaHub.Controllers
         public async Task<IActionResult> UpdatePharmacy([FromForm] PharmacyUpdateDto dto, IFormFile? image)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "User not authenticated." });
 
-            var result = await _pharmacyService.UpdatePharmacyAsync(userId, dto, image);
+            var (success, message) = await _pharmacyService.UpdatePharmacyAsync(userId, dto, image);
 
-            if (!result)
-                return NotFound(new { message = "Pharmacy not found for this pharmacist." });
+            if (!success)
+                return BadRequest(new { message }); 
 
-            return Ok(new { message = "Pharmacy updated successfully ✅" });
+            return Ok(new { message });
         }
+
 
 
         [HttpGet("all")]

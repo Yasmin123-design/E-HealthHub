@@ -34,11 +34,18 @@ namespace E_PharmaHub.Services
         }
 
 
-        public async Task<bool> UpdateClinicAsync(string userId, ClinicUpdateDto dto, IFormFile? image)
+        public async Task<(bool Success, string Message)> UpdateClinicAsync(string userId, ClinicUpdateDto dto, IFormFile? image)
         {
-            var clinic = await _unitOfWork.Clinics.GetClinicByDoctorUserIdAsync(userId);
+            var doctor = await _unitOfWork.Doctors.GetDoctorByUserIdAsync(userId);
+            if (doctor == null)
+                return (false, "Doctor profile not found ❌");
+
+            if (doctor.ClinicId == null)
+                return (false, "Doctor does not have an assigned clinic ❌");
+
+            var clinic = await _unitOfWork.Clinics.GetByIdAsync(doctor.ClinicId.Value);
             if (clinic == null)
-                return false;
+                return (false, "Clinic not found ❌");
 
             if (!string.IsNullOrEmpty(dto.Name))
                 clinic.Name = dto.Name;
@@ -47,7 +54,13 @@ namespace E_PharmaHub.Services
                 clinic.Phone = dto.Phone;
 
             if (dto.AddressId.HasValue)
+            {
+                var addressExists = await _unitOfWork.Addresses.GetByIdAsync(dto.AddressId.Value);
+                if (addressExists == null)
+                    return (false, "The provided address does not exist ❌");
+
                 clinic.AddressId = dto.AddressId.Value;
+            }
 
             if (image != null)
             {
@@ -58,8 +71,9 @@ namespace E_PharmaHub.Services
             _unitOfWork.Clinics.Update(clinic);
             await _unitOfWork.CompleteAsync();
 
-            return true;
+            return (true, "Clinic updated successfully ✅");
         }
+
 
         public async Task<bool> DeleteClinicAsync(int id)
         {

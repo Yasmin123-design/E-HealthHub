@@ -8,7 +8,7 @@ namespace E_PharmaHub.Services
         Task<Clinic> CreateClinicAsync(Clinic clinic);
         Task<Clinic?> GetClinicByIdAsync(int id);
         Task<IEnumerable<Clinic>> GetAllClinicsAsync();
-        Task<bool> UpdateClinicAsync(string userId, ClinicUpdateDto dto, IFormFile? image);
+        Task<(bool Success, string Message)> UpdateClinicAsync(string userId, ClinicUpdateDto dto, IFormFile? image);
         Task<bool> DeleteClinicAsync(int id);
     }
 }
