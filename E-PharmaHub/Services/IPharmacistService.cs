@@ -14,8 +14,7 @@ namespace E_PharmaHub.Services
         Task<PharmacistReadDto?> GetPharmacistByIdAsync(int id);
         Task<PharmacistDto?> GetPharmacistByUserIdAsync(string userId);
 
-        Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist, IFormFile? newPharmacyImage, IFormFile? newPharmacistImage);
-
+        Task<bool> UpdatePharmacistProfileAsync(string userId, PharmacistUpdateDto dto, IFormFile? image)
 
         Task DeletePharmacistAsync(int id);
         Task<(bool success, string message)> RejectPharmacistAsync(int pharmacistId);

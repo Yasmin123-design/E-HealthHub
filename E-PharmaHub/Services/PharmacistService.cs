@@ -1,9 +1,8 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
-using E_PharmaHub.Repositories;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
+using Address = E_PharmaHub.Models.Address;
 
 namespace E_PharmaHub.Services
 {
@@ -223,92 +222,49 @@ namespace E_PharmaHub.Services
             return (true, "Pharmacist rejected successfully and payment refunded.");
         }
 
-        public async Task UpdatePharmacistAsync(int id, PharmacistProfile updatedPharmacist, IFormFile? newPharmacyImage, IFormFile? newPharmacistImage)
+        public async Task<bool> UpdatePharmacistProfileAsync(string userId, PharmacistUpdateDto dto, IFormFile? image)
         {
-            var existing = await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);
-            if (existing == null)
-                throw new Exception("Pharmacist not found.");
+            var pharmacist = await _unitOfWork.PharmasistsProfile.GetPharmacistByUserIdAsync(userId);
+            if (pharmacist == null)
+                return false;
 
-            var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                         ?? _httpContextAccessor.HttpContext?.User?.FindFirst("sub")?.Value;
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return false;
 
-            if (string.IsNullOrEmpty(userId))
-                throw new UnauthorizedAccessException("User not authenticated.");
+            if (!string.IsNullOrEmpty(dto.Email))
+                user.Email = dto.Email;
 
-            var isAdmin = _httpContextAccessor.HttpContext?.User?.IsInRole("Admin") ?? false;
-            if (existing.AppUserId != userId && !isAdmin)
-                throw new UnauthorizedAccessException("You are not allowed to update this pharmacist.");
+            if (!string.IsNullOrEmpty(dto.UserName))
+                user.UserName = dto.UserName;
 
-            var pharmacy = await _unitOfWork.Pharmacies.GetByIdAsync(existing.PharmacyId)
-                           ?? throw new Exception("Pharmacy not found.");
+            await _userManager.UpdateAsync(user);
 
-            var currentAddress = await _unitOfWork.Addresses.GetByIdAsync(pharmacy.AddressId)
-                                ?? throw new Exception("Address not found.");
-
-            Address address = currentAddress;
-
-            if (updatedPharmacist.Pharmacy?.Address != null)
+            if (!string.IsNullOrEmpty(dto.CurrentPassword) && !string.IsNullOrEmpty(dto.NewPassword))
             {
-                var dtoAddress = updatedPharmacist.Pharmacy.Address;
-
-                var existingAddress = await _unitOfWork.Addresses.FindAsync(a =>
-                    a.Country == dtoAddress.Country &&
-                    a.City == dtoAddress.City &&
-                    a.Street == dtoAddress.Street &&
-                    a.PostalCode == dtoAddress.PostalCode &&
-                    a.Latitude == dtoAddress.Latitude &&
-                    a.Longitude == dtoAddress.Longitude
-                );
-
-                if (existingAddress != null)
+                var passResult = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+                if (!passResult.Succeeded)
                 {
-                    address = existingAddress;
-                }
-                else
-                {
-                    address = new Address
-                    {
-                        Country = dtoAddress.Country ?? currentAddress.Country,
-                        City = dtoAddress.City ?? currentAddress.City,
-                        Street = dtoAddress.Street ?? currentAddress.Street,
-                        PostalCode = dtoAddress.PostalCode ?? currentAddress.PostalCode,
-                        Latitude = dtoAddress.Latitude ?? currentAddress.Latitude,
-                        Longitude = dtoAddress.Longitude ?? currentAddress.Longitude
-                    };
-                    await _unitOfWork.Addresses.AddAsync(address);
-                    await _unitOfWork.CompleteAsync();
+                    var errors = string.Join(", ", passResult.Errors.Select(e => e.Description));
+                    throw new Exception($"Password update failed: {errors}");
                 }
             }
 
-            string imagePharmacyPath = pharmacy.ImagePath;
-            if (newPharmacyImage != null && newPharmacyImage.Length > 0)
+            if (!string.IsNullOrEmpty(dto.LicenseNumber))
+                pharmacist.LicenseNumber = dto.LicenseNumber;
+
+            if (image != null)
             {
-                imagePharmacyPath = await _fileStorage.SaveFileAsync(newPharmacyImage, "pharmacies");
+                var imagePath = await _fileStorage.SaveFileAsync(image, "pharmacistes");
+                pharmacist.Image = imagePath;
             }
 
-            pharmacy.Name = updatedPharmacist.Pharmacy?.Name ?? pharmacy.Name;
-            pharmacy.Phone = updatedPharmacist.Pharmacy?.Phone ?? pharmacy.Phone;
-            pharmacy.AddressId = address.Id;
-            pharmacy.ImagePath = imagePharmacyPath ?? pharmacy.ImagePath;
-
-            _unitOfWork.Pharmacies.Update(pharmacy);
-
-
-            if (isAdmin)
-                existing.IsApproved = updatedPharmacist.IsApproved;
-
-            string imagePharmacistPath = existing.Image;
-            if (newPharmacistImage != null && newPharmacistImage.Length > 0)
-            {
-                imagePharmacistPath = await _fileStorage.SaveFileAsync(newPharmacistImage, "pharmacistes");
-            }
-            existing.LicenseNumber = updatedPharmacist.LicenseNumber ?? existing.LicenseNumber;
-            existing.PharmacyId = pharmacy.Id;
-            existing.Image = imagePharmacistPath;
-
-            _unitOfWork.PharmasistsProfile.Update(existing);
+            _unitOfWork.PharmasistsProfile.Update(pharmacist);
             await _unitOfWork.CompleteAsync();
+
+            return true;
         }
+
         public async Task DeletePharmacistAsync(int id)
         {
             var pharmacist = await _unitOfWork.PharmasistsProfile.GetByIdAsync(id);

@@ -42,6 +42,26 @@ namespace E_PharmaHub.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist")]
+        [HttpPut("update-profile")]
+        public async Task<IActionResult> UpdateProfile([FromForm] PharmacistUpdateDto dto, IFormFile? image)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var result = await _pharmacistService.UpdatePharmacistProfileAsync(userId, dto, image);
+
+                if (!result)
+                    return NotFound(new { message = "Pharmacist profile not found." });
+
+                return Ok(new { message = "Pharmacist profile updated successfully ✅" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         [HttpGet("all")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 
@@ -61,40 +81,6 @@ namespace E_PharmaHub.Controllers
                 return NotFound(new { message = "Pharmacist not found." });
 
             return Ok(pharmacist);
-        }
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Pharmacist")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePharmacist(int id, [FromForm] PharmacistProfile updated, IFormFile? pharmacyImage , IFormFile? pharmacistImage)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                         ?? User.FindFirst("sub")?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized(new { message = "User not authenticated." });
-
-            try
-            {
-                if (!User.IsInRole("Admin"))
-                {
-                    var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
-                    if (pharmacist == null)
-                        return NotFound(new { message = "Pharmacist profile not found." });
-
-                    if (!pharmacist.IsApproved)
-                        return Forbid("Your account is pending admin approval.");
-                }
-
-                await _pharmacistService.UpdatePharmacistAsync(id, updated, pharmacyImage,pharmacistImage);
-                return Ok(new { message = "Pharmacist updated successfully." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
         }
 
 
