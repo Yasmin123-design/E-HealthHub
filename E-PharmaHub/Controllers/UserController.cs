@@ -262,18 +262,21 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message });
         }
 
-        [HttpDelete("delete")]
+        [HttpPut("update-picture")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
-
-        public async Task<IActionResult> DeleteAccount()
+        public async Task<IActionResult> UpdateProfilePicture(IFormFile newImage)
         {
+            if (newImage == null || newImage.Length == 0)
+                return BadRequest(new { message = "Please upload a valid image 🖼️⚠️" });
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var (success, message) = await _userService.DeleteAccountAsync(userId);
+            var (success, message) = await _userService.UpdateProfilePictureAsync(userId, newImage);
 
             if (!success)
                 return BadRequest(new { message });
 
             return Ok(new { message });
         }
+
     }
 }

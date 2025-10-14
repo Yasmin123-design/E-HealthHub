@@ -8,5 +8,6 @@ namespace E_PharmaHub.Services
         Task<(bool Success, string Message)> UpdateUserProfileAsync(string userId, UserUpdateDto dto);
         Task<(bool Success, string Message)> UploadProfilePictureAsync(string userId, IFormFile image);
         Task<(bool Success, string Message)> DeleteAccountAsync(string userId);
+        Task<(bool Success, string Message)> UpdateProfilePictureAsync(string userId, IFormFile newImage);
     }
 }

@@ -50,6 +50,12 @@ namespace E_PharmaHub.Models
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Review>()
+                        .HasOne(r => r.User)
+                        .WithMany()
+                        .HasForeignKey(r => r.UserId)
+                        .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<AppUser>()
                 .HasIndex(u => u.Email).IsUnique();
 

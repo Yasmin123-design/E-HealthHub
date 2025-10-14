@@ -77,6 +77,27 @@ namespace E_PharmaHub.Services
             return (true, "Profile picture updated successfully 🖼️✅");
         }
 
+        public async Task<(bool Success, string Message)> UpdateProfilePictureAsync(string userId, IFormFile newImage)
+        {
+            var user = await _unitOfWork.Useres.GetByIdAsync(userId);
+            if (user == null)
+                return (false, "User not found ❌");
+
+            if (newImage == null || newImage.Length == 0)
+                return (false, "Please upload a valid image 🖼️⚠️");
+
+            if (!string.IsNullOrEmpty(user.ProfileImage))
+                 _fileStorage.DeleteFile(user.ProfileImage);
+
+            var newPath = await _fileStorage.SaveFileAsync(newImage, "users");
+            user.ProfileImage = newPath;
+
+            _unitOfWork.Useres.Update(user);
+            await _unitOfWork.CompleteAsync();
+
+            return (true, "Profile picture updated successfully 🖼️✅");
+        }
+
         public async Task<(bool Success, string Message)> DeleteAccountAsync(string userId)
         {
             var user = await _userRepo.GetByIdAsync(userId);
