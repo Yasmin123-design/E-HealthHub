@@ -68,7 +68,11 @@ namespace E_PharmaHub.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDoctorWithClinicWithAddressRelated(int id, [FromForm] DoctorProfile doctor, IFormFile? clinicImage,IFormFile? doctorImage)
+        public async Task<IActionResult> UpdateDoctorWithClinicWithAddressRelated(
+            int id, 
+            [FromForm] DoctorProfile doctor,
+            IFormFile? clinicImage,
+            IFormFile? doctorImage)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                          ?? User.FindFirst("sub")?.Value;
