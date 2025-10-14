@@ -1,5 +1,4 @@
-﻿using E_PharmaHub.Models;
-using E_PharmaHub.Services;
+﻿using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -16,7 +15,7 @@ namespace E_PharmaHub.Controllers
             _favoriteClinicService = favoriteClinicService;
         }
 
-        [HttpPost("add")]
+        [HttpPost("{clinicId}/favorite")]
         public async Task<IActionResult> AddToFavorites(int clinicId)
         {
 
@@ -25,7 +24,7 @@ namespace E_PharmaHub.Controllers
             return result ? Ok("Added to favorites.") : BadRequest("Already in favorites.");
         }
 
-        [HttpDelete("remove")]
+        [HttpDelete("{clinicId}/favorite")]
         public async Task<IActionResult> RemoveFromFavorites(int clinicId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -33,7 +32,7 @@ namespace E_PharmaHub.Controllers
             return result ? Ok("Removed from favorites.") : NotFound("Not found in favorites.");
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("favorites")]
         public async Task<IActionResult> GetUserFavorites()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
