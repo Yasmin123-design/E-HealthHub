@@ -17,26 +17,34 @@ namespace E_PharmaHub.Services
             _hubContext = hubContext;
         }
 
-        public async Task<MessageThread> StartConversationAsync(string userId, string pharmacistId)
+        public async Task<MessageThread> StartConversationAsync(string userId, int pharmacistId)
         {
-            var existingThread = await _unitOfWork.Chat.GetThreadBetweenUsersAsync(userId, pharmacistId);
+            var pharmacist = await _unitOfWork.PharmasistsProfile.GetByIdAsync(pharmacistId);
+            if (pharmacist == null)
+                throw new Exception("Pharmacist not found.");
+
+            var pharmacistUserId = pharmacist.AppUserId;
+
+            var existingThread = await _unitOfWork.Chat.GetThreadBetweenUsersAsync(userId, pharmacistUserId);
             if (existingThread != null)
                 return existingThread;
 
             var thread = new MessageThread
             {
-                Title = $"Chat between {userId} and {pharmacistId}",
+                Title = $"Chat between {userId} and {pharmacistUserId}",
                 Participants = new List<MessageThreadParticipant>
-            {
-                new MessageThreadParticipant { UserId = userId },
-                new MessageThreadParticipant { UserId = pharmacistId }
-            }
+        {
+            new MessageThreadParticipant { UserId = userId },
+            new MessageThreadParticipant { UserId = pharmacistUserId }
+        }
             };
 
             await _unitOfWork.MessageThread.AddAsync(thread);
             await _unitOfWork.CompleteAsync();
+
             return thread;
         }
+
 
         public async Task<ChatMessage> SendMessageAsync(int threadId, string senderId, string text)
         {

@@ -20,7 +20,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPost("start")]
-        public async Task<IActionResult> StartConversation([FromQuery] string pharmacistId)
+        public async Task<IActionResult> StartConversation([FromQuery] int pharmacistId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
