@@ -28,8 +28,9 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<MessageThread>> GetUserThreadsAsync(string userId)
         {
             return await _context.MessageThreads
-                .Include(t => t.Participants)
                 .Include(m => m.Messages)
+                .Include(t => t.Participants)
+                .ThenInclude(a => a.User)
                 .Where(t => t.Participants.Any(p => p.UserId == userId))
                 .ToListAsync();
         }
