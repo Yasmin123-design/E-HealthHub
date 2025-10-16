@@ -20,6 +20,8 @@ namespace E_PharmaHub
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddSignalR();
+
 
             builder.Services.AddCors(options =>
             {
@@ -120,7 +122,6 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IChatRepository, ChatRepository>();
             builder.Services.AddScoped<IChatService, ChatService>();
 
-            builder.Services.AddSignalR();
 
 
             builder.Services.AddHttpContextAccessor();
@@ -145,6 +146,7 @@ namespace E_PharmaHub
             StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
+            app.UseRouting();
 
             app.UseCors("AllowAll");
 
@@ -175,8 +177,9 @@ namespace E_PharmaHub
             app.UseAuthorization();
 
             app.MapControllers();
+
             app.UseWebSockets();
-            app.MapHub<ChatHub>("/Hubs/chat");
+            app.MapHub<ChatHub>("/hubs/chat");
 
             app.Run();
         }

@@ -21,4 +21,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\Lenovo\source\repos\API\E-PharmaHub\E-PharmaHub\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\Lenovo\source\repos\API\E-PharmaHub\E-PharmaHub\.editorconfig" />
+  </ItemGroup>
+
 </Project>
