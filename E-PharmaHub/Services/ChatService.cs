@@ -3,7 +3,6 @@ using E_PharmaHub.Hubs;
 using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Services
 {
@@ -19,7 +18,7 @@ namespace E_PharmaHub.Services
             _hubContext = hubContext;
         }
 
-        public async Task<MessageThreadDto> StartConversationAsync(string userId, int pharmacistId)
+        public async Task<MessageThreadDto> StartConversationWithPharmacistAsync(string userId, int pharmacistId)
         {
             var pharmacist = await _unitOfWork.PharmasistsProfile.GetByIdAsync(pharmacistId);
             if (pharmacist == null)
@@ -45,6 +44,45 @@ namespace E_PharmaHub.Services
         {
             new MessageThreadParticipant { UserId = userId },
             new MessageThreadParticipant { UserId = pharmacistUserId }
+        }
+            };
+
+            await _unitOfWork.MessageThread.AddAsync(thread);
+            await _unitOfWork.CompleteAsync();
+
+            return new MessageThreadDto
+            {
+                Id = thread.Id,
+                Title = thread.Title,
+                ParticipantIds = thread.Participants.Select(p => p.UserId).ToList()
+            };
+        }
+        public async Task<MessageThreadDto> StartConversationWithDoctorAsync(string userId, int doctorId)
+        {
+            var doctor = await _unitOfWork.Doctors.GetByIdAsync(doctorId);
+            if (doctor == null)
+                throw new Exception("Doctor not found.");
+
+            var doctorUserId = doctor.AppUserId;
+
+            var existingThread = await _unitOfWork.Chat.GetThreadBetweenUsersAsync(userId, doctorUserId);
+            if (existingThread != null)
+            {
+                return new MessageThreadDto
+                {
+                    Id = existingThread.Id,
+                    Title = existingThread.Title,
+                    ParticipantIds = existingThread.Participants.Select(p => p.UserId).ToList()
+                };
+            }
+
+            var thread = new MessageThread
+            {
+                Title = $"Chat between {userId} and {doctorUserId}",
+                Participants = new List<MessageThreadParticipant>
+        {
+            new MessageThreadParticipant { UserId = userId },
+            new MessageThreadParticipant { UserId = doctorUserId }
         }
             };
 

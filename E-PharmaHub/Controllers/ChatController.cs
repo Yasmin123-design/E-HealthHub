@@ -19,14 +19,23 @@ namespace E_PharmaHub.Controllers
             _chatService = chatService;
         }
 
-        [HttpPost("start")]
+        [HttpPost("start-with-pharmacist")]
         public async Task<IActionResult> StartConversation([FromQuery] int pharmacistId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var thread = await _chatService.StartConversationAsync(userId, pharmacistId);
+            var thread = await _chatService.StartConversationWithPharmacistAsync(userId, pharmacistId);
             return Ok(thread);
         }
+
+        [HttpPost("start-with-doctor")]
+        public async Task<IActionResult> StartConversationWithDoctor([FromQuery] int doctorId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var thread = await _chatService.StartConversationWithDoctorAsync(userId, doctorId);
+            return Ok(thread);
+        }
+
 
         [HttpPost("send")]
         public async Task<IActionResult> SendMessage([FromBody] SendMessageDto dto)
