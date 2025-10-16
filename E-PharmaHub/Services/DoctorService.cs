@@ -111,6 +111,9 @@ namespace E_PharmaHub.Services
                 AppUserId = user.Id,
                 ClinicId = clinic.Id,
                 Specialty = dto.Specialty,
+                ConsultationPrice = dto.ConsultationPrice,
+                ConsultationType = dto.ConsultationType,
+                Gender = dto.Gender,
                 IsApproved = false,
                 HasPaid = false,
                 Image = doctorImagePath
@@ -204,6 +207,11 @@ namespace E_PharmaHub.Services
         {
             return await _unitOfWork.Doctors.GetDoctorsBySpecialtyAsync(specialty);
         }
+        public async Task<IEnumerable<DoctorProfile>> GetDoctorsAsync(
+    string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType)
+        {
+            return await _unitOfWork.Doctors.GetFilteredDoctorsAsync(name, gender, sortOrder, consultationType);
+        }
 
         public async Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto, IFormFile? doctorImage)
         {
@@ -216,6 +224,15 @@ namespace E_PharmaHub.Services
 
             if (!string.IsNullOrEmpty(dto.Specialty))
                 doctor.Specialty = dto.Specialty;
+
+            if (dto.ConsultationPrice != 0)
+                doctor.ConsultationPrice = dto.ConsultationPrice;
+
+
+            doctor.Gender = dto.Gender;
+            doctor.ConsultationType = dto.ConsultationType;
+
+
 
             if (doctorImage != null)
             {

@@ -11,6 +11,11 @@ namespace E_PharmaHub.Models
         public string? Image { get; set; }
         [Range(1, int.MaxValue, ErrorMessage = "ClinicId must be a valid positive number.")]
         public int? ClinicId { get; set; }
+
+        public decimal ConsultationPrice { get; set; }
+        public Gender Gender { get; set; }
+
+        public ConsultationType ConsultationType { get; set; }
         public bool IsApproved { get; set; } = false;
         public bool IsRejected { get; set; } = false;
         public bool HasPaid { get; set; } = false;

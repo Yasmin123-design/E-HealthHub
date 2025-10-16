@@ -48,7 +48,10 @@ namespace E_PharmaHub.Repositories
                     ClinicPhone = d.Clinic.Phone,
                     ClinicImagePath = d.Clinic.ImagePath,
                     City = d.Clinic.Address.City,
-                    DoctorImage=d.Image
+                    DoctorImage=d.Image,
+                    Gender= d.Gender,
+                    ConsultationType=d.ConsultationType,
+                    ConsultationPrice=d.ConsultationPrice
                 })
                 .FirstOrDefaultAsync();
         }
@@ -86,7 +89,10 @@ namespace E_PharmaHub.Repositories
                     ClinicPhone = d.Clinic.Phone,
                     ClinicImagePath = d.Clinic.ImagePath,
                     City = d.Clinic.Address.City,
-                    DoctorImage=d.Image
+                    DoctorImage=d.Image,
+                    Gender = d.Gender,
+                    ConsultationType = d.ConsultationType,
+                    ConsultationPrice = d.ConsultationPrice
                 })
                 .FirstOrDefaultAsync();
         }
@@ -132,7 +138,10 @@ namespace E_PharmaHub.Repositories
                     ClinicPhone = d.Clinic.Phone,
                     ClinicImagePath = d.Clinic.ImagePath,
                     City = d.Clinic.Address.City,
-                    DoctorImage=d.Image
+                    DoctorImage=d.Image,
+                    Gender = d.Gender,
+                    ConsultationType = d.ConsultationType,
+                    ConsultationPrice = d.ConsultationPrice
                 })
                 .ToListAsync();
         }
@@ -166,5 +175,32 @@ namespace E_PharmaHub.Repositories
                           .Include(d => d.AppUser)
                           .FirstOrDefault(x => x.Id == id);
         }
+
+        public async Task<IEnumerable<DoctorProfile>> GetFilteredDoctorsAsync(
+                             string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType)
+        {
+            var query = _context.DoctorProfiles
+                .Include(d => d.AppUser)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(d => d.AppUser.UserName.Contains(name));
+
+            if (gender.HasValue)
+                query = query.Where(d => d.Gender == gender);
+
+            if (consultationType.HasValue)
+                query = query.Where(d => d.ConsultationType == consultationType);
+
+            query = sortOrder switch
+            {
+                "PriceLowToHigh" => query.OrderBy(d => d.ConsultationPrice),
+                "PriceHighToLow" => query.OrderByDescending(d => d.ConsultationPrice),
+                _ => query
+            };
+
+            return await query.ToListAsync();
+        }
+
     }
 }

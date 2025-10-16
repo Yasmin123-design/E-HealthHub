@@ -1,4 +1,5 @@
 ﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -149,6 +150,16 @@ namespace E_PharmaHub.Controllers
         }
 
 
+        [HttpGet("filterDoctors")]
+        public async Task<IActionResult> GetDoctors(
+            [FromQuery] string? name,
+            [FromQuery] Gender? gender,
+            [FromQuery] string? sort,
+            [FromQuery] ConsultationType? consultationType)
+        {
+            var doctors = await _doctorService.GetDoctorsAsync(name, gender, sort, consultationType);
+            return Ok(doctors);
+        }
 
 
     }
