@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Hubs;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Hubs;
 using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.SignalR;
@@ -17,7 +18,7 @@ namespace E_PharmaHub.Services
             _hubContext = hubContext;
         }
 
-        public async Task<MessageThread> StartConversationAsync(string userId, int pharmacistId)
+        public async Task<MessageThreadDto> StartConversationAsync(string userId, int pharmacistId)
         {
             var pharmacist = await _unitOfWork.PharmasistsProfile.GetByIdAsync(pharmacistId);
             if (pharmacist == null)
@@ -27,7 +28,14 @@ namespace E_PharmaHub.Services
 
             var existingThread = await _unitOfWork.Chat.GetThreadBetweenUsersAsync(userId, pharmacistUserId);
             if (existingThread != null)
-                return existingThread;
+            {
+                return new MessageThreadDto
+                {
+                    Id = existingThread.Id,
+                    Title = existingThread.Title,
+                    ParticipantIds = existingThread.Participants.Select(p => p.UserId).ToList()
+                };
+            }
 
             var thread = new MessageThread
             {
@@ -42,7 +50,12 @@ namespace E_PharmaHub.Services
             await _unitOfWork.MessageThread.AddAsync(thread);
             await _unitOfWork.CompleteAsync();
 
-            return thread;
+            return new MessageThreadDto
+            {
+                Id = thread.Id,
+                Title = thread.Title,
+                ParticipantIds = thread.Participants.Select(p => p.UserId).ToList()
+            };
         }
 
 
