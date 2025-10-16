@@ -23,11 +23,50 @@ namespace E_PharmaHub.Repositories
 
             doctor.HasPaid = true;
         }
-        public async Task<IEnumerable<DoctorProfile>> GetAllAsync()
+        public async Task<IEnumerable<DoctorReadDto>> GetAllDoctorsShowToAdminAsync()
         {
             return await _context.DoctorProfiles
                 .Include(d => d.Clinic)
                 .Include(d => d.AppUser)
+                                .Select(d => new DoctorReadDto
+                                {
+                                    Id = d.Id,
+                                    Email = d.AppUser.Email,
+                                    Specialty = d.Specialty,
+                                    IsApproved = d.IsApproved,
+                                    ClinicName = d.Clinic.Name,
+                                    ClinicPhone = d.Clinic.Phone,
+                                    ClinicImagePath = d.Clinic.ImagePath,
+                                    City = d.Clinic.Address.City,
+                                    DoctorImage = d.Image,
+                                    Gender = d.Gender,
+                                    ConsultationType = d.ConsultationType,
+                                    ConsultationPrice = d.ConsultationPrice
+                                })
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<DoctorReadDto>> GetAllDoctorsAcceptedByAdminAsync()
+        {
+            return await _context.DoctorProfiles
+                .Where(d => d.IsApproved) 
+                .Include(d => d.Clinic)
+                .Include(d => d.AppUser)
+                .Select(d => new DoctorReadDto
+                {
+                    Id = d.Id,
+                    Email = d.AppUser.Email,
+                    Specialty = d.Specialty,
+                    IsApproved = d.IsApproved,
+                    ClinicName = d.Clinic.Name,
+                    ClinicPhone = d.Clinic.Phone,
+                    ClinicImagePath = d.Clinic.ImagePath,
+                    City = d.Clinic.Address.City,
+                    DoctorImage = d.Image,
+                    Gender = d.Gender,
+                    ConsultationType = d.ConsultationType,
+                    ConsultationPrice = d.ConsultationPrice
+                })
                 .ToListAsync();
         }
 
@@ -202,5 +241,12 @@ namespace E_PharmaHub.Repositories
             return await query.ToListAsync();
         }
 
+        public async Task<IEnumerable<DoctorProfile>> GetAllAsync()
+        {
+            return await _context.DoctorProfiles
+    .Include(d => d.Clinic)
+    .Include(d => d.AppUser)
+    .ToListAsync();
+        }
     }
 }

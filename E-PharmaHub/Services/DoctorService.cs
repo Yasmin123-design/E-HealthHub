@@ -35,7 +35,7 @@ namespace E_PharmaHub.Services
         }
         public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
         {
-            return await _doctorRepository.GetDoctorByUserIdReadDtoAsync(userId);
+            return await _unitOfWork.Doctors.GetDoctorByUserIdReadDtoAsync(userId);
         }
         public async Task<AppUser> RegisterDoctorAsync(DoctorRegisterDto dto, IFormFile clinicImage,IFormFile doctorImage)
         {
@@ -129,7 +129,7 @@ namespace E_PharmaHub.Services
 
         public async Task<(bool success, string message)> ApproveDoctorAsync(int doctorId)
         {
-            var doctor = await _doctorRepository.GetDoctorByIdAsync(doctorId);
+            var doctor = await _unitOfWork.Doctors.GetDoctorByIdAsync(doctorId);
             if (doctor == null)
                 return (false, "Doctor not found.");
 
@@ -165,7 +165,7 @@ namespace E_PharmaHub.Services
 
         public async Task<(bool success, string message)> RejectDoctorAsync(int doctorId)
         {
-            var doctor = await _doctorRepository.GetDoctorByIdAsync(doctorId);
+            var doctor = await _unitOfWork.Doctors.GetDoctorByIdAsync(doctorId);
             if (doctor == null)
                 return (false, "Doctor not found.");
 
@@ -321,7 +321,17 @@ namespace E_PharmaHub.Services
 
         public async Task<DoctorProfile?> GetDoctorDetailsByUserIdAsync(string userId)
         {
-            return await _doctorRepository.GetDoctorByUserIdAsync(userId);
+            return await _unitOfWork.Doctors.GetDoctorByUserIdAsync(userId);
+        }
+
+        public async Task<IEnumerable<DoctorReadDto>> GetAllDoctorsAcceptedByAdminAsync()
+        {
+            return await _unitOfWork.Doctors.GetAllDoctorsAcceptedByAdminAsync();
+        }
+
+        public async Task<IEnumerable<DoctorReadDto>> GetAllDoctorsShowToAdmin()
+        {
+            return await _unitOfWork.Doctors.GetAllDoctorsShowToAdminAsync();
         }
     }
 

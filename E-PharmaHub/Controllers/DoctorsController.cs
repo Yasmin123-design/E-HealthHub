@@ -61,6 +61,26 @@ namespace E_PharmaHub.Controllers
             return Ok(doctor);
         }
 
+        [HttpGet("allDoctorsShowToRegularUser")]
+        public async Task<IActionResult> GetAllDoctorsShowToRegularUser()
+        {
+            var doctor = await _doctorService.GetAllDoctorsAcceptedByAdminAsync();
+            if (doctor == null)
+                return NotFound(new { message = "Doctor not found." });
+
+            return Ok(doctor);
+        }
+
+        [HttpGet("allDoctorsShowToAdmin")]
+        public async Task<IActionResult> GetAllDoctorsShowToAdmin()
+        {
+            var doctor = await _doctorService.GetAllDoctorsShowToAdmin();
+            if (doctor == null)
+                return NotFound(new { message = "Doctor not found." });
+
+            return Ok(doctor);
+        }
+
         [HttpGet("specialty/{specialty}")]
         public async Task<IActionResult> GetDoctorsBySpecialty(string specialty)
         {

@@ -9,12 +9,13 @@ namespace E_PharmaHub.Repositories
         Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty);
         Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId);
         Task<DoctorReadDto?> GetDoctorByUserIdReadDtoAsync(string userId);
+        Task<IEnumerable<DoctorReadDto>> GetAllDoctorsAcceptedByAdminAsync();
         Task<IEnumerable<DoctorProfile>> GetFilteredDoctorsAsync(
               string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType);
         Task<DoctorReadDto?> GetByIdDetailsAsync(int id);
         Task MarkAsPaid(string userId);
         Task<DoctorProfile> GetDoctorByIdAsync(int id);
-
+        Task<IEnumerable<DoctorReadDto>> GetAllDoctorsShowToAdminAsync();
         Task<bool> ApproveDoctorAsync(int id);
         Task<bool> RejectDoctorAsync(int id);
 
