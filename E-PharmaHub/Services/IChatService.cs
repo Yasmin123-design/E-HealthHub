@@ -8,6 +8,6 @@ namespace E_PharmaHub.Services
         Task<MessageThreadDto> StartConversationAsync(string userId, int pharmacistId);
         Task<ChatMessage> SendMessageAsync(int threadId, string senderId, string text);
         Task<IEnumerable<ChatMessage>> GetMessagesAsync(int threadId);
-        Task<IEnumerable<MessageThread>> GetUserThreadsAsync(string userId);
+        Task<IEnumerable<ThreadDto>> GetUserThreadsAsync(string userId);
     }
 }

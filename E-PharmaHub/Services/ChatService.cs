@@ -3,6 +3,7 @@ using E_PharmaHub.Hubs;
 using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Services
 {
@@ -82,10 +83,30 @@ namespace E_PharmaHub.Services
             return await _unitOfWork.Chat.GetMessagesByThreadIdAsync(threadId);
         }
 
-        public async Task<IEnumerable<MessageThread>> GetUserThreadsAsync(string userId)
+        public async Task<IEnumerable<ThreadDto>> GetUserThreadsAsync(string userId)
         {
-            return await _unitOfWork.Chat.GetUserThreadsAsync(userId);
+            var threads = await _unitOfWork.Chat.GetUserThreadsAsync(userId);
+
+            return threads.Select(t => new ThreadDto
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Participants = t.Participants.Select(p => new ParticipantDto
+                {
+                    UserId = p.UserId,
+                    UserName = p.User?.UserName ?? "Unknown"
+                }).ToList(),
+                LastMessage = t.Messages
+                    .OrderByDescending(m => m.SentAt)
+                    .Select(m => new LastMessageDto
+                    {
+                        Text = m.Text,
+                        SentAt = m.SentAt
+                    })
+                    .FirstOrDefault()
+            });
         }
+
     }
 
 }

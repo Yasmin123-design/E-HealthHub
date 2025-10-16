@@ -29,6 +29,7 @@ namespace E_PharmaHub.Repositories
         {
             return await _context.MessageThreads
                 .Include(t => t.Participants)
+                .Include(m => m.Messages)
                 .Where(t => t.Participants.Any(p => p.UserId == userId))
                 .ToListAsync();
         }
