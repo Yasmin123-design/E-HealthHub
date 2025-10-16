@@ -114,6 +114,7 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IFavoriteMedicationRepository, FavoriteMedicationRepository>();
             builder.Services.AddScoped<IFavoriteMedicationService, FavoriteMedicationService>();
             builder.Services.AddScoped<IFavouriteClinicRepository, FavouriteClinicRepository>();
+            builder.Services.AddScoped<IMessageThreadRepository, MessageThreadRepository>();
             builder.Services.AddScoped<IChatRepository, ChatRepository>();
             builder.Services.AddScoped<IChatService, ChatService>();
 
