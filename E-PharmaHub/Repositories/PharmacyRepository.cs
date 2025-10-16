@@ -15,7 +15,7 @@ namespace E_PharmaHub.Repositories
         public async Task<Pharmacy?> GetPharmacyByPharmacistUserIdAsync(string userId)
         {
             return await _context.Pharmacists
-                .Where(p => p.AppUserId == userId)
+                .Where(p => p.AppUserId == userId && p.IsApproved)
                 .Select(p => p.Pharmacy)
                 .FirstOrDefaultAsync();
         }
@@ -26,8 +26,10 @@ namespace E_PharmaHub.Repositories
                 .Include(p => p.Address)
                 .Include(p => p.Inventory)
                     .ThenInclude(i => i.Medication)
+                .Where(p => _context.Pharmacists.Any(ph => ph.PharmacyId == p.Id && ph.IsApproved))
                 .ToListAsync();
         }
+
 
         public async Task<Pharmacy> GetByIdAsync(int id)
         {
@@ -35,8 +37,11 @@ namespace E_PharmaHub.Repositories
                 .Include(p => p.Address)
                 .Include(p => p.Inventory)
                     .ThenInclude(i => i.Medication)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .Where(p => p.Id == id &&
+                            _context.Pharmacists.Any(ph => ph.PharmacyId == p.Id && ph.IsApproved))
+                .FirstOrDefaultAsync();
         }
+
 
         public async Task AddAsync(Pharmacy entity)
         {
@@ -56,32 +61,39 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<PharmacySimpleDto>> GetAllBriefAsync()
         {
             var pharmacies = await _context.Pharmacies
-                    .Include(p => p.Address)
-                    .Select(p => new PharmacySimpleDto
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Phone = p.Phone,
-                        City = p.Address.City,
-                        ImagePath = p.ImagePath
-                    })
-                    .ToListAsync();
+                .Include(p => p.Address)
+                .Where(p => _context.Pharmacists
+                    .Any(ph => ph.PharmacyId == p.Id && ph.IsApproved))
+                .Select(p => new PharmacySimpleDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Phone = p.Phone,
+                    City = p.Address.City,
+                    ImagePath = p.ImagePath
+                })
+                .ToListAsync();
+
             return pharmacies;
         }
 
+
         public async Task<PharmacySimpleDto> GetByIdBriefAsync(int id)
         {
-            return  _context.Pharmacies
-                    .Include(p => p.Address)
-                    .Select(p => new PharmacySimpleDto
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Phone = p.Phone,
-                        City = p.Address.City,
-                        ImagePath = p.ImagePath
-                    })
-                    .FirstOrDefault(x => x.Id == id);
+            return await _context.Pharmacies
+                .Include(p => p.Address)
+                .Where(p => p.Id == id &&
+                            _context.Pharmacists.Any(ph => ph.PharmacyId == p.Id && ph.IsApproved))
+                .Select(p => new PharmacySimpleDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Phone = p.Phone,
+                    City = p.Address.City,
+                    ImagePath = p.ImagePath
+                })
+                .FirstOrDefaultAsync();
         }
+
     }
 }

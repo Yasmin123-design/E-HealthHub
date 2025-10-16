@@ -16,15 +16,21 @@ namespace E_PharmaHub.Repositories
         {
             return await _context.Clinics
                 .Include(c => c.Address)
+                .Where(c => _context.DoctorProfiles
+                    .Any(d => d.ClinicId == c.Id && d.IsApproved))
                 .ToListAsync();
         }
 
-        public async Task<Clinic> GetByIdAsync(int id)
+
+        public async Task<Clinic?> GetByIdAsync(int id)
         {
             return await _context.Clinics
                 .Include(c => c.Address)
+                .Where(c => _context.DoctorProfiles
+                    .Any(d => d.ClinicId == c.Id && d.IsApproved))
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
+
 
         public async Task AddAsync(Clinic entity)
         {
@@ -44,16 +50,19 @@ namespace E_PharmaHub.Repositories
         public async Task<Clinic> GetClinicByIdAsync(int? id)
         {
             return await _context.Clinics
-                         .Include(c => c.Address)
-                         .FirstOrDefaultAsync(c => c.Id == id);
+            .Include(c => c.Address)
+            .Where(c => _context.DoctorProfiles
+                .Any(d => d.ClinicId == c.Id && d.IsApproved))
+            .FirstOrDefaultAsync(c => c.Id == id);
         }
         public async Task<Clinic?> GetClinicByDoctorUserIdAsync(string userId)
         {
             return await _context.DoctorProfiles
-                .Where(d => d.AppUserId == userId)
+                .Where(d => d.AppUserId == userId && d.IsApproved)
                 .Select(d => d.Clinic)
                 .FirstOrDefaultAsync();
         }
+
 
     }
 }
