@@ -86,7 +86,7 @@ namespace E_PharmaHub.Repositories
             await _context.DonorProfiles.AddAsync(entity);
         }
 
-        public void Update(DonorProfile entity)
+        public async Task Update(DonorProfile entity)
         {
             _context.DonorProfiles.Update(entity);
         }

@@ -68,9 +68,9 @@ namespace E_PharmaHub.Repositories
                                  .ToListAsync();
         }
 
-        public void Update(InventoryItem entity)
+        public async Task Update(InventoryItem entity)
         {
-            _context.InventoryItems.Update(entity);
+             _context.InventoryItems.Update(entity);
         }
 
         public void Delete(InventoryItem entity)

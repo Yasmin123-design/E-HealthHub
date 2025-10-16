@@ -28,6 +28,8 @@ namespace E_PharmaHub.UnitOfWorkes
         public IClinicRepository Clinics { get; }
 
         public IUserRepository Useres { get; }
+        public IChatRepository Chat { get; private set; }
+        public IMessageThreadRepository MessageThread { get; private set; }
 
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
@@ -46,7 +48,9 @@ namespace E_PharmaHub.UnitOfWorkes
             IFavoriteMedicationRepository favoriteMedicationRepository,
             IFavouriteClinicRepository favouriteClinicRepository,
             IClinicRepository clinicRepository,
-            IUserRepository userRepository
+            IUserRepository userRepository,
+            IChatRepository chatRepository,
+            IMessageThreadRepository messageThreadRepository
             )
         {
             _context = context;
@@ -68,6 +72,8 @@ namespace E_PharmaHub.UnitOfWorkes
             FavouriteClinic = favouriteClinicRepository;
             Clinics = clinicRepository;
             Useres = userRepository;
+            Chat = chatRepository;
+            MessageThread = messageThreadRepository;
         }
 
         public async Task<int> CompleteAsync()

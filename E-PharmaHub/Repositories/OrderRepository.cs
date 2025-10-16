@@ -14,6 +14,12 @@ namespace E_PharmaHub.Repositories
         {
             await _context.Orders.AddAsync(order);
         }
+        public async Task<Order?> GetByPaymentIdAsync(int paymentId)
+        {
+            return await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.PaymentId == paymentId);
+        }
         public async Task<IEnumerable<Order>> GetAllAsync()
         {
             return await _context.Orders

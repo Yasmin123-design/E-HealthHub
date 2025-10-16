@@ -32,7 +32,7 @@ namespace E_PharmaHub.Repositories
             await _context.BloodRequests.AddAsync(entity);
         }
 
-        public void Update(BloodRequest entity)
+        public async Task Update(BloodRequest entity)
         {
             _context.BloodRequests.Update(entity);
         }

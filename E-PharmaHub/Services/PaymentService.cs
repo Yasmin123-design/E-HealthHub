@@ -50,8 +50,31 @@ namespace E_PharmaHub.Services
             switch (intentStatus)
             {
                 case "requires_capture":
-                    payment.Status = PaymentStatus.Captured; 
+                    payment.Status = PaymentStatus.Captured;
                     message = "Payment authorized successfully (awaiting pharmacist approval).";
+
+                    var order = await _unitOfWork.Order.GetByPaymentIdAsync(payment.Id);
+                    if (order != null)
+                    {
+                        order.PaymentStatus = PaymentStatus.Captured;
+
+                        foreach (var item in order.Items)
+                        {
+                            var inventoryItem = await _unitOfWork.IinventoryItem
+                                .GetByPharmacyAndMedicationAsync( order.PharmacyId,item.MedicationId);
+
+                            if (inventoryItem != null)
+                            {
+                                inventoryItem.Quantity -= item.Quantity;
+                                if (inventoryItem.Quantity < 0)
+                                    inventoryItem.Quantity = 0;
+
+                                await _unitOfWork.IinventoryItem.Update(inventoryItem);
+                            }
+                        }
+
+                        await _unitOfWork.CompleteAsync();
+                    }
                     break;
 
                 case "succeeded":

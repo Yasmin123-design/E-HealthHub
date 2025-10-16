@@ -1,4 +1,3 @@
-
 using E_PharmaHub.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Stripe;
+using E_PharmaHub.Hubs;
 
 namespace E_PharmaHub
 {
@@ -114,6 +114,11 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IFavoriteMedicationRepository, FavoriteMedicationRepository>();
             builder.Services.AddScoped<IFavoriteMedicationService, FavoriteMedicationService>();
             builder.Services.AddScoped<IFavouriteClinicRepository, FavouriteClinicRepository>();
+            builder.Services.AddScoped<IChatRepository, ChatRepository>();
+            builder.Services.AddScoped<IChatService, ChatService>();
+
+            builder.Services.AddSignalR();
+
 
             builder.Services.AddHttpContextAccessor();
 
@@ -167,6 +172,7 @@ namespace E_PharmaHub
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapHub<ChatHub>("/Hubs/Chat");
 
             app.Run();
         }

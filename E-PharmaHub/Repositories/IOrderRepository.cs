@@ -12,6 +12,8 @@ namespace E_PharmaHub.Repositories
         Task UpdateStatusAsync(int orderId, OrderStatus newStatus);
         Task MarkAsPaid(string userId);
         Task<Order?> GetPendingOrderByUserAsync(string userId, int pharmacyId);
+        Task<Order?> GetByPaymentIdAsync(int paymentId);
+
 
     }
 }

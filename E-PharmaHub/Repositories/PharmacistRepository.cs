@@ -88,7 +88,7 @@ namespace E_PharmaHub.Repositories
             await _context.Pharmacists.AddAsync(entity);
         }
 
-        public void Update(PharmacistProfile entity)
+        public async Task Update(PharmacistProfile entity)
         {
             _context.Pharmacists.Update(entity);
         }

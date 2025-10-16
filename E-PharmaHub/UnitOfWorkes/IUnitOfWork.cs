@@ -11,6 +11,8 @@ namespace E_PharmaHub.UnitOfWorkes
         IUserRepository Useres { get; }
         IClinicRepository Clinics { get; }
         IDonorRepository Donors { get; }
+        IChatRepository Chat { get; }
+        IMessageThreadRepository MessageThread { get; }
         IReviewRepository Reviews { get; }
         IFavoriteMedicationRepository Favorite { get; }
         IFavouriteClinicRepository FavouriteClinic { get; }
