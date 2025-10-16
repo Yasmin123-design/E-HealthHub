@@ -175,7 +175,7 @@ namespace E_PharmaHub
             app.UseAuthorization();
 
             app.MapControllers();
-            app.MapHub<ChatHub>("/Hubs/Chat");
+            app.MapHub<ChatHub>("/hubs/chat");
 
             app.Run();
         }
