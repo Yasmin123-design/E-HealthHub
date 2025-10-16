@@ -176,7 +176,7 @@ namespace E_PharmaHub
 
             app.MapControllers();
             app.UseWebSockets();
-            app.MapHub<ChatHub>("/hubs/chat");
+            app.MapHub<ChatHub>("/Hubs/chat");
 
             app.Run();
         }
