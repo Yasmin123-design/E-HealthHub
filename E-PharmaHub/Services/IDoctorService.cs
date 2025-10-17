@@ -18,7 +18,7 @@ namespace E_PharmaHub.Services
         Task MarkAsPaid(string userId);
         Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto, IFormFile? doctorImage);
         Task DeleteDoctorAsync(int id);
-        Task<IEnumerable<DoctorProfile>> GetDoctorsAsync(
+        Task<IEnumerable<DoctorReadDto>> GetDoctorsAsync(
     string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType);
 
         Task<(bool success, string message)> ApproveDoctorAsync(int doctorId);

@@ -207,7 +207,7 @@ namespace E_PharmaHub.Services
         {
             return await _unitOfWork.Doctors.GetDoctorsBySpecialtyAsync(specialty);
         }
-        public async Task<IEnumerable<DoctorProfile>> GetDoctorsAsync(
+        public async Task<IEnumerable<DoctorReadDto>> GetDoctorsAsync(
     string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType)
         {
             return await _unitOfWork.Doctors.GetFilteredDoctorsAsync(name, gender, sortOrder, consultationType);

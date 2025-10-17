@@ -215,7 +215,7 @@ namespace E_PharmaHub.Repositories
                           .FirstOrDefault(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<DoctorProfile>> GetFilteredDoctorsAsync(
+        public async Task<IEnumerable<DoctorReadDto>> GetFilteredDoctorsAsync(
                              string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType)
         {
             var query = _context.DoctorProfiles
@@ -238,7 +238,23 @@ namespace E_PharmaHub.Repositories
                 _ => query
             };
 
-            return await query.ToListAsync();
+            return await query
+                .Select(d => new DoctorReadDto
+                {
+                    Id = d.Id,
+                    Email = d.AppUser.Email,
+                    Specialty = d.Specialty,
+                    IsApproved = d.IsApproved,
+                    ClinicName = d.Clinic.Name,
+                    ClinicPhone = d.Clinic.Phone,
+                    ClinicImagePath = d.Clinic.ImagePath,
+                    City = d.Clinic.Address.City,
+                    DoctorImage = d.Image,
+                    Gender = d.Gender,
+                    ConsultationType = d.ConsultationType,
+                    ConsultationPrice = d.ConsultationPrice
+                })
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<DoctorProfile>> GetAllAsync()
