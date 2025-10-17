@@ -31,6 +31,8 @@ namespace E_PharmaHub.UnitOfWorkes
         public IChatRepository Chat { get; private set; }
         public IMessageThreadRepository MessageThread { get; private set; }
 
+        public IAppointmentRepository Appointments { get; private set; }
+
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
             IReviewRepository reviewRepository,
@@ -50,7 +52,8 @@ namespace E_PharmaHub.UnitOfWorkes
             IClinicRepository clinicRepository,
             IUserRepository userRepository,
             IChatRepository chatRepository,
-            IMessageThreadRepository messageThreadRepository
+            IMessageThreadRepository messageThreadRepository,
+            IAppointmentRepository appointmentRepository
             )
         {
             _context = context;
@@ -74,6 +77,7 @@ namespace E_PharmaHub.UnitOfWorkes
             Useres = userRepository;
             Chat = chatRepository;
             MessageThread = messageThreadRepository;
+            Appointments = appointmentRepository;
         }
 
         public async Task<int> CompleteAsync()

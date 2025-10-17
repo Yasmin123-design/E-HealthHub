@@ -23,5 +23,7 @@ namespace E_PharmaHub.Services
 
         Task<(bool success, string message)> ApproveDoctorAsync(int doctorId);
         Task<(bool success, string message)> RejectDoctorAsync(int doctorId);
+        Task<int?> GetDoctorPatientCountAsync(string doctorId);
+        Task<int?> GetDoctorReviewCountAsync(int doctorProfileId);
     }
 }

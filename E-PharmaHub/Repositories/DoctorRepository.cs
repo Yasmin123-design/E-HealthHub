@@ -257,6 +257,21 @@ namespace E_PharmaHub.Repositories
                 .ToListAsync();
         }
 
+        public async Task<int> GetDoctorPatientCountAsync(string doctorId)
+        {
+            return await _context.Appointments
+                .Where(a => a.DoctorId == doctorId && a.Status != AppointmentStatus.Cancelled)
+                .Select(a => a.UserId)
+                .Distinct()
+                .CountAsync();
+        }
+
+        public async Task<int> GetDoctorReviewCountAsync(int doctorProfileId)
+        {
+            return await _context.Reviews
+                .Where(r => r.DoctorId == doctorProfileId)
+                .CountAsync();
+        }
         public async Task<IEnumerable<DoctorProfile>> GetAllAsync()
         {
             return await _context.DoctorProfiles
