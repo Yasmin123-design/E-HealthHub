@@ -121,7 +121,8 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IMessageThreadRepository, MessageThreadRepository>();
             builder.Services.AddScoped<IChatRepository, ChatRepository>();
             builder.Services.AddScoped<IChatService, ChatService>();
-
+            builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+            builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
 
             builder.Services.AddHttpContextAccessor();
