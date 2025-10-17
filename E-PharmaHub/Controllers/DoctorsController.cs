@@ -190,7 +190,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("{doctorId}/patients/count")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor,Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetDoctorPatientCount(string doctorId)
         {
             var count = await _doctorService.GetDoctorPatientCountAsync(doctorId);
@@ -205,7 +205,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("{doctorProfileId}/reviews/count")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor,Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetDoctorReviewCount(int doctorProfileId)
         {
             var count = await _doctorService.GetDoctorReviewCountAsync(doctorProfileId);
