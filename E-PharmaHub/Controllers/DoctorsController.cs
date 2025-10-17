@@ -62,6 +62,8 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("allDoctorsShowToRegularUser")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
         public async Task<IActionResult> GetAllDoctorsShowToRegularUser()
         {
             var doctor = await _doctorService.GetAllDoctorsAcceptedByAdminAsync();
@@ -72,6 +74,8 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("allDoctorsShowToAdmin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
         public async Task<IActionResult> GetAllDoctorsShowToAdmin()
         {
             var doctor = await _doctorService.GetAllDoctorsShowToAdmin();
