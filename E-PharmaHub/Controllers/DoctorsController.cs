@@ -86,6 +86,8 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("specialty/{specialty}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
         public async Task<IActionResult> GetDoctorsBySpecialty(string specialty)
         {
             var doctors = await _doctorService.GetDoctorsBySpecialtyAsync(specialty);
@@ -175,6 +177,8 @@ namespace E_PharmaHub.Controllers
 
 
         [HttpGet("filterDoctors")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
         public async Task<IActionResult> GetDoctors(
             [FromQuery] string? name,
             [FromQuery] Gender? gender,
