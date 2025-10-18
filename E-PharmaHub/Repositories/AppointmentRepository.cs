@@ -61,6 +61,7 @@ namespace E_PharmaHub.Repositories
         public async Task<Appointment> GetByIdAsync(int id)
         {
             return await _context.Appointments
+                .Include(u => u.User)
                 .Include(a => a.Doctor)
                 .Include(a => a.Clinic)
                 .FirstOrDefaultAsync(a => a.Id == id);
