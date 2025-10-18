@@ -46,7 +46,8 @@ namespace E_PharmaHub.Controllers
             return Ok(new
             {
                 message = "Payment session created successfully.",
-                sessionUrl = result.CheckoutUrl
+                sessionUrl = result.CheckoutUrl,
+                sessionId = result.SessionId,
             });
         }
 

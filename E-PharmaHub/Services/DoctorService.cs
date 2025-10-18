@@ -149,6 +149,7 @@ namespace E_PharmaHub.Services
 
             doctor.IsApproved = true;
             doctor.IsRejected = false;
+            doctor.HasPaid = true;
             await _unitOfWork.CompleteAsync();
 
             await _emailSender.SendEmailAsync(
@@ -175,6 +176,7 @@ namespace E_PharmaHub.Services
 
             doctor.IsApproved = false;
             doctor.IsRejected = true;
+            doctor.HasPaid = true;
             await _unitOfWork.CompleteAsync();
 
             var payment = await _paymentService.GetByReferenceIdAsync(doctor.AppUserId);
