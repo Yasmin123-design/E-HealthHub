@@ -44,6 +44,7 @@ namespace E_PharmaHub.Repositories
             return await _context
                 .Appointments
                 .Include(a => a.User)
+                .Include(d => d.Doctor)
                 .Include(a => a.Clinic)
                 .Where(a => a.DoctorId == doctorId)
                 .ToListAsync();
