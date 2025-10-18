@@ -123,6 +123,7 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IChatService, ChatService>();
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 
 
             builder.Services.AddHttpContextAccessor();

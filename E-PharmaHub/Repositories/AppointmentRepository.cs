@@ -1,5 +1,6 @@
 ﻿using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace E_PharmaHub.Repositories
 {
@@ -48,6 +49,10 @@ namespace E_PharmaHub.Repositories
                 .Include(a => a.Clinic)
                 .Where(a => a.DoctorId == doctorId)
                 .ToListAsync();
+        }
+        public async Task<bool> ExistsAsync(Expression<Func<Appointment, bool>> predicate)
+        {
+            return await _context.Appointments.AnyAsync(predicate);
         }
 
         public async Task<IEnumerable<Appointment>> GetAppointmentsByUserIdAsync(string userId)
