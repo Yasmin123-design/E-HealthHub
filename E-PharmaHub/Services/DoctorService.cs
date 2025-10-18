@@ -108,7 +108,7 @@ namespace E_PharmaHub.Services
                 AppUserId = user.Id,
                 ClinicId = clinic.Id,
                 Specialty = dto.Specialty,
-                ConsultationPrice = dto.ConsultationPrice,
+                ConsultationPrice = dto.ConsultationPrice??0,
                 ConsultationType = dto.ConsultationType,
                 Gender = dto.Gender,
                 IsApproved = false,

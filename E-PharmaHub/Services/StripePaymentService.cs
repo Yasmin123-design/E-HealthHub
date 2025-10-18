@@ -102,7 +102,7 @@ namespace E_PharmaHub.Services
                 ProviderTransactionId = session.Id,     
                 PaymentIntentId = paymentIntentId,      
                 Status = PaymentStatus.Pending,         
-                Amount = dto.Amount,
+                Amount = dto.Amount??0,
                 PayerUserId = dto.ReferenceId          
             };
 
