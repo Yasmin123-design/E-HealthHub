@@ -12,16 +12,19 @@ namespace E_PharmaHub.Controllers
         private readonly IPaymentService _paymentService;
         private readonly IDoctorService _doctorService;
         private readonly IPharmacistService _pharmacistService;
+        private readonly IAppointmentService _appointmentService;
         public PaymentsController(IStripePaymentService stripePaymentService ,
             IPaymentService paymentService ,
             IDoctorService doctorService ,
-            IPharmacistService pharmacistService
+            IPharmacistService pharmacistService,
+            IAppointmentService appointmentService
             )
         {
             _stripePaymentService = stripePaymentService;
             _paymentService = paymentService;
             _doctorService = doctorService;
             _pharmacistService = pharmacistService;
+            _appointmentService = appointmentService;
         }
 
         [HttpPost("create-session")]
@@ -43,6 +46,12 @@ namespace E_PharmaHub.Controllers
                     return NotFound(new { message = "Doctor not found." });
 
                 dto.ReferenceId = doctor.AppUserId;
+            }
+            if(dto.PaymentFor == Models.PaymentForType.Appointment && dto.AppointmentId.HasValue)
+            {
+                var appointment = await _appointmentService.GetFullAppointmemtByIdAsync(dto.AppointmentId.Value);
+                var doctor = await _doctorService.GetDoctorByUserIdAsync(appointment.DoctorId);
+                dto.Amount = doctor.ConsultationPrice;
             }
 
             var result = await _stripePaymentService.CreateCheckoutSessionAsync(dto);
