@@ -37,7 +37,6 @@ namespace E_PharmaHub.Controllers
                     return NotFound(new { message = "Doctor not found." });
 
                 dto.ReferenceId = doctor.AppUserId;
-                dto.Amount = doctor.ConsultationPrice;
             }
             if (dto.PharmacistId.HasValue)
             {
@@ -52,6 +51,7 @@ namespace E_PharmaHub.Controllers
                 var appointment = await _appointmentService.GetFullAppointmemtByIdAsync(dto.AppointmentId.Value);
                 var doctor = await _doctorService.GetDoctorByUserIdAsync(appointment.DoctorId);
                 dto.Amount = doctor.ConsultationPrice;
+                dto.ReferenceId = appointment.UserId;
             }
 
             var result = await _stripePaymentService.CreateCheckoutSessionAsync(dto);
