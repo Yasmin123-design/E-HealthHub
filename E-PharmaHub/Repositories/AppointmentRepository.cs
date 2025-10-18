@@ -12,10 +12,11 @@ namespace E_PharmaHub.Repositories
             _context = context;
         }
 
-        public Task AddAsync(Appointment entity)
+        public async Task AddAsync(Appointment entity)
         {
-            throw new NotImplementedException();
+            await _context.Appointments.AddAsync(entity);
         }
+
 
         public async Task<Appointment> BookAppointmentAsync(Appointment appointment)
         {
