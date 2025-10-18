@@ -70,7 +70,7 @@ namespace E_PharmaHub.Controllers
         } 
         
 
-        [HttpPatch("{id}/status")]
+        [HttpPatch("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
         public async Task<IActionResult> CompleteAppointment(int id)
         {
