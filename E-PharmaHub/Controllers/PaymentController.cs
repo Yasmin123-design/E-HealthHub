@@ -1,10 +1,6 @@
 ﻿using E_PharmaHub.Dtos;
-using E_PharmaHub.Models;
 using E_PharmaHub.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
 {
@@ -15,14 +11,17 @@ namespace E_PharmaHub.Controllers
         private readonly IStripePaymentService _stripePaymentService;
         private readonly IPaymentService _paymentService;
         private readonly IDoctorService _doctorService;
+        private readonly IPharmacistService _pharmacistService;
         public PaymentsController(IStripePaymentService stripePaymentService ,
             IPaymentService paymentService ,
-            IDoctorService doctorService
+            IDoctorService doctorService ,
+            IPharmacistService pharmacistService
             )
         {
             _stripePaymentService = stripePaymentService;
             _paymentService = paymentService;
             _doctorService = doctorService;
+            _pharmacistService = pharmacistService;
         }
 
         [HttpPost("create-session")]
@@ -36,7 +35,14 @@ namespace E_PharmaHub.Controllers
 
                 dto.ReferenceId = doctor.AppUserId; 
             }
+            if (dto.PharmacistId.HasValue)
+            {
+                var doctor = await _pharmacistService.GetPharmacistProfileByIdAsync(dto.PharmacistId.Value);
+                if (doctor == null)
+                    return NotFound(new { message = "Doctor not found." });
 
+                dto.ReferenceId = doctor.AppUserId;
+            }
 
             var result = await _stripePaymentService.CreateCheckoutSessionAsync(dto);
 
