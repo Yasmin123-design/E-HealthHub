@@ -112,37 +112,56 @@ namespace E_PharmaHub.Services
             if (appointment.Status == AppointmentStatus.Cancelled)
                 return (false, "Appointment was cancelled before.");
 
-            appointment.Status = AppointmentStatus.Confirmed;
+            if (!appointment.PaymentId.HasValue)
+                return (false, "No payment found for this appointment.");
 
-            if (appointment.PaymentId.HasValue)
+            var payment = await _unitOfWork.Payments.GetByIdAsync(appointment.PaymentId.Value);
+            if (payment == null)
+                return (false, "Payment not found.");
+
+            if (payment.Status == PaymentStatus.Paid)
             {
-                var payment = await _unitOfWork.Payments.GetByIdAsync(appointment.PaymentId.Value);
-                if (payment != null && !string.IsNullOrEmpty(payment.PaymentIntentId))
+                appointment.Status = AppointmentStatus.Confirmed;
+                appointment.IsPaid = true;
+                await _unitOfWork.CompleteAsync();
+
+                await _emailSender.SendEmailAsync(
+                    appointment.User.Email,
+                    "Appointment Approved",
+                    $"Hello {appointment.User.Email},<br/>Your appointment with Dr. {appointment.Doctor.UserName} has been approved successfully."
+                );
+
+                return (true, "Appointment approved (already paid).");
+            }
+
+            if (!string.IsNullOrEmpty(payment.PaymentIntentId))
+            {
+                var captured = await _stripePaymentService.CapturePaymentAsync(payment.PaymentIntentId);
+                if (captured)
                 {
-                    var captured = await _stripePaymentService.CapturePaymentAsync(payment.PaymentIntentId);
-                    if (captured)
-                    {
-                        payment.Status = PaymentStatus.Paid;
-                        appointment.IsPaid = true;
-                        await _unitOfWork.CompleteAsync();
-                    }
-                    else
-                    {
-                        return (false, "Payment capture failed.");
-                    }
+                    payment.Status = PaymentStatus.Paid;
+                    appointment.IsPaid = true;
+                    appointment.Status = AppointmentStatus.Confirmed;
+
+                    await _unitOfWork.CompleteAsync();
+
+                    await _emailSender.SendEmailAsync(
+                        appointment.User.Email,
+                        "Appointment Approved",
+                        $"Hello {appointment.User.Email},<br/>Your appointment with Dr. {appointment.Doctor.UserName} has been approved and payment captured successfully."
+                    );
+
+                    return (true, "Appointment approved and payment captured.");
+                }
+                else
+                {
+                    return (false, "Payment capture failed.");
                 }
             }
 
-            await _unitOfWork.CompleteAsync();
-
-            await _emailSender.SendEmailAsync(
-                appointment.User.Email,
-                "Appointment Approved",
-                $"Hello {appointment.User.Email},<br/>Your appointment with Dr. {appointment.Doctor.UserName} has been approved and payment captured successfully."
-            );
-
-            return (true, "Appointment approved and payment captured.");
+            return (false, "Invalid payment details.");
         }
+
 
         public async Task<(bool success, string message)> RejectAppointmentAsync(int appointmentId)
         {
