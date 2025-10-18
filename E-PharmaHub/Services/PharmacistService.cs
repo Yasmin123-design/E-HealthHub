@@ -159,29 +159,31 @@ namespace E_PharmaHub.Services
             if (pharmacist.IsRejected)
                 return (false, "Pharmacist was rejected before.");
 
-            pharmacist.IsApproved = true;
-            pharmacist.IsRejected = false;
+            var payment = await _paymentService.GetByReferenceIdAsync(pharmacist.AppUserId);
+            if (payment == null || string.IsNullOrEmpty(payment.PaymentIntentId))
+                return (false, "Pharmacist has not completed the payment process.");
+
+            var captured = await _stripePaymentService.CapturePaymentAsync(payment.PaymentIntentId);
+            if (!captured)
+                return (false, "Payment capture failed. Please verify payment status.");
+
+            payment.Status = PaymentStatus.Paid;
             await _unitOfWork.CompleteAsync();
 
-            var payment = await _paymentService.GetByReferenceIdAsync(pharmacist.AppUserId);
-            if (payment != null && !string.IsNullOrEmpty(payment.PaymentIntentId))
-            {
-                var captured = await _stripePaymentService.CapturePaymentAsync(payment.PaymentIntentId);
-                if (captured)
-                {
-                    payment.Status = PaymentStatus.Paid;
-                    await _unitOfWork.CompleteAsync();
-                }
-            }
+            pharmacist.IsApproved = true;
+            pharmacist.IsRejected = false;
+            pharmacist.HasPaid = true;
+            await _unitOfWork.CompleteAsync();
 
             await _emailSender.SendEmailAsync(
                 pharmacist.AppUser.Email,
                 "Account Approved",
-                $"Hello {pharmacist.AppUser.Email},<br/>Your pharmacist account has been approved by admin. Welcome aboard!"
+                $"Hello {pharmacist.AppUser.Email},<br/>Your pharmacist account has been accepted by admin after payment confirmation."
             );
 
-            return (true, "Pharmacist approved successfully and payment captured.");
+            return (true, "Pharmacist approved successfully after confirming payment.");
         }
+
 
         public async Task<(bool success, string message)> RejectPharmacistAsync(int pharmacistId)
         {
