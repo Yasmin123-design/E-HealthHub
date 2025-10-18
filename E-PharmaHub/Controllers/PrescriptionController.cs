@@ -41,7 +41,7 @@ namespace E_PharmaHub.Controllers
             if (!result.success)
                 return BadRequest(new { message = result.message });
 
-            return Ok(new { message = "Prescription created successfully", prescription = result.prescription });
+            return Ok(new { message = "Prescription created successfully"});
         }
 
 

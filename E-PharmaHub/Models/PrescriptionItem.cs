@@ -14,7 +14,7 @@ namespace E_PharmaHub.Models
         public int Quantity { get; set; }
 
         public virtual Prescription? Prescription { get; set; }
-        public virtual Medication? Medication { get; set; } // ممكن null لو دواء جديد
+        public virtual Medication? Medication { get; set; } 
     }
 
 }
