@@ -38,8 +38,14 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("doctor/{doctorId}")]
-        public async Task<IActionResult> GetByDoctor(string doctorId)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+        public async Task<IActionResult> GetByDoctor()
+
         {
+            var doctorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (doctorId == null)
+                return Unauthorized(new { message = "Doctor not authorized" });
+
             var appointments = await _appointmentService.GetAppointmentsByDoctorAsync(doctorId);
             if (!appointments.Any())
                 return NotFound(new { message = "No appointments found for this doctor." });
@@ -48,8 +54,14 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetByUser(string userId)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+        public async Task<IActionResult> GetByUser()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+                return Unauthorized(new { message = "User not authorized" });
+
             var appointments = await _appointmentService.GetAppointmentsByUserAsync(userId);
             if (!appointments.Any())
                 return NotFound(new { message = "No appointments found for this patient." });
@@ -59,12 +71,13 @@ namespace E_PharmaHub.Controllers
         
 
         [HttpPatch("{id}/status")]
-        public async Task<IActionResult> UpdateStatus(int id, [FromQuery] AppointmentStatus status)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+        public async Task<IActionResult> CompleteAppointment(int id)
         {
-            var result = await _appointmentService.UpdateStatusAsync(id, status);
+            var result = await _appointmentService.CompleteAppointmentAsync(id);
             if (!result) return NotFound(new { message = "Appointment not found" });
 
-            return Ok(new { message = $"Appointment status updated to {status}" });
+            return Ok(new { message = $"Appointment status updated to Completed" });
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]

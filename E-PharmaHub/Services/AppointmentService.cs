@@ -114,13 +114,12 @@ namespace E_PharmaHub.Services
             if (appointment == null) return null;
             return appointment;
         }
-        public async Task<bool> UpdateStatusAsync(int id, AppointmentStatus status)
+        public async Task<bool> CompleteAppointmentAsync(int id)
         {
             var appointment = await _unitOfWork.Appointments.GetByIdAsync(id);
             if (appointment == null) return false;
 
-            appointment.Status = status;
-            _unitOfWork.Appointments.Update(appointment);
+            appointment.Status = AppointmentStatus.Completed;
             await _unitOfWork.CompleteAsync();
 
             return true;
