@@ -33,7 +33,8 @@ namespace E_PharmaHub.Controllers
                 if (doctor == null)
                     return NotFound(new { message = "Doctor not found." });
 
-                dto.ReferenceId = doctor.AppUserId; 
+                dto.ReferenceId = doctor.AppUserId;
+                dto.Amount = doctor.ConsultationPrice;
             }
             if (dto.PharmacistId.HasValue)
             {

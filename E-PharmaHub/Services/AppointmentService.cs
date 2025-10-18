@@ -45,6 +45,7 @@ namespace E_PharmaHub.Services
 
             return new AppointmentDto
             {
+                UserId = dto.UserId,
                 DoctorId = dto.DoctorId,
                 ClinicId = appointment.ClinicId,
                 StartAt = appointment.StartAt,

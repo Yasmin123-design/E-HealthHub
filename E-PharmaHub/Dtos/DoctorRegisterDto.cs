@@ -18,7 +18,7 @@ namespace E_PharmaHub.Dtos
         public string Specialty { get; set; }
 
         public Gender Gender { get; set; }
-        public decimal ConsultationPrice { get; set; }
+        public decimal? ConsultationPrice { get; set; }
         public ConsultationType ConsultationType { get; set; }
 
 
