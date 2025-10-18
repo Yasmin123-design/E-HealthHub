@@ -190,17 +190,27 @@ namespace E_PharmaHub.Services
                 order.Status = OrderStatus.Cancelled;
                 order.PaymentStatus = PaymentStatus.Refunded;
 
+                foreach (var item in order.Items)
+                {
+                    var inventoryItem = await _unitOfWork.IinventoryItem
+                        .GetByPharmacyAndMedicationAsync(order.PharmacyId, item.MedicationId);
+
+                    if (inventoryItem != null)
+                    {
+                        inventoryItem.Quantity += item.Quantity; 
+                        await _unitOfWork.IinventoryItem.Update(inventoryItem);
+                    }
+                }
+
                 await _unitOfWork.CompleteAsync();
 
-                return (true, "Order cancelled and payment authorization voided successfully.");
+                return (true, "Order cancelled successfully and quantities restored to inventory.");
             }
             catch (Exception ex)
             {
                 return (false, $"Failed to cancel payment: {ex.Message}");
             }
         }
-
-
 
         public async Task<IEnumerable<BriefOrderDto>> GetOrdersByPharmacyIdAsync(int pharmacyId)
         {
