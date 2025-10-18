@@ -24,6 +24,9 @@ namespace E_PharmaHub.Services
             var doctor = await _unitOfWork.Doctors.GetByIdAsync(dto.DoctorId);
             if (doctor == null)
                 throw new Exception("Doctor not found.");
+            var clinic = await _unitOfWork.Clinics.GetByIdAsync(dto.ClinicId);
+            if (clinic == null)
+                throw new Exception("Clinic not found.");
 
             var doctorUserId = doctor.AppUserId;
 
