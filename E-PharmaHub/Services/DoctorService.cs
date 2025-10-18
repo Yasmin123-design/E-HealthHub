@@ -11,13 +11,11 @@ namespace E_PharmaHub.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<AppUser> _userManager;
         private readonly IFileStorageService _fileStorage;
-        private readonly IDoctorRepository _doctorRepository;
         private readonly IStripePaymentService _stripePaymentService;
         private readonly IPaymentService _paymentService;
         private readonly IEmailSender _emailSender;
 
         public DoctorService(IUnitOfWork unitOfWork,
-            IDoctorRepository doctorRepository,
             UserManager<AppUser> userManager,
             IFileStorageService fileStorage,
             IStripePaymentService stripePaymentService,
@@ -31,7 +29,6 @@ namespace E_PharmaHub.Services
             _stripePaymentService = stripePaymentService;
             _paymentService = paymentService;
             _emailSender = emailSender;
-            _doctorRepository = doctorRepository;
         }
         public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
         {
@@ -139,29 +136,30 @@ namespace E_PharmaHub.Services
             if (doctor.IsRejected)
                 return (false, "Doctor was rejected before.");
 
+            var payment = await _paymentService.GetByReferenceIdAsync(doctor.AppUserId);
+            if (payment == null || string.IsNullOrEmpty(payment.PaymentIntentId))
+                return (false, "Doctor has not completed the payment process.");
+
+            var captured = await _stripePaymentService.CapturePaymentAsync(payment.PaymentIntentId);
+            if (!captured)
+                return (false, "Payment capture failed. Please verify payment status.");
+
+            payment.Status = PaymentStatus.Paid;
+            await _unitOfWork.CompleteAsync();
+
             doctor.IsApproved = true;
             doctor.IsRejected = false;
             await _unitOfWork.CompleteAsync();
 
-            var payment = await _paymentService.GetByReferenceIdAsync(doctor.AppUserId);
-            if (payment != null && !string.IsNullOrEmpty(payment.PaymentIntentId))
-            {
-                var captured = await _stripePaymentService.CapturePaymentAsync(payment.PaymentIntentId);
-                if (captured)
-                {
-                    payment.Status = PaymentStatus.Paid;
-                    await _unitOfWork.CompleteAsync();
-                }
-            }
-
             await _emailSender.SendEmailAsync(
                 doctor.AppUser.Email,
                 "Account Approved",
-                $"Hello {doctor.AppUser.Email},<br/>Your account has been accepted by admin."
+                $"Hello {doctor.AppUser.Email},<br/>Your account has been accepted by admin after payment confirmation."
             );
 
-            return (true, "Doctor approved successfully and payment captured.");
+            return (true, "Doctor approved successfully after confirming payment.");
         }
+
 
         public async Task<(bool success, string message)> RejectDoctorAsync(int doctorId)
         {
