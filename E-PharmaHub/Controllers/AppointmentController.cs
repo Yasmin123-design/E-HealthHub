@@ -37,7 +37,7 @@ namespace E_PharmaHub.Controllers
             });
         }
 
-        [HttpGet("doctor/{doctorId}")]
+        [HttpGet("doctor")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
         public async Task<IActionResult> GetByDoctor()
 
@@ -53,7 +53,7 @@ namespace E_PharmaHub.Controllers
             return Ok(appointments);
         }
 
-        [HttpGet("user/{userId}")]
+        [HttpGet("user")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
         public async Task<IActionResult> GetByUser()
         {
