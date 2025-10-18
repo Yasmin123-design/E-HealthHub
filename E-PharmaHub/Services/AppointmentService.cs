@@ -19,20 +19,36 @@ namespace E_PharmaHub.Services
             _stripePaymentService = stripePaymentService;
             _emailSender = emailSender;
         }
-        public async Task<Appointment> BookAppointmentAsync(AppointmentDto dto)
+        public async Task<AppointmentDto> BookAppointmentAsync(AppointmentDto dto)
         {
+            var doctor = await _unitOfWork.Doctors.GetByIdAsync(dto.DoctorId);
+            if (doctor == null)
+                throw new Exception("Doctor not found.");
+
+            var doctorUserId = doctor.AppUserId;
+
             var appointment = new Appointment
             {
                 UserId = dto.UserId,
-                DoctorId = dto.DoctorId,
+                DoctorId = doctorUserId,  
                 ClinicId = dto.ClinicId,
                 StartAt = dto.StartAt,
                 EndAt = dto.EndAt,
                 Status = AppointmentStatus.Pending
             };
 
-            return await _unitOfWork.Appointments.BookAppointmentAsync(appointment);
+            await _unitOfWork.Appointments.AddAsync(appointment);
+            await _unitOfWork.CompleteAsync();
+
+            return new AppointmentDto
+            {
+                DoctorId = dto.DoctorId,
+                ClinicId = appointment.ClinicId,
+                StartAt = appointment.StartAt,
+                EndAt = appointment.EndAt
+            };
         }
+
 
         public async Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByDoctorAsync(string doctorId)
         {

@@ -4,6 +4,7 @@ using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
 {
@@ -22,8 +23,18 @@ namespace E_PharmaHub.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
         public async Task<IActionResult> BookAppointment([FromBody] AppointmentDto dto)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized(new { message = "User not authorized" });
+
+            dto.UserId = userId; 
+
             var appointment = await _appointmentService.BookAppointmentAsync(dto);
-            return Ok(new { message = "Appointment booked successfully!", appointment });
+            return Ok(new
+            {
+                message = "Appointment booked successfully!",
+                appointment
+            });
         }
 
         [HttpGet("doctor/{doctorId}")]
