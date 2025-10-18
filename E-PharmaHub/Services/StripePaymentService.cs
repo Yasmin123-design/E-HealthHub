@@ -118,7 +118,15 @@ namespace E_PharmaHub.Services
                     await _unitOfWork.CompleteAsync();
                 }
             }
-
+            if (dto.PaymentFor == PaymentForType.Appointment && dto.AppointmentId.HasValue)
+            {
+                var appontment = await _unitOfWork.Appointments.GetByIdAsync(dto.AppointmentId.Value);
+                if (appontment != null)
+                {
+                    appontment.PaymentId = payment.Id;
+                    await _unitOfWork.CompleteAsync();
+                }
+            }
             return new StripeSessionResponseDto
             {
                 CheckoutUrl = session.Url,

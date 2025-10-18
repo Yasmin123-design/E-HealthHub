@@ -14,7 +14,12 @@ namespace E_PharmaHub.Models
         public string DoctorId { get; set; }
         [ForeignKey(nameof(DoctorId))]
         public virtual AppUser Doctor { get; set; }
+        public int? PaymentId { get; set; }
 
+        [ForeignKey(nameof(PaymentId))]
+        public virtual Payment? Payment { get; set; }
+
+        public bool IsPaid { get; set; } = false;
         public int ClinicId { get; set; }
         public virtual Clinic? Clinic { get; set; }
 
