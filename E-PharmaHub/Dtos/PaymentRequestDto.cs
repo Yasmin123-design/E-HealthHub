@@ -4,7 +4,7 @@ namespace E_PharmaHub.Dtos
 {
     public class PaymentRequestDto
     {
-        public int DoctorId { get; set; }
+        public int? DoctorId { get; set; }
         public string? ReferenceId { get; set; }
         public PaymentForType PaymentFor { get; set; }
         public decimal Amount { get; set; }

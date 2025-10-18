@@ -26,18 +26,21 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPost("create-session")]
-        [AllowAnonymous] 
         public async Task<IActionResult> CreatePaymentSession([FromBody] PaymentRequestDto dto)
         {
-            var doctor = await _doctorService.GetDoctorByIdAsync(dto.DoctorId);
-            if (doctor == null)
-                return NotFound(new { message = "Doctor not found." });
+            if (dto.DoctorId.HasValue)
+            {
+                var doctor = await _doctorService.GetDoctorByIdAsync(dto.DoctorId.Value);
+                if (doctor == null)
+                    return NotFound(new { message = "Doctor not found." });
 
-            var existingPayment = await _paymentService.GetByReferenceIdAsync(doctor.AppUserId);
-            if (existingPayment != null && existingPayment.Status != PaymentStatus.Failed)
-                return BadRequest(new { message = "Payment already exists for this doctor." });
+                dto.ReferenceId = doctor.AppUserId; 
+            }
 
-            dto.ReferenceId = doctor.AppUserId;
+            if (string.IsNullOrEmpty(dto.ReferenceId))
+            {
+                dto.ReferenceId = Guid.NewGuid().ToString();
+            }
 
             var result = await _stripePaymentService.CreateCheckoutSessionAsync(dto);
 
@@ -47,9 +50,10 @@ namespace E_PharmaHub.Controllers
             return Ok(new
             {
                 message = "Payment session created successfully.",
-                sessionUrl = result.CheckoutUrl 
+                sessionUrl = result.CheckoutUrl
             });
         }
+
 
         [HttpGet("verify-session")]
 
