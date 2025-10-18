@@ -37,10 +37,6 @@ namespace E_PharmaHub.Controllers
                 dto.ReferenceId = doctor.AppUserId; 
             }
 
-            if (string.IsNullOrEmpty(dto.ReferenceId))
-            {
-                dto.ReferenceId = Guid.NewGuid().ToString();
-            }
 
             var result = await _stripePaymentService.CreateCheckoutSessionAsync(dto);
 
