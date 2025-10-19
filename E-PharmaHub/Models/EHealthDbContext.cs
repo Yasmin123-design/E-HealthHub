@@ -25,6 +25,7 @@ namespace E_PharmaHub.Models
         public DbSet<FavoriteClinic> FavoriteClinics { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<PrescriptionItem> PrescriptionItems { get; set; }
         public DbSet<Clinic> Clinics { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<BloodRequest> BloodRequests { get; set; }

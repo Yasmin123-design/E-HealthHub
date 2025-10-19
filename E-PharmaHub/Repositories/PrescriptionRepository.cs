@@ -54,9 +54,15 @@ namespace E_PharmaHub.Repositories
 
         public async Task DeleteAsync(Prescription prescription)
         {
+            var items = _context.PrescriptionItems
+                .Where(i => i.PrescriptionId == prescription.Id);
+
+            _context.PrescriptionItems.RemoveRange(items);
+
             _context.Prescriptions.Remove(prescription);
-            await Task.CompletedTask;
+
         }
+
 
     }
 }
