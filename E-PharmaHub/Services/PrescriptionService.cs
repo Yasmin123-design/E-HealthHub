@@ -89,7 +89,7 @@ namespace E_PharmaHub.Services
                    IssuedAt = p.IssuedAt,
                    Items = p.Items.Select(i => new PrescriptionItemViewDto
                    {
-                       MedicationName = i.Medication.GenericName,
+                       MedicationName = i.MedicationId == null ? i.MedicationName : i.Medication.GenericName,
                        Dosage = i.Dosage,
                        Quantity = i.Quantity
                    }).ToList()
@@ -112,7 +112,7 @@ namespace E_PharmaHub.Services
                     IssuedAt = p.IssuedAt,
                     Items = p.Items.Select(i => new PrescriptionItemViewDto
                     {
-                        MedicationName = i.Medication.GenericName,
+                        MedicationName = i.MedicationId == null ? i.MedicationName: i.Medication.GenericName,
                         Dosage = i.Dosage,
                         Quantity = i.Quantity
                     }).ToList()
@@ -136,7 +136,7 @@ namespace E_PharmaHub.Services
                 IssuedAt = p.IssuedAt,
                 Items = p.Items.Select(i => new PrescriptionItemViewDto
                 {
-                    MedicationName = i.Medication.GenericName,
+                    MedicationName = i.MedicationId == null ? i.MedicationName : i.Medication.GenericName,
                     Dosage = i.Dosage,
                     Quantity = i.Quantity
                 }).ToList()
