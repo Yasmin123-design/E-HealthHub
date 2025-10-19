@@ -25,6 +25,7 @@ namespace E_PharmaHub.Repositories
         {
             return await _context.Prescriptions
                 .Include(p => p.Doctor)
+                .Include(u => u.User)
                 .Include(p => p.Items)
                 .ThenInclude(i => i.Medication)
                 .Where(p => p.UserId == userId)
@@ -34,6 +35,7 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<Prescription>> GetByDoctorIdAsync(int doctorId)
         {
             return await _context.Prescriptions
+                .Include(p => p.Doctor)
                 .Include(p => p.User)
                 .Include(p => p.Items)
                 .ThenInclude(i => i.Medication)
