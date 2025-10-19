@@ -13,8 +13,6 @@ namespace E_PharmaHub.Models
         public virtual DonorProfile? DonorProfile { get; set; }
         public virtual PharmacistProfile? PharmacistProfile { get; set; }
         public virtual DoctorProfile? DoctorProfile { get; set; }
-        public virtual HealthProviderProfile? HealthProviderProfile { get; set; }
-
         public virtual ICollection<Order>? Orders { get; set; }
         public virtual ICollection<Review>? Reviews { get; set; }
         public virtual ICollection<MessageThread>? MessageThreads { get; set; }
