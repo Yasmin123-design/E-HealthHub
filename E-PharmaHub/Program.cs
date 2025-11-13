@@ -180,6 +180,7 @@ namespace E_PharmaHub
             app.UseAuthorization();
 
             app.MapControllers();
+            app.UseStaticFiles();
 
             app.UseWebSockets();
             app.MapHub<ChatHub>("/hubs/chat");
