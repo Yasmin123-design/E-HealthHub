@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.UnitOfWorkes;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.UnitOfWorkes;
 
 namespace E_PharmaHub.Services
 {
@@ -29,7 +30,7 @@ namespace E_PharmaHub.Services
             return true;
         }
 
-        public async Task<IEnumerable<object>> GetUserFavoritesAsync(string userId)
+        public async Task<IEnumerable<MedicineDto>> GetUserFavoritesAsync(string userId)
         {
             var favs = await _unitOfWork.Favorite.GetUserFavoritesAsync(userId);
             return favs;

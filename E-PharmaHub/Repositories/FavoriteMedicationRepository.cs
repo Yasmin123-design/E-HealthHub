@@ -1,4 +1,6 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Helpers;
+using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Repositories
@@ -39,30 +41,33 @@ namespace E_PharmaHub.Repositories
             return true;
         }
 
-        public async Task<IEnumerable<object>> GetUserFavoritesAsync(string userId)
+        public async Task<IEnumerable<MedicineDto>> GetUserFavoritesAsync(string userId)
         {
             var favorites = await _context.FavoriteMedications
                 .Where(f => f.UserId == userId)
                 .Include(f => f.Medication)
                     .ThenInclude(m => m.Inventories)
-                .Select(f => new
-                {
-                    f.Medication.Id,
-                    f.Medication.BrandName,
-                    f.Medication.GenericName,
-                    f.Medication.DosageForm,
-                    f.Medication.Strength,
-                    f.Medication.ATCCode,
-                    f.Medication.ImagePath,
-
-                    Price = f.Medication.Inventories != null && f.Medication.Inventories.Any()
-                        ? f.Medication.Inventories.Min(i => i.Price)
-                        : 0
-                })
+                        .ThenInclude(i => i.Pharmacy)
+                            .ThenInclude(p => p.Address)
                 .ToListAsync();
 
-            return favorites;
+            var result = new List<MedicineDto>();
+
+            foreach (var fav in favorites)
+            {
+                var inventoryItem = fav.Medication.Inventories
+                    .OrderBy(i => i.Price)
+                    .FirstOrDefault();
+
+                if (inventoryItem != null)
+                {
+                    result.Add(MappingExtensions.MapInventoryToDto(inventoryItem));
+                }
+            }
+
+            return result;
         }
+
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 
 namespace E_PharmaHub.Repositories
 {
@@ -6,6 +7,6 @@ namespace E_PharmaHub.Repositories
     {
         Task<bool> AddToFavoritesAsync(string userId, int medicationId);
         Task<bool> RemoveFromFavoritesAsync(string userId, int medicationId);
-        Task<IEnumerable<object>> GetUserFavoritesAsync(string userId);
+        Task<IEnumerable<MedicineDto>> GetUserFavoritesAsync(string userId);
     }
 }
