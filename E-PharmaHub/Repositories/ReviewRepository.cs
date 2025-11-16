@@ -103,7 +103,9 @@ namespace E_PharmaHub.Repositories
                 .Take(count)
                 .ToListAsync();
 
+
             var result = new List<MedicineDto>();
+
 
             foreach (var med in topMedications)
             {
@@ -113,12 +115,10 @@ namespace E_PharmaHub.Repositories
                     .FirstOrDefaultAsync(i => i.MedicationId == med.Id);
 
                 if (inventoryItem != null)
-                {
                     result.Add(MappingExtensions.MapInventoryToDto(inventoryItem));
-                }
             }
-
             return result;
+
         }
 
     }

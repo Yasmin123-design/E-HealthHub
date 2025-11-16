@@ -130,17 +130,11 @@ namespace E_PharmaHub.Services
             });
         }
 
-        public async Task<IEnumerable<object>> GetTopRatedMedicationsAsync()
+        public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync()
         {
             var meds = await _unitOfWork.Reviews.GetTopRatedMedicationsAsync(3);
-            return meds.Select(m => new
-            {
-                m.Id,
-                m.BrandName,
-                m.GenericName,
-                m.ImagePath,
-                AverageRating = m.Reviews.Any() ? m.Reviews.Average(r => r.Rating) : 0
-            });
+            return meds;
+            
         }
     }
 
