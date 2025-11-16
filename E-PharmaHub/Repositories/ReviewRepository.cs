@@ -1,4 +1,6 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Helpers;
+using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Repositories
@@ -93,14 +95,32 @@ namespace E_PharmaHub.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Medication>> GetTopRatedMedicationsAsync(int count)
+        public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync(int count)
         {
-            return await _context.Medications
+            var topMedications = await _context.Medications
                 .Include(m => m.Reviews)
                 .OrderByDescending(m => m.Reviews.Average(r => (double?)r.Rating) ?? 0)
                 .Take(count)
                 .ToListAsync();
+
+            var result = new List<MedicineDto>();
+
+            foreach (var med in topMedications)
+            {
+                var inventoryItem = await _context.InventoryItems
+                    .Include(i => i.Pharmacy)
+                        .ThenInclude(p => p.Address)
+                    .FirstOrDefaultAsync(i => i.MedicationId == med.Id);
+
+                if (inventoryItem != null)
+                {
+                    result.Add(MappingExtensions.MapInventoryToDto(inventoryItem));
+                }
+            }
+
+            return result;
         }
+
     }
 
 }

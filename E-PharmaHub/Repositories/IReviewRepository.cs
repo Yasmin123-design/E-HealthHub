@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 
 namespace E_PharmaHub.Repositories
 {
@@ -10,7 +11,7 @@ namespace E_PharmaHub.Repositories
         Task<double> GetAverageRatingForMedicationAsync(int medicationId);
         Task<IEnumerable<Pharmacy>> GetTopRatedPharmaciesAsync(int count);
         Task<IEnumerable<DoctorProfile>> GetTopRatedDoctorsAsync(int count);
-        Task<IEnumerable<Medication>> GetTopRatedMedicationsAsync(int count);
+        Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync(int count);
 
     }
 
