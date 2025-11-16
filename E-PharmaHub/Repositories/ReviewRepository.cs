@@ -90,10 +90,13 @@ namespace E_PharmaHub.Repositories
             return await _context.DoctorProfiles
                 .Include(d => d.Reviews)
                 .Include(d => d.AppUser)
+                .Include(d => d.Clinic) 
+                .ThenInclude(a => a.Address)
                 .OrderByDescending(d => d.Reviews.Average(r => (double?)r.Rating) ?? 0)
                 .Take(count)
                 .ToListAsync();
         }
+
 
         public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync(int count)
         {

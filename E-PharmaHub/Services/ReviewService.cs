@@ -117,18 +117,29 @@ namespace E_PharmaHub.Services
             });
         }
 
-        public async Task<IEnumerable<object>> GetTopRatedDoctorsAsync()
+        public async Task<IEnumerable<DoctorReadDto>> GetTopRatedDoctorsAsync()
         {
             var doctors = await _unitOfWork.Reviews.GetTopRatedDoctorsAsync(3);
-            return doctors.Select(d => new
+
+            var result = doctors.Select(d => new DoctorReadDto
             {
-                d.Id,
-                DoctorName = d.AppUser?.UserName,
-                d.Specialty,
-                d.Image,
-                AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0
+                Id = d.Id,
+                Email = d.AppUser?.Email,
+                Specialty = d.Specialty,
+                IsApproved = d.IsApproved,
+                Gender = d.Gender,
+                ConsultationPrice = d.ConsultationPrice,
+                ConsultationType = d.ConsultationType,
+                ClinicName = d.Clinic.Name, 
+                ClinicPhone = d.Clinic.Phone,
+                ClinicImagePath = d.Clinic.ImagePath,
+                DoctorImage = d.Image,
+                City = d.Clinic.Address.City
             });
+
+            return result;
         }
+
 
         public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync()
         {
