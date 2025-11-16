@@ -12,7 +12,10 @@ namespace E_PharmaHub.Repositories
         {
             _context = context;
         }
-
+        public void Delete(Payment entity)
+        {
+            _context.Payments.Remove(entity);
+        }
         public async Task<Payment> GetByReferenceIdAsync(string referenceId)
         {
             return await _context.Payments

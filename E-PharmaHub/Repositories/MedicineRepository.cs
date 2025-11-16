@@ -1,7 +1,6 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq.Expressions;
 
 namespace E_PharmaHub.Repositories
@@ -19,17 +18,23 @@ namespace E_PharmaHub.Repositories
             return await _context.Medications
                 .Include(m => m.Inventories)
                     .ThenInclude(i => i.Pharmacy)
+                    .ThenInclude(i => i.Address)
                 .ToListAsync();
         }
         public async Task<Medication?> FindAsync(Expression<Func<Medication, bool>> predicate)
         {
-            return await _context.Medications.FirstOrDefaultAsync(predicate);
+            return await _context.Medications
+                .Include(m => m.Inventories)
+                .ThenInclude(p => p.Pharmacy)
+                .ThenInclude(a => a.Address)
+                .FirstOrDefaultAsync(predicate);
         }
         public async Task<Medication> GetByIdAsync(int id)
         {
             return await _context.Medications
                 .Include(m => m.Inventories)
                     .ThenInclude(i => i.Pharmacy)
+                    .ThenInclude(a => a.Address)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
@@ -53,17 +58,20 @@ namespace E_PharmaHub.Repositories
             return await _context.Medications
                 .Include(x => x.Inventories)
                 .ThenInclude(x => x.Pharmacy)
+                .ThenInclude(a => a.Address)
                 .Where(m => m.BrandName.Contains(name) || m.GenericName.Contains(name))
                 .ToListAsync();
         }
         public async Task<IEnumerable<Medication>> GetMedicinesByPharmacyIdAsync(int pharmacyId)
         {
-            return await _context.InventoryItems
-                .Include(i => i.Medication)
-                .Where(i => i.PharmacyId == pharmacyId)
-                .Select(i => i.Medication)
+            return await _context.Medications
+                .Include(x => x.Inventories)
+                    .ThenInclude(x => x.Pharmacy)
+                    .ThenInclude(a => a.Address)
+                .Where(m => m.Inventories.Any(inv => inv.PharmacyId == pharmacyId))
                 .ToListAsync();
         }
+
 
         public async Task<IEnumerable<NearestPharmacyDTO>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng)
         {

@@ -50,8 +50,8 @@ namespace E_PharmaHub.Services
 
                 if (inventory != null)
                 {
-                    inventory.Price = dto.Price;
-                    inventory.Quantity = dto.Quantity;
+                    inventory.Price = dto.Price??0;
+                    inventory.Quantity = dto.Quantity??0;
                     inventory.LastUpdated = DateTime.UtcNow;
 
                     _unitOfWork.IinventoryItem.Update(inventory);
@@ -134,8 +134,8 @@ namespace E_PharmaHub.Services
             {
                 PharmacyId = pharmacyId,
                 MedicationId = medicine.Id,
-                Price = dto.Price,
-                Quantity = dto.Quantity,
+                Price = dto.Price??0,
+                Quantity = dto.Quantity??0,
                 LastUpdated = DateTime.UtcNow
             };
 

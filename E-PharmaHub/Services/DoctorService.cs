@@ -1,6 +1,5 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
-using E_PharmaHub.Repositories;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
 
@@ -302,7 +301,7 @@ namespace E_PharmaHub.Services
             var doctor = await _unitOfWork.Doctors.GetByIdAsync(id);
             if (doctor == null)
                 throw new Exception("Doctor not found.");
-
+            
             var clinic = await _unitOfWork.Clinics.GetClinicByIdAsync(doctor.ClinicId);
             if (clinic != null)
             {
@@ -324,7 +323,11 @@ namespace E_PharmaHub.Services
                         throw new Exception("Failed to delete user account.");
                 }
             }
-
+            var payment = await _paymentService.GetByReferenceIdAsync(doctor.AppUserId);
+            if(payment != null)
+            {
+                _paymentService.DeletePaymentAsync(payment);
+            }
             await _unitOfWork.CompleteAsync();
         }
 

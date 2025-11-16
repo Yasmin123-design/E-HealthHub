@@ -1,4 +1,5 @@
 ﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Helpers;
 using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -27,10 +28,11 @@ namespace E_PharmaHub.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var medicine = await _inventoryService.GetInventoryItemByIdAsync(id);
-            if (medicine == null)
+            var item = await _inventoryService.GetInventoryItemByIdAsync(id);
+            if (item == null)
                 return NotFound($"Medicine with ID {id} not found.");
-            return Ok(medicine);
+
+            return Ok(MappingExtensions.MapInventoryToDto(item));
         }
 
         [HttpPost]
@@ -122,46 +124,45 @@ namespace E_PharmaHub.Controllers
         [HttpGet("search/{name}")]
         public async Task<IActionResult> Search(string name)
         {
-            var result = await _medicineService.SearchMedicinesByNameAsync(name);
-            if (!result.Any())
-                return NotFound($"No medicines found with name containing '{name}'.");
+            var medicines = await _medicineService.SearchMedicinesByNameAsync(name);
+            if (!medicines.Any())
+                return NotFound($"No medicines found with name '{name}'.");
 
-            return Ok(result);
+            var inventoryItems = medicines
+                .SelectMany(m => m.Inventories)
+                .Select(MappingExtensions.MapInventoryToDto);
+
+            return Ok(inventoryItems);
         }
+
         [HttpGet("{id}/alternatives")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
         public async Task<IActionResult> GetAlternatives(int id)
         {
             var alternatives = await _inventoryService.GetAlternativeMedicinesAsync(id);
-
             if (!alternatives.Any())
                 return NotFound(new { message = "No alternative medicines found." });
 
-            return Ok(alternatives.Select(a => new
-            {
-                a.Medication.Id,
-                a.Medication.BrandName,
-                a.Medication.GenericName,
-                a.Medication.ATCCode,
-                a.Price,
-                a.Quantity,
-                Pharmacy = new
-                {
-                    a.Pharmacy.Id,
-                    a.Pharmacy.Name,
-                    a.Pharmacy.Address.City
-                }
-            }));
+            return Ok(alternatives.Select(MappingExtensions.MapInventoryToDto));
         }
+
         [HttpGet("pharmacy/{pharmacyId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
         public async Task<IActionResult> GetByPharmacy(int pharmacyId)
         {
-            var result = await _medicineService.GetMedicinesByPharmacyIdAsync(pharmacyId);
-            if (!result.Any())
+            var items = await _medicineService.GetMedicinesByPharmacyIdAsync(pharmacyId);
+            if (!items.Any())
                 return NotFound($"No medicines found for pharmacy ID {pharmacyId}.");
 
-            return Ok(result);
+            return Ok(items.SelectMany(i => i.Inventories)
+                .Select(MappingExtensions.MapInventoryToDto));
         }
+
         [HttpGet("nearest")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
         public async Task<IActionResult> GetNearestPharmacies(string medicationName, double lat, double lng)
         {
             var pharmacies = await _medicineService.GetNearestPharmaciesWithMedicationAsync(medicationName, lat, lng);
@@ -170,5 +171,7 @@ namespace E_PharmaHub.Controllers
 
             return Ok(pharmacies);
         }
+
+
     }
 }

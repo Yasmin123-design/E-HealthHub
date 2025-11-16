@@ -9,11 +9,16 @@ namespace E_PharmaHub.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IPaymentService _paymentService;
 
-        public DonorService(IUnitOfWork unitOfWork, UserManager<AppUser> userManager)
+        public DonorService(IUnitOfWork unitOfWork,
+            UserManager<AppUser> userManager,
+            IPaymentService paymentService
+            )
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+            _paymentService = paymentService;
         }
 
         public async Task<IEnumerable<DonorReadDto>> GetAllDetailsAsync()
@@ -84,10 +89,10 @@ namespace E_PharmaHub.Services
             var user = await _userManager.FindByIdAsync(donor.AppUserId);
 
             _unitOfWork.Donors.Delete(donor);
-            await _unitOfWork.CompleteAsync();
 
             if (user != null)
                 await _userManager.DeleteAsync(user);
+            await _unitOfWork.CompleteAsync();
         }
     }
 }

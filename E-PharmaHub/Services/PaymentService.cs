@@ -114,7 +114,12 @@ namespace E_PharmaHub.Services
                 message
             };
         }
-
+        public async Task DeletePaymentAsync(Payment model)
+        {
+                _unitOfWork.Payments.Delete(model);
+                await _unitOfWork.CompleteAsync();
+            
+        }
 
 
     }

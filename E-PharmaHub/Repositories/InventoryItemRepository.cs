@@ -18,6 +18,7 @@ namespace E_PharmaHub.Repositories
             return await _context.InventoryItems
                 .Include(i => i.Medication)
                 .Include(i => i.Pharmacy)
+                .ThenInclude(a => a.Address)
                 .ToListAsync();
         }
         public async Task<IEnumerable<InventoryItem>> GetAlternativeMedicinesAsync(int medicineId)
@@ -44,6 +45,7 @@ namespace E_PharmaHub.Repositories
             return await _context.InventoryItems
                 .Include(i => i.Medication)
                 .Include(i => i.Pharmacy)
+                .ThenInclude(a => a.Address)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
@@ -56,6 +58,7 @@ namespace E_PharmaHub.Repositories
             return await _context.InventoryItems
                                  .Include(i => i.Medication)
                                  .Include(i => i.Pharmacy)
+                                 .ThenInclude(a => a.Address)
                                  .FirstOrDefaultAsync(predicate);
         }
 
@@ -64,6 +67,7 @@ namespace E_PharmaHub.Repositories
             return await _context.InventoryItems
                                  .Include(i => i.Medication)
                                  .Include(i => i.Pharmacy)
+                                 .ThenInclude(a => a.Address)
                                  .Where(predicate)
                                  .ToListAsync();
         }
@@ -82,6 +86,8 @@ namespace E_PharmaHub.Repositories
         {
             return await _context.InventoryItems
                 .Include(i => i.Medication)
+                .Include(p => p.Pharmacy)
+                .ThenInclude(a => a.Address)
                 .Where(i => i.PharmacyId == pharmacyId)
                 .ToListAsync();
         }
@@ -89,13 +95,18 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<InventoryItem>> GetByMedicationIdAsync(int medicationId)
         {
             return await _context.InventoryItems
+                .Include(i => i.Medication)
                 .Include(i => i.Pharmacy)
+                .ThenInclude(a => a.Address)
                 .Where(i => i.MedicationId == medicationId)
                 .ToListAsync();
         }
         public async Task<InventoryItem?> GetByPharmacyAndMedicationAsync(int pharmacyId, int medicationId)
         {
             return await _context.InventoryItems
+                .Include(i => i.Medication)
+                .Include(i => i.Pharmacy)
+                .ThenInclude(a => a.Address)
                 .FirstOrDefaultAsync(i => i.PharmacyId == pharmacyId && i.MedicationId == medicationId);
         }
 
