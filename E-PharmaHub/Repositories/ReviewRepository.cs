@@ -79,6 +79,7 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<Pharmacy>> GetTopRatedPharmaciesAsync(int count)
         {
             return await _context.Pharmacies
+                .Include(a => a.Address)
                 .Include(p => p.Reviews)
                 .OrderByDescending(p => p.Reviews.Average(r => (double?)r.Rating) ?? 0)
                 .Take(count)

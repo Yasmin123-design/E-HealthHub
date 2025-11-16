@@ -70,7 +70,12 @@ namespace E_PharmaHub.Repositories
                     Name = p.Name,
                     Phone = p.Phone,
                     City = p.Address.City,
-                    ImagePath = p.ImagePath
+                    ImagePath = p.ImagePath,
+                    Country = p.Address.Country,
+                    Latitude = p.Address.Latitude,
+                    Longitude = p.Address.Longitude,
+                    PostalCode = p.Address.PostalCode,
+                    Street = p.Address.Street
                 })
                 .ToListAsync();
 
@@ -90,7 +95,12 @@ namespace E_PharmaHub.Repositories
                     Name = p.Name,
                     Phone = p.Phone,
                     City = p.Address.City,
-                    ImagePath = p.ImagePath
+                    ImagePath = p.ImagePath,
+                    Country = p.Address.Country,
+                    Latitude = p.Address.Latitude,
+                    Longitude = p.Address.Longitude,
+                    PostalCode = p.Address.PostalCode,
+                    Street = p.Address.Street
                 })
                 .FirstOrDefaultAsync();
         }

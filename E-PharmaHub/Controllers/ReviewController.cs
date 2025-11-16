@@ -114,7 +114,7 @@ namespace E_PharmaHub.Controllers
         public async Task<IActionResult> GetTopPharmacies()
         {
             var result = await _reviewService.GetTopRatedPharmaciesAsync();
-            return Ok(new { message = "🏥 Top 3 Rated Pharmacies", data = result });
+            return Ok(result);
         }
 
         [HttpGet("top-doctors")]
