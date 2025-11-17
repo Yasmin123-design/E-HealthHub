@@ -20,6 +20,7 @@ namespace E_PharmaHub.Helpers
                 ImagePath = item.Medication.ImagePath,
                 Price = item.Price,
                 Quantity = item.Quantity,
+                AverageRating = item.Medication.Reviews.Any() ? item.Medication.Reviews.Average(r => r.Rating) : 0,
                 Pharmacy = new PharmacySimpleDto
                 {
                     Id = item.Pharmacy.Id,

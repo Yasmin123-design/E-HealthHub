@@ -32,6 +32,7 @@ namespace E_PharmaHub.Controllers
                 return Ok(new
                 {
                     message = "Pharmacist registered successfully! Awaiting admin approval.",
+                    name = user.UserName,
                     userId = user.Id,
                     email = user.Email,
                     role = user.Role.ToString()

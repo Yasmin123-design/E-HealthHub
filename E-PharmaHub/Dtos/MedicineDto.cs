@@ -13,6 +13,7 @@ namespace E_PharmaHub.Dtos
         public string? ImagePath { get; set; }
         public decimal? Price { get; set; }
         public int? Quantity { get; set; }
+        public double AverageRating { get; set; }
         public PharmacySimpleDto? Pharmacy { get; set; }
     }
 

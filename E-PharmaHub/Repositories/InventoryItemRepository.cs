@@ -16,6 +16,7 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<InventoryItem>> GetAllAsync()
         {
             return await _context.InventoryItems
+                .AsNoTracking()
                 .Include(i => i.Medication)
                 .Include(i => i.Pharmacy)
                 .ThenInclude(a => a.Address)
@@ -28,6 +29,7 @@ namespace E_PharmaHub.Repositories
                 return Enumerable.Empty<InventoryItem>();
 
             var alternatives = await _context.InventoryItems
+                .AsNoTracking()
                 .Include(i => i.Medication)
                 .Include(i => i.Pharmacy)
                 .ThenInclude(i => i.Address)
@@ -43,7 +45,9 @@ namespace E_PharmaHub.Repositories
         public async Task<InventoryItem> GetByIdAsync(int id)
         {
             return await _context.InventoryItems
+                .AsNoTracking()
                 .Include(i => i.Medication)
+                .ThenInclude(r => r.Reviews)
                 .Include(i => i.Pharmacy)
                 .ThenInclude(a => a.Address)
                 .FirstOrDefaultAsync(i => i.Id == id);
@@ -55,7 +59,7 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<InventoryItem?> FindAsync(Expression<Func<InventoryItem, bool>> predicate)
         {
-            return await _context.InventoryItems
+            return await _context.InventoryItems.AsNoTracking()
                                  .Include(i => i.Medication)
                                  .Include(i => i.Pharmacy)
                                  .ThenInclude(a => a.Address)
@@ -64,7 +68,7 @@ namespace E_PharmaHub.Repositories
 
         public async Task<IEnumerable<InventoryItem>> FindAllAsync(Expression<Func<InventoryItem, bool>> predicate)
         {
-            return await _context.InventoryItems
+            return await _context.InventoryItems.AsNoTracking()
                                  .Include(i => i.Medication)
                                  .Include(i => i.Pharmacy)
                                  .ThenInclude(a => a.Address)
@@ -84,8 +88,9 @@ namespace E_PharmaHub.Repositories
 
         public async Task<IEnumerable<InventoryItem>> GetByPharmacyIdAsync(int pharmacyId)
         {
-            return await _context.InventoryItems
+            return await _context.InventoryItems.AsNoTracking()
                 .Include(i => i.Medication)
+                .ThenInclude(r => r.Reviews)
                 .Include(p => p.Pharmacy)
                 .ThenInclude(a => a.Address)
                 .Where(i => i.PharmacyId == pharmacyId)
@@ -94,7 +99,7 @@ namespace E_PharmaHub.Repositories
 
         public async Task<IEnumerable<InventoryItem>> GetByMedicationIdAsync(int medicationId)
         {
-            return await _context.InventoryItems
+            return await _context.InventoryItems.AsNoTracking()
                 .Include(i => i.Medication)
                 .Include(i => i.Pharmacy)
                 .ThenInclude(a => a.Address)
@@ -103,7 +108,7 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<InventoryItem?> GetByPharmacyAndMedicationAsync(int pharmacyId, int medicationId)
         {
-            return await _context.InventoryItems
+            return await _context.InventoryItems.AsNoTracking()
                 .Include(i => i.Medication)
                 .Include(i => i.Pharmacy)
                 .ThenInclude(a => a.Address)

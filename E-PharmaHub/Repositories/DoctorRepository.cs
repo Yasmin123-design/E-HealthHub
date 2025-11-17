@@ -26,6 +26,7 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<DoctorReadDto>> GetAllDoctorsShowToAdminAsync()
         {
             return await _context.DoctorProfiles
+                .AsNoTracking()
                 .Include(d => d.Clinic)
                 .Include(d => d.AppUser)
                                 .Select(d => new DoctorReadDto
@@ -49,6 +50,7 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<DoctorReadDto>> GetAllDoctorsAcceptedByAdminAsync()
         {
             return await _context.DoctorProfiles
+                .AsNoTracking()
                 .Where(d => d.IsApproved) 
                 .Include(d => d.Clinic)
                 .Include(d => d.AppUser)
@@ -65,14 +67,22 @@ namespace E_PharmaHub.Repositories
                     DoctorImage = d.Image,
                     Gender = d.Gender,
                     ConsultationType = d.ConsultationType,
-                    ConsultationPrice = d.ConsultationPrice
+                    ConsultationPrice = d.ConsultationPrice,
+                    Username = d.AppUser.UserName,
+                    Country = d.Clinic.Address.Country,
+                    Latitude = d.Clinic.Address.Latitude,
+                    Longitude = d.Clinic.Address.Longitude,
+                    Street = d.Clinic.Address.Street,
+                    PostalCode = d.Clinic.Address.PostalCode,
+                    AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0
+
                 })
                 .ToListAsync();
         }
 
         public async Task<DoctorReadDto?> GetDoctorByUserIdReadDtoAsync(string userId)
         {
-            return await _context.DoctorProfiles
+            return await _context.DoctorProfiles.AsNoTracking()
                 .Include(d => d.AppUser)
                 .Include(d => d.Clinic)
                 .ThenInclude(c => c.Address)
@@ -96,7 +106,7 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId)
         {
-            return await _context.DoctorProfiles
+            return await _context.DoctorProfiles.AsNoTracking()
                 .Include(d => d.AppUser)
                 .Include(d => d.Clinic)
                 .ThenInclude(c => c.Address)
@@ -105,7 +115,7 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<DoctorProfile> GetByIdAsync(int id) 
         { 
-            return await _context.DoctorProfiles
+            return await _context.DoctorProfiles.AsNoTracking()
                 .Include(d => d.AppUser)
                 .Include(d => d.Clinic)
                 .ThenInclude(d => d.Address)
@@ -113,7 +123,7 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<DoctorReadDto?> GetByIdDetailsAsync(int id)
         {
-            return await _context.DoctorProfiles
+            return await _context.DoctorProfiles.AsNoTracking()
                 .Include(d => d.AppUser)
                 .Include(d => d.Clinic)
                 .ThenInclude(c => c.Address)
@@ -138,7 +148,7 @@ namespace E_PharmaHub.Repositories
 
         public async Task<DoctorProfile?> GetDoctorProfileByIdAsync(int id)
         {
-            return await _context.DoctorProfiles
+            return await _context.DoctorProfiles.AsNoTracking()
                 .Include(d => d.AppUser)
                 .Include(d => d.Clinic)
                 .ThenInclude(c => c.Address)
@@ -162,7 +172,8 @@ namespace E_PharmaHub.Repositories
 
         public async Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty)
         {
-            return await _context.DoctorProfiles
+            return await _context.DoctorProfiles.AsNoTracking()
+                .Include(a => a.Reviews)
                 .Include(d => d.AppUser)
                 .Include(d => d.Clinic)
                 .ThenInclude(c => c.Address)
@@ -180,7 +191,14 @@ namespace E_PharmaHub.Repositories
                     DoctorImage=d.Image,
                     Gender = d.Gender,
                     ConsultationType = d.ConsultationType,
-                    ConsultationPrice = d.ConsultationPrice
+                    ConsultationPrice = d.ConsultationPrice,
+                    AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0,
+                    Country = d.Clinic.Address.Country,
+                    Street = d.Clinic.Address.Street,
+                    PostalCode = d.Clinic.Address.PostalCode,
+                    Latitude = d.Clinic.Address.Latitude,
+                    Longitude = d.Clinic.Address.Longitude,
+                    Username = d.AppUser.UserName
                 })
                 .ToListAsync();
         }
@@ -218,8 +236,11 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<DoctorReadDto>> GetFilteredDoctorsAsync(
                              string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType)
         {
-            var query = _context.DoctorProfiles
+            var query = _context.DoctorProfiles.AsNoTracking()
+                .Include(r => r.Reviews)
                 .Include(d => d.AppUser)
+                .Include(c => c.Clinic)
+                .ThenInclude(a => a.Address)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(name))
@@ -252,7 +273,15 @@ namespace E_PharmaHub.Repositories
                     DoctorImage = d.Image,
                     Gender = d.Gender,
                     ConsultationType = d.ConsultationType,
-                    ConsultationPrice = d.ConsultationPrice
+                    ConsultationPrice = d.ConsultationPrice,
+                    AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0,
+                    Country = d.Clinic.Address.Country,
+                    Street = d.Clinic.Address.Street,
+                    PostalCode = d.Clinic.Address.PostalCode,
+                    Latitude = d.Clinic.Address.Latitude,
+                    Longitude = d.Clinic.Address.Longitude,
+                    Username = d.AppUser.UserName
+
                 })
                 .ToListAsync();
         }

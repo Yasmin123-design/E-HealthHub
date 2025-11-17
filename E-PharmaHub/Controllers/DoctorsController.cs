@@ -40,6 +40,7 @@ namespace E_PharmaHub.Controllers
                     message = "Doctor registered successfully! Awaiting admin approval.",
                     userId = user.Id,
                     email = user.Email,
+                    name = user.UserName,
                     role = user.Role.ToString()
                 });
             }

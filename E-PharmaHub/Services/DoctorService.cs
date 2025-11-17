@@ -41,7 +41,7 @@ namespace E_PharmaHub.Services
 
             var user = new AppUser
             {
-                UserName = dto.Email,
+                UserName = dto.UserName,
                 Email = dto.Email,
                 Role = UserRole.Doctor
             };

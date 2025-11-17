@@ -61,6 +61,7 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<PharmacySimpleDto>> GetAllBriefAsync()
         {
             var pharmacies = await _context.Pharmacies
+                .Include(p => p.Reviews)
                 .Include(p => p.Address)
                 .Where(p => _context.Pharmacists
                     .Any(ph => ph.PharmacyId == p.Id && ph.IsApproved))
@@ -75,7 +76,8 @@ namespace E_PharmaHub.Repositories
                     Latitude = p.Address.Latitude,
                     Longitude = p.Address.Longitude,
                     PostalCode = p.Address.PostalCode,
-                    Street = p.Address.Street
+                    Street = p.Address.Street,
+                    AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
                 })
                 .ToListAsync();
 
@@ -100,7 +102,8 @@ namespace E_PharmaHub.Repositories
                     Latitude = p.Address.Latitude,
                     Longitude = p.Address.Longitude,
                     PostalCode = p.Address.PostalCode,
-                    Street = p.Address.Street
+                    Street = p.Address.Street,
+                    AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0
                 })
                 .FirstOrDefaultAsync();
         }

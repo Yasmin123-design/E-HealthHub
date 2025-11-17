@@ -116,7 +116,9 @@ namespace E_PharmaHub.Services
                 Country = p.Address.Country,
                 Street = p.Address.Street,
                 Latitude = p.Address.Latitude,
-                Longitude = p.Address.Longitude
+                Longitude = p.Address.Longitude,
+                AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0
+
             }).ToList();
 
             return dtoList;
@@ -141,7 +143,15 @@ namespace E_PharmaHub.Services
                 ClinicPhone = d.Clinic.Phone,
                 ClinicImagePath = d.Clinic.ImagePath,
                 DoctorImage = d.Image,
-                City = d.Clinic.Address.City
+                City = d.Clinic.Address.City,
+                Country = d.Clinic.Address.Country,
+                Latitude = d.Clinic.Address.Latitude,
+                Longitude = d.Clinic.Address.Longitude,
+                Street = d.Clinic.Address.Street,
+                PostalCode = d.Clinic.Address.PostalCode,
+                Username = d.AppUser?.UserName,
+                AverageRating  = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0,
+
             });
 
             return result;

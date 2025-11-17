@@ -1,7 +1,6 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace E_PharmaHub.Repositories
 {
@@ -17,7 +16,7 @@ namespace E_PharmaHub.Repositories
         public async Task<IEnumerable<PharmacistProfile>> GetAllAsync()
         {
             return await _context
-                .Pharmacists
+                .Pharmacists.AsNoTracking()
                 .Include(p => p.AppUser)
                 .Include(p => p.Pharmacy)
                 .ToListAsync();
@@ -26,7 +25,7 @@ namespace E_PharmaHub.Repositories
         public async Task<PharmacistProfile> GetByIdAsync(int id)
         {
             return await _context
-                .Pharmacists
+                .Pharmacists.AsNoTracking()
                 .Include(p => p.AppUser)
                 .Include(p => p.Pharmacy)
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -43,7 +42,7 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<IEnumerable<PharmacistReadDto>> GetAllDetailsAsync()
         {
-            return await _context.Pharmacists
+            return await _context.Pharmacists.AsNoTracking()
                 .Include(p => p.AppUser)
                 .Include(p => p.Pharmacy)
                 .ThenInclude(ph => ph.Address)
@@ -63,7 +62,7 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<PharmacistReadDto?> GetByIdDetailsAsync(int id)
         {
-            return await _context.Pharmacists
+            return await _context.Pharmacists.AsNoTracking()
                 .Include(p => p.AppUser)
                 .Include(p => p.Pharmacy)
                 .ThenInclude(ph => ph.Address)
@@ -100,7 +99,7 @@ namespace E_PharmaHub.Repositories
 
         public async Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId)
         {
-            return await _context.Pharmacists
+            return await _context.Pharmacists.AsNoTracking()
                 .FirstOrDefaultAsync(p => p.AppUserId == userId);
         }
         public async Task<bool> ApprovePharmacistAsync(int id)
@@ -115,7 +114,7 @@ namespace E_PharmaHub.Repositories
         }
         public async Task<PharmacistProfile?> GetByUserIdAsync(string userId)
         {
-            return await _context.Pharmacists
+            return await _context.Pharmacists.AsNoTracking()
                 .Include(x => x.AppUser)
                 .Include(p => p.Pharmacy)
                 .FirstOrDefaultAsync(p => p.AppUserId == userId);
