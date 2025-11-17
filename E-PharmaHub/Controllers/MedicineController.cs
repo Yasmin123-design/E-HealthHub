@@ -171,7 +171,5 @@ namespace E_PharmaHub.Controllers
 
             return Ok(pharmacies);
         }
-
-
     }
 }

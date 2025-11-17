@@ -16,7 +16,7 @@ namespace E_PharmaHub.Repositories
 
         public async Task<bool> AddToFavoritesAsync(string userId, int medicationId)
         {
-            var exists = await _context.FavoriteMedications
+            var exists = await _context.FavoriteMedications.AsNoTracking()
                 .AnyAsync(f => f.UserId == userId && f.MedicationId == medicationId);
 
             if (exists) return false;
@@ -32,7 +32,7 @@ namespace E_PharmaHub.Repositories
 
         public async Task<bool> RemoveFromFavoritesAsync(string userId, int medicationId)
         {
-            var fav = await _context.FavoriteMedications
+            var fav = await _context.FavoriteMedications.AsNoTracking()
                 .FirstOrDefaultAsync(f => f.UserId == userId && f.MedicationId == medicationId);
 
             if (fav == null) return false;
@@ -43,12 +43,15 @@ namespace E_PharmaHub.Repositories
 
         public async Task<IEnumerable<MedicineDto>> GetUserFavoritesAsync(string userId)
         {
-            var favorites = await _context.FavoriteMedications
+            var favorites = await _context.FavoriteMedications.AsNoTracking()
                 .Where(f => f.UserId == userId)
                 .Include(f => f.Medication)
-                    .ThenInclude(m => m.Inventories)
+                 .ThenInclude(m => m.Inventories)
+                    
                         .ThenInclude(i => i.Pharmacy)
                             .ThenInclude(p => p.Address)
+                .Include(f => f.Medication)
+            .ThenInclude(m => m.Reviews)
                 .ToListAsync();
 
             var result = new List<MedicineDto>();

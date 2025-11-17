@@ -77,6 +77,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("pharmacy/{pharmacyId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetPharmacyReviews(int pharmacyId)
         {
             var reviews = await _reviewService.GetReviewsByPharmacyIdAsync(pharmacyId);
@@ -87,6 +88,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("medication/{medicationId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetMedicationReviews(int medicationId)
         {
             var reviews = await _reviewService.GetReviewsByMedicationIdAsync(medicationId);
@@ -95,7 +97,16 @@ namespace E_PharmaHub.Controllers
 
             return Ok(reviews);
         }
+        [HttpGet("doctor/{doctorId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetDoctorReviews(int doctorId)
+        {
+            var reviews = await _reviewService.GetReviewsByDoctorIdAsync(doctorId);
+            if (reviews == null || !reviews.Any())
+                return Ok(new { message = "No reviews found for this medicine." });
 
+            return Ok(reviews);
+        }
         [HttpGet("pharmacy/{pharmacyId}/average")]
         public async Task<IActionResult> GetPharmacyAverageRating(int pharmacyId)
         {

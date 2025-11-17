@@ -62,7 +62,13 @@ namespace E_PharmaHub.Repositories
                 .Include(r => r.User)
                 .ToListAsync();
         }
-
+        public async Task<IEnumerable<Review>> GetReviewsByDoctorIdAsync(int doctorId)
+        {
+            return await _context.Reviews
+                .Where(r => r.DoctorId == doctorId)
+                .Include(r => r.User)
+                .ToListAsync();
+        }
         public async Task<double> GetAverageRatingForPharmacyAsync(int pharmacyId)
         {
             return await _context.Reviews
@@ -97,7 +103,6 @@ namespace E_PharmaHub.Repositories
                 .Take(count)
                 .ToListAsync();
         }
-
 
         public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync(int count)
         {

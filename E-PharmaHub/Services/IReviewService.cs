@@ -12,6 +12,7 @@ namespace E_PharmaHub.Services
         Task<bool> DeleteReviewAsync(int id, string userId);
         Task<IEnumerable<ReviewDto>> GetReviewsByPharmacyIdAsync(int pharmacyId);
         Task<IEnumerable<ReviewDto>> GetReviewsByMedicationIdAsync(int medicationId);
+        Task<IEnumerable<ReviewDto>> GetReviewsByDoctorIdAsync(int doctorId);
         Task<double> GetAverageRatingForPharmacyAsync(int pharmacyId);
         Task<double> GetAverageRatingForMedicationAsync(int medicationId);
         Task<IEnumerable<PharmacySimpleDto>> GetTopRatedPharmaciesAsync();

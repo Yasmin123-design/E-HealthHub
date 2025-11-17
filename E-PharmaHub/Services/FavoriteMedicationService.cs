@@ -29,7 +29,6 @@ namespace E_PharmaHub.Services
             await _unitOfWork.CompleteAsync();
             return true;
         }
-
         public async Task<IEnumerable<MedicineDto>> GetUserFavoritesAsync(string userId)
         {
             var favs = await _unitOfWork.Favorite.GetUserFavoritesAsync(userId);

@@ -71,7 +71,17 @@ namespace E_PharmaHub.Services
             });
         }
 
+        public async Task<IEnumerable<ReviewDto>> GetReviewsByDoctorIdAsync(int doctorId)
+        {
+            var reviews = await _unitOfWork.Reviews.GetReviewsByDoctorIdAsync(doctorId);
 
+            return reviews.Select(r => new ReviewDto
+            {
+                Rating = r.Rating,
+                Comment = r.Comment,
+                UserEmail = r.User.Email
+            });
+        }
 
         public async Task<double> GetAverageRatingForPharmacyAsync(int pharmacyId)
         {
@@ -123,9 +133,6 @@ namespace E_PharmaHub.Services
 
             return dtoList;
         }
-
-
-
         public async Task<IEnumerable<DoctorReadDto>> GetTopRatedDoctorsAsync()
         {
             var doctors = await _unitOfWork.Reviews.GetTopRatedDoctorsAsync(3);
@@ -156,8 +163,6 @@ namespace E_PharmaHub.Services
 
             return result;
         }
-
-
         public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync()
         {
             var meds = await _unitOfWork.Reviews.GetTopRatedMedicationsAsync(3);
