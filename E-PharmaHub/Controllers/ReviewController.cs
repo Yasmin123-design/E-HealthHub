@@ -107,19 +107,6 @@ namespace E_PharmaHub.Controllers
 
             return Ok(reviews);
         }
-        [HttpGet("pharmacy/{pharmacyId}/average")]
-        public async Task<IActionResult> GetPharmacyAverageRating(int pharmacyId)
-        {
-            var rating = await _reviewService.GetAverageRatingForPharmacyAsync(pharmacyId);
-            return Ok(new { averageRating = rating });
-        }
-
-        [HttpGet("medication/{medicationId}/average")]
-        public async Task<IActionResult> GetMedicationAverageRating(int medicationId)
-        {
-            var rating = await _reviewService.GetAverageRatingForMedicationAsync(medicationId);
-            return Ok(new { averageRating = rating });
-        }
 
         [HttpGet("top-pharmacies")]
         public async Task<IActionResult> GetTopPharmacies()
