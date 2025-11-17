@@ -8,7 +8,7 @@ namespace E_PharmaHub.Repositories
     {
         Task<Medication?> FindAsync(Expression<Func<Medication, bool>> predicate);
         Task<IEnumerable<Medication>> SearchByNameAsync(string name);
-        Task<IEnumerable<NearestPharmacyDTO>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng);
+        Task<IEnumerable<PharmacySimpleDto>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng);
             Task<IEnumerable<Medication>> GetMedicinesByPharmacyIdAsync(int pharmacyId);
 
 

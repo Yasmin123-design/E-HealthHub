@@ -12,7 +12,6 @@ namespace E_PharmaHub.Repositories
         {
             _context = context;
         }
-
         public async Task<IEnumerable<PharmacistProfile>> GetAllAsync()
         {
             return await _context

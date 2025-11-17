@@ -80,48 +80,48 @@ namespace E_PharmaHub.Repositories
                 .Where(m => m.Inventories.Any(inv => inv.PharmacyId == pharmacyId))
                 .ToListAsync();
         }
-        public async Task<IEnumerable<NearestPharmacyDTO>> GetNearestPharmaciesWithMedicationAsync(
+        public async Task<IEnumerable<PharmacySimpleDto>> GetNearestPharmaciesWithMedicationAsync(
             string medicationName, double userLat, double userLng)
         {
             var pharmacies = await _context.Pharmacies
-                .AsNoTracking()
-                .Include(p => p.Address)
-                .Include(p => p.Inventory)
-                    .ThenInclude(i => i.Medication)
-                .Where(p => p.Inventory.Any(i =>
-                    i.Medication.BrandName.Contains(medicationName) ||
-                    i.Medication.GenericName.Contains(medicationName)))
-                .ToListAsync();
+    .AsNoTracking()
+    .Where(p => p.Inventory.Any(i =>
+        i.Medication.BrandName.Contains(medicationName) ||
+        i.Medication.GenericName.Contains(medicationName)))
+    .Select(p => new PharmacySimpleDto
+    {
+        Id = p.Id,
+        Name = p.Name,
+        Phone = p.Phone,
+        ImagePath = p.ImagePath,
+        City = p.Address.City,
+        Street = p.Address.Street,
+        PostalCode = p.Address.PostalCode,
+        Country = p.Address.Country,
+        Latitude = p.Address.Latitude,
+        Longitude = p.Address.Longitude,
+        AverageRating = p.Inventory
+            .SelectMany(i => i.Medication.Reviews)
+            .Any() ? p.Inventory.SelectMany(i => i.Medication.Reviews).Average(r => r.Rating) : 0
+    })
+    .ToListAsync();
 
-            var result = pharmacies.Select(p =>
+            foreach (var p in pharmacies)
             {
-                var medication = p.Inventory.FirstOrDefault(i =>
-                    i.Medication.BrandName.Contains(medicationName) ||
-                    i.Medication.GenericName.Contains(medicationName))?.Medication;
-
-                // Haversine Formula
-                var dLat = (p.Address.Latitude ?? 0 - userLat) * Math.PI / 180;
-                var dLng = (p.Address.Longitude ?? 0 - userLng) * Math.PI / 180;
-                var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                        Math.Cos(userLat * Math.PI / 180) *
-                        Math.Cos((p.Address.Latitude ?? 0) * Math.PI / 180) *
-                        Math.Sin(dLng / 2) * Math.Sin(dLng / 2);
-
-                var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-                var distance = 6371 * c;
-
-                return new NearestPharmacyDTO
+                if (p.Latitude.HasValue && p.Longitude.HasValue)
                 {
-                    PharmacyName = p.Name,
-                    City = p.Address?.City,
-                    Street = p.Address?.Street,
-                    Phone = p.Phone,
-                    MedicationName = medication?.BrandName ?? medicationName,
-                    DistanceKm = Math.Round(distance, 2)
-                };
-            });
+                    var dLat = (p.Latitude.Value - userLat) * Math.PI / 180;
+                    var dLng = (p.Longitude.Value - userLng) * Math.PI / 180;
+                    var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                            Math.Cos(userLat * Math.PI / 180) *
+                            Math.Cos(p.Latitude.Value * Math.PI / 180) *
+                            Math.Sin(dLng / 2) * Math.Sin(dLng / 2);
 
-            return result.OrderBy(r => r.DistanceKm);
+                    var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+                }
+            }
+
+            return pharmacies.ToList();
         }
     }
 }
