@@ -13,8 +13,6 @@ namespace E_PharmaHub.Services
         Task<IEnumerable<ReviewDto>> GetReviewsByPharmacyIdAsync(int pharmacyId);
         Task<IEnumerable<ReviewDto>> GetReviewsByMedicationIdAsync(int medicationId);
         Task<IEnumerable<ReviewDto>> GetReviewsByDoctorIdAsync(int doctorId);
-        Task<double> GetAverageRatingForPharmacyAsync(int pharmacyId);
-        Task<double> GetAverageRatingForMedicationAsync(int medicationId);
         Task<IEnumerable<PharmacySimpleDto>> GetTopRatedPharmaciesAsync();
         Task<IEnumerable<DoctorReadDto>> GetTopRatedDoctorsAsync();
         Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync();

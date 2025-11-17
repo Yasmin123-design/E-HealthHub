@@ -24,7 +24,7 @@ namespace E_PharmaHub.UnitOfWorkes
         public IFavoriteMedicationRepository Favorite { get; }
 
         public IFavouriteClinicRepository FavouriteClinic { get; }
-
+        public IFavouriteDoctorRepository FavouriteDoctor { get; }
         public IClinicRepository Clinics { get; }
 
         public IUserRepository Useres { get; }
@@ -56,7 +56,8 @@ namespace E_PharmaHub.UnitOfWorkes
             IChatRepository chatRepository,
             IMessageThreadRepository messageThreadRepository,
             IAppointmentRepository appointmentRepository,
-            IPrescriptionRepository prescriptionRepository
+            IPrescriptionRepository prescriptionRepository,
+            IFavouriteDoctorRepository favouriteDoctorRepository
             )
         {
             _context = context;
@@ -82,6 +83,7 @@ namespace E_PharmaHub.UnitOfWorkes
             MessageThread = messageThreadRepository;
             Appointments = appointmentRepository;
             Prescriptions = prescriptionRepository;
+            FavouriteDoctor = favouriteDoctorRepository;
         }
 
         public async Task<int> CompleteAsync()

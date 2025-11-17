@@ -1,6 +1,7 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Services
 {
@@ -83,15 +84,6 @@ namespace E_PharmaHub.Services
             });
         }
 
-        public async Task<double> GetAverageRatingForPharmacyAsync(int pharmacyId)
-        {
-            return await _unitOfWork.Reviews.GetAverageRatingForPharmacyAsync(pharmacyId);
-        }
-
-        public async Task<double> GetAverageRatingForMedicationAsync(int medicationId)
-        {
-            return await _unitOfWork.Reviews.GetAverageRatingForMedicationAsync(medicationId);
-        }
 
         public async Task<bool> UpdateReviewAsync(int id, Review updatedReview, string userId)
         {
@@ -114,54 +106,13 @@ namespace E_PharmaHub.Services
         public async Task<IEnumerable<PharmacySimpleDto>> GetTopRatedPharmaciesAsync()
         {
             var pharmacies = await _unitOfWork.Reviews.GetTopRatedPharmaciesAsync(3);
-
-            var dtoList = pharmacies.Select(p => new PharmacySimpleDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Phone = p.Phone,
-                City = p.Address.City,
-                ImagePath = p.ImagePath,
-                PostalCode = p.Address.PostalCode,
-                Country = p.Address.Country,
-                Street = p.Address.Street,
-                Latitude = p.Address.Latitude,
-                Longitude = p.Address.Longitude,
-                AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0
-
-            }).ToList();
-
-            return dtoList;
+            return pharmacies;
+        
         }
         public async Task<IEnumerable<DoctorReadDto>> GetTopRatedDoctorsAsync()
         {
             var doctors = await _unitOfWork.Reviews.GetTopRatedDoctorsAsync(3);
-
-            var result = doctors.Select(d => new DoctorReadDto
-            {
-                Id = d.Id,
-                Email = d.AppUser?.Email,
-                Specialty = d.Specialty,
-                IsApproved = d.IsApproved,
-                Gender = d.Gender,
-                ConsultationPrice = d.ConsultationPrice,
-                ConsultationType = d.ConsultationType,
-                ClinicName = d.Clinic.Name, 
-                ClinicPhone = d.Clinic.Phone,
-                ClinicImagePath = d.Clinic.ImagePath,
-                DoctorImage = d.Image,
-                City = d.Clinic.Address.City,
-                Country = d.Clinic.Address.Country,
-                Latitude = d.Clinic.Address.Latitude,
-                Longitude = d.Clinic.Address.Longitude,
-                Street = d.Clinic.Address.Street,
-                PostalCode = d.Clinic.Address.PostalCode,
-                Username = d.AppUser?.UserName,
-                AverageRating  = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0,
-
-            });
-
-            return result;
+            return doctors;
         }
         public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync()
         {

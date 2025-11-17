@@ -9,6 +9,7 @@ namespace E_PharmaHub.UnitOfWorkes
         IPharmacistRepository PharmasistsProfile { get; }
         IAppointmentRepository Appointments { get; }
         IPharmacyRepository Pharmacies { get; }
+
         IUserRepository Useres { get; }
         IPrescriptionRepository Prescriptions { get; }
         IClinicRepository Clinics { get; }
@@ -18,6 +19,7 @@ namespace E_PharmaHub.UnitOfWorkes
         IReviewRepository Reviews { get; }
         IFavoriteMedicationRepository Favorite { get; }
         IFavouriteClinicRepository FavouriteClinic { get; }
+        IFavouriteDoctorRepository FavouriteDoctor { get; }
         ICartRepository Carts { get; }
         IInventoryItemRepository IinventoryItem { get; }
         IOrderRepository Order { get; }

@@ -69,32 +69,37 @@ namespace E_PharmaHub.Repositories
                 .Include(r => r.User)
                 .ToListAsync();
         }
-        public async Task<double> GetAverageRatingForPharmacyAsync(int pharmacyId)
-        {
-            return await _context.Reviews
-                .Where(r => r.PharmacyId == pharmacyId)
-                .AverageAsync(r => (double?)r.Rating) ?? 0;
-        }
 
-        public async Task<double> GetAverageRatingForMedicationAsync(int medicationId)
+        public async Task<IEnumerable<PharmacySimpleDto>> GetTopRatedPharmaciesAsync(int count)
         {
-            return await _context.Reviews
-                .Where(r => r.MedicationId == medicationId)
-                .AverageAsync(r => (double?)r.Rating) ?? 0;
-        }
-        public async Task<IEnumerable<Pharmacy>> GetTopRatedPharmaciesAsync(int count)
-        {
-            return await _context.Pharmacies
+            var pharmacies =  await _context.Pharmacies
                 .Include(a => a.Address)
                 .Include(p => p.Reviews)
                 .OrderByDescending(p => p.Reviews.Average(r => (double?)r.Rating) ?? 0)
                 .Take(count)
                 .ToListAsync();
+
+            var dtoList = pharmacies.Select(p => new PharmacySimpleDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Phone = p.Phone,
+                City = p.Address.City,
+                ImagePath = p.ImagePath,
+                PostalCode = p.Address.PostalCode,
+                Country = p.Address.Country,
+                Street = p.Address.Street,
+                Latitude = p.Address.Latitude,
+                Longitude = p.Address.Longitude,
+                AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0
+
+            }).ToList();
+            return dtoList;
         }
 
-        public async Task<IEnumerable<DoctorProfile>> GetTopRatedDoctorsAsync(int count)
+        public async Task<IEnumerable<DoctorReadDto>> GetTopRatedDoctorsAsync(int count)
         {
-            return await _context.DoctorProfiles
+            var doctors =  await _context.DoctorProfiles
                 .Include(d => d.Reviews)
                 .Include(d => d.AppUser)
                 .Include(d => d.Clinic) 
@@ -102,6 +107,33 @@ namespace E_PharmaHub.Repositories
                 .OrderByDescending(d => d.Reviews.Average(r => (double?)r.Rating) ?? 0)
                 .Take(count)
                 .ToListAsync();
+            var result = doctors.Select(d => new DoctorReadDto
+            {
+                Id = d.Id,
+                Email = d.AppUser?.Email,
+                Specialty = d.Specialty,
+                IsApproved = d.IsApproved,
+                Gender = d.Gender,
+                ConsultationPrice = d.ConsultationPrice,
+                ConsultationType = d.ConsultationType,
+                ClinicName = d.Clinic.Name,
+                ClinicPhone = d.Clinic.Phone,
+                ClinicImagePath = d.Clinic.ImagePath,
+                DoctorImage = d.Image,
+                City = d.Clinic.Address.City,
+                Country = d.Clinic.Address.Country,
+                Latitude = d.Clinic.Address.Latitude,
+                Longitude = d.Clinic.Address.Longitude,
+                Street = d.Clinic.Address.Street,
+                PostalCode = d.Clinic.Address.PostalCode,
+                Username = d.AppUser?.UserName,
+                AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0,
+                CountPatient = _context.Appointments.Count(a => a.DoctorId == d.AppUserId),
+                CountFavourite = _context.FavouriteDoctors.Count(a => a.DoctorId == d.Id),
+                CountReviews = d.Reviews.Count,
+
+            });
+            return result;
         }
 
         public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync(int count)

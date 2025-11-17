@@ -212,25 +212,6 @@ namespace E_PharmaHub.Services
             return await _unitOfWork.Doctors.GetFilteredDoctorsAsync(name, gender, sortOrder, consultationType);
         }
 
-        public async Task<int?> GetDoctorPatientCountAsync(string doctorId)
-        {
-            var doctorExists = await _unitOfWork.Doctors.GetDoctorByUserIdAsync(doctorId);
-            if (doctorExists == null)
-                return null;
-
-            var count = await _unitOfWork.Doctors.GetDoctorPatientCountAsync(doctorId);
-            return count;
-        }
-
-        public async Task<int?> GetDoctorReviewCountAsync(int doctorProfileId)
-        {
-            var doctorProfileExists = await _unitOfWork.Doctors.GetByIdAsync(doctorProfileId);
-            if (doctorProfileExists == null)
-                return null;
-
-            var count = await _unitOfWork.Doctors.GetDoctorReviewCountAsync(doctorProfileId);
-            return count;
-        }
         public async Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto, IFormFile? doctorImage)
         {
             var doctor = await _unitOfWork.Doctors.GetByIdAsync(

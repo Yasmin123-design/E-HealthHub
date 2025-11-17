@@ -18,7 +18,5 @@ namespace E_PharmaHub.Repositories
         Task<IEnumerable<DoctorReadDto>> GetAllDoctorsShowToAdminAsync();
         Task<bool> ApproveDoctorAsync(int id);
         Task<bool> RejectDoctorAsync(int id);
-        Task<int> GetDoctorPatientCountAsync(string doctorId);
-        Task<int> GetDoctorReviewCountAsync(int doctorProfileId);
     }
 }

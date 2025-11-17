@@ -42,7 +42,17 @@ namespace E_PharmaHub.Repositories
                                     DoctorImage = d.Image,
                                     Gender = d.Gender,
                                     ConsultationType = d.ConsultationType,
-                                    ConsultationPrice = d.ConsultationPrice
+                                    ConsultationPrice = d.ConsultationPrice,
+                                    Country = d.Clinic.Address.Country,
+                                    Longitude = d.Clinic.Address.Longitude,
+                                    Latitude = d.Clinic.Address.Latitude,
+                                    PostalCode = d.Clinic.Address.PostalCode,
+                                    Street = d.Clinic.Address.Street,
+                                    Username = d.AppUser.UserName,
+                                    CountPatient = _context.Appointments.Count(a => a.DoctorId == d.AppUserId),
+                                    CountFavourite = _context.FavouriteDoctors.Count(a => a.DoctorId == d.Id),
+                                    CountReviews = d.Reviews.Count,
+
                                 })
                 .ToListAsync();
         }
@@ -74,7 +84,10 @@ namespace E_PharmaHub.Repositories
                     Longitude = d.Clinic.Address.Longitude,
                     Street = d.Clinic.Address.Street,
                     PostalCode = d.Clinic.Address.PostalCode,
-                    AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0
+                    AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0,
+                    CountPatient = _context.Appointments.Count(a => a.DoctorId == d.AppUserId),
+                    CountFavourite = _context.FavouriteDoctors.Count(a => a.DoctorId == d.Id),
+                    CountReviews = d.Reviews.Count
 
                 })
                 .ToListAsync();
@@ -100,7 +113,19 @@ namespace E_PharmaHub.Repositories
                     DoctorImage=d.Image,
                     Gender= d.Gender,
                     ConsultationType=d.ConsultationType,
-                    ConsultationPrice=d.ConsultationPrice
+                    ConsultationPrice=d.ConsultationPrice,
+                    CountPatient = _context.Appointments.Count(a => a.DoctorId == d.AppUserId),
+                    CountFavourite = _context.FavouriteDoctors.Count(a => a.DoctorId == d.Id),
+                    CountReviews = d.Reviews.Count,
+                    Username = d.AppUser.UserName,
+                    Country = d.Clinic.Address.Country,
+                    Latitude = d.Clinic.Address.Latitude,
+                    Longitude = d.Clinic.Address.Longitude,
+                    Street = d.Clinic.Address.Street,
+                    PostalCode = d.Clinic.Address.PostalCode,
+                    AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0
+
+
                 })
                 .FirstOrDefaultAsync();
         }
@@ -141,7 +166,19 @@ namespace E_PharmaHub.Repositories
                     DoctorImage=d.Image,
                     Gender = d.Gender,
                     ConsultationType = d.ConsultationType,
-                    ConsultationPrice = d.ConsultationPrice
+                    ConsultationPrice = d.ConsultationPrice,
+                    AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0,
+                    CountPatient = _context.Appointments.Count(a => a.DoctorId == d.AppUserId),
+                    CountFavourite = _context.FavouriteDoctors.Count(a => a.DoctorId == d.Id),
+                    CountReviews = d.Reviews.Count,
+                    Username = d.AppUser.UserName,
+                    Country = d.Clinic.Address.Country,
+                    Latitude = d.Clinic.Address.Latitude,
+                    Longitude = d.Clinic.Address.Longitude,
+                    Street = d.Clinic.Address.Street,
+                    PostalCode = d.Clinic.Address.PostalCode,
+
+
                 })
                 .FirstOrDefaultAsync();
         }
@@ -198,7 +235,10 @@ namespace E_PharmaHub.Repositories
                     PostalCode = d.Clinic.Address.PostalCode,
                     Latitude = d.Clinic.Address.Latitude,
                     Longitude = d.Clinic.Address.Longitude,
-                    Username = d.AppUser.UserName
+                    Username = d.AppUser.UserName,
+                    CountPatient = _context.Appointments.Count(a => a.DoctorId == d.AppUserId),
+                    CountFavourite = _context.FavouriteDoctors.Count(a => a.DoctorId == d.Id),
+                    CountReviews = d.Reviews.Count
                 })
                 .ToListAsync();
         }
@@ -280,27 +320,15 @@ namespace E_PharmaHub.Repositories
                     PostalCode = d.Clinic.Address.PostalCode,
                     Latitude = d.Clinic.Address.Latitude,
                     Longitude = d.Clinic.Address.Longitude,
-                    Username = d.AppUser.UserName
+                    Username = d.AppUser.UserName,
+                    CountPatient = _context.Appointments.Count(a => a.DoctorId == d.AppUserId),
+                    CountFavourite = _context.FavouriteDoctors.Count(a => a.DoctorId == d.Id),
+                    CountReviews = d.Reviews.Count
 
                 })
                 .ToListAsync();
         }
 
-        public async Task<int> GetDoctorPatientCountAsync(string doctorId)
-        {
-            return await _context.Appointments
-                .Where(a => a.DoctorId == doctorId && a.Status != AppointmentStatus.Cancelled)
-                .Select(a => a.UserId)
-                .Distinct()
-                .CountAsync();
-        }
-
-        public async Task<int> GetDoctorReviewCountAsync(int doctorProfileId)
-        {
-            return await _context.Reviews
-                .Where(r => r.DoctorId == doctorProfileId)
-                .CountAsync();
-        }
         public async Task<IEnumerable<DoctorProfile>> GetAllAsync()
         {
             return await _context.DoctorProfiles

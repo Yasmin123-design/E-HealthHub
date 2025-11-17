@@ -190,35 +190,6 @@ namespace E_PharmaHub.Controllers
             return Ok(doctors);
         }
 
-        [HttpGet("{doctorId}/patients/count")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> GetDoctorPatientCount(string doctorId)
-        {
-            var count = await _doctorService.GetDoctorPatientCountAsync(doctorId);
-
-            if (count == null)
-                return NotFound(new { message = "Doctor not found." });
-
-            if (count == 0)
-                return Ok(new { DoctorId = doctorId, PatientCount = 0, message = "No patients found yet." });
-
-            return Ok(new { DoctorId = doctorId, PatientCount = count });
-        }
-
-        [HttpGet("{doctorProfileId}/reviews/count")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> GetDoctorReviewCount(int doctorProfileId)
-        {
-            var count = await _doctorService.GetDoctorReviewCountAsync(doctorProfileId);
-
-            if (count == null)
-                return NotFound(new { message = "Doctor profile not found." });
-
-            if (count == 0)
-                return Ok(new { DoctorProfileId = doctorProfileId, ReviewCount = 0, message = "No reviews yet." });
-
-            return Ok(new { DoctorProfileId = doctorProfileId, ReviewCount = count });
-        }
 
     }
 }

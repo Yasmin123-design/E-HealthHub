@@ -23,6 +23,9 @@ namespace E_PharmaHub.Dtos
         public string Street { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+        public int CountPatient { get; set; }
+        public int CountReviews { get; set; }
+        public int CountFavourite { get; set; }
     }
 
 }
