@@ -1,17 +1,28 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Helpers;
+using E_PharmaHub.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace E_PharmaHub.Repositories
 {
-    public interface IInventoryItemRepository : IGenericRepository<InventoryItem>
+    public interface IInventoryItemRepository 
     {
-        Task<InventoryItem?> GetByPharmacyAndMedicationAsync(int pharmacyId, int medicationId);
+        Task<IEnumerable<InventoryItem>> GetAllAsync();
+        Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(int medicineId);
+        Task<MedicineDto?> GetByIdAsync(int id);
+        Task AddAsync(InventoryItem entity);
 
-        Task<IEnumerable<InventoryItem>> GetAlternativeMedicinesAsync(int medicineId);
-        Task<IEnumerable<InventoryItem>> GetByPharmacyIdAsync(int pharmacyId);
-        Task<IEnumerable<InventoryItem>> GetByMedicationIdAsync(int medicationId);
         Task<InventoryItem?> FindAsync(Expression<Func<InventoryItem, bool>> predicate);
         Task<IEnumerable<InventoryItem>> FindAllAsync(Expression<Func<InventoryItem, bool>> predicate);
+        Task Update(InventoryItem entity);
+        void Delete(InventoryItem entity);
+        Task<IEnumerable<MedicineDto>> GetByPharmacyIdAsync(int pharmacyId);
+        Task<IEnumerable<MedicineDto>> GetByMedicationIdAsync(int medicationId);
+
+        Task<InventoryItem?> GetByPharmacyAndMedicationAsync(int pharmacyId, int medicationId);
+        Task<InventoryItem?> GetInventoryItemByIdAsync(int id);
+
     }
 
 }

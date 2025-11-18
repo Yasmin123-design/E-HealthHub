@@ -1,4 +1,6 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
+using E_PharmaHub.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -13,72 +15,79 @@ namespace E_PharmaHub.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<InventoryItem>> GetAllAsync()
+        private IQueryable<InventoryItem> BaseInventoryIncludes()
         {
-            return await _context.InventoryItems
+            return _context.InventoryItems
                 .AsNoTracking()
                 .Include(i => i.Medication)
+                    .ThenInclude(m => m.Reviews)
                 .Include(i => i.Pharmacy)
-                .ThenInclude(a => a.Address)
-                .ToListAsync();
+                    .ThenInclude(p => p.Address);
         }
-        public async Task<IEnumerable<InventoryItem>> GetAlternativeMedicinesAsync(int medicineId)
+
+        public async Task<IEnumerable<InventoryItem>> GetAllAsync()
+        {
+            return await BaseInventoryIncludes().ToListAsync();
+        }
+
+        public async Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(int medicineId)
         {
             var originalMedicine = await _context.Medications.FindAsync(medicineId);
             if (originalMedicine == null)
-                return Enumerable.Empty<InventoryItem>();
+                return Enumerable.Empty<MedicineDto>();
 
-            var alternatives = await _context.InventoryItems
-                .AsNoTracking()
-                .Include(i => i.Medication)
-                .Include(i => i.Pharmacy)
-                .ThenInclude(i => i.Address)
+            var alternatives = await BaseInventoryIncludes()
                 .Where(i =>
-                    i.Medication.Id != medicineId && (
-                    i.Medication.GenericName == originalMedicine.GenericName ||
-                    i.Medication.ATCCode == originalMedicine.ATCCode)
-                )
+                    i.Medication.Id != medicineId &&
+                    (i.Medication.GenericName == originalMedicine.GenericName ||
+                     i.Medication.ATCCode == originalMedicine.ATCCode))
                 .ToListAsync();
 
-            return alternatives;
-        }
-        public async Task<InventoryItem> GetByIdAsync(int id)
-        {
-            return await _context.InventoryItems
-                .AsNoTracking()
-                .Include(i => i.Medication)
-                .ThenInclude(r => r.Reviews)
-                .Include(i => i.Pharmacy)
-                .ThenInclude(a => a.Address)
-                .FirstOrDefaultAsync(i => i.Id == id);
+            return alternatives
+                .Select(MedicineSelector.MapInventoryToDto)
+                .ToList();
         }
 
+
+        public async Task<MedicineDto?> GetByIdAsync(int id)
+        {
+            var inventoryItem = await BaseInventoryIncludes()
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (inventoryItem == null) return null;
+
+            return MedicineSelector.MapInventoryToDto(inventoryItem);
+        }
+        public async Task<InventoryItem?> GetInventoryItemByIdAsync(int id)
+        {
+            var inventoryItem = await BaseInventoryIncludes()
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (inventoryItem == null) return null;
+
+            return inventoryItem;
+        }
         public async Task AddAsync(InventoryItem entity)
         {
             await _context.InventoryItems.AddAsync(entity);
         }
+
         public async Task<InventoryItem?> FindAsync(Expression<Func<InventoryItem, bool>> predicate)
         {
-            return await _context.InventoryItems.AsNoTracking()
-                                 .Include(i => i.Medication)
-                                 .Include(i => i.Pharmacy)
-                                 .ThenInclude(a => a.Address)
-                                 .FirstOrDefaultAsync(predicate);
+            return await BaseInventoryIncludes()
+                .FirstOrDefaultAsync(predicate);
         }
 
         public async Task<IEnumerable<InventoryItem>> FindAllAsync(Expression<Func<InventoryItem, bool>> predicate)
         {
-            return await _context.InventoryItems.AsNoTracking()
-                                 .Include(i => i.Medication)
-                                 .Include(i => i.Pharmacy)
-                                 .ThenInclude(a => a.Address)
-                                 .Where(predicate)
-                                 .ToListAsync();
+            return await BaseInventoryIncludes()
+                .Where(predicate)
+                .ToListAsync();
         }
 
         public async Task Update(InventoryItem entity)
         {
-             _context.InventoryItems.Update(entity);
+            _context.InventoryItems.Update(entity);
         }
 
         public void Delete(InventoryItem entity)
@@ -86,35 +95,33 @@ namespace E_PharmaHub.Repositories
             _context.InventoryItems.Remove(entity);
         }
 
-        public async Task<IEnumerable<InventoryItem>> GetByPharmacyIdAsync(int pharmacyId)
+        public async Task<IEnumerable<MedicineDto>> GetByPharmacyIdAsync(int pharmacyId)
         {
-            return await _context.InventoryItems.AsNoTracking()
-                .Include(i => i.Medication)
-                .ThenInclude(r => r.Reviews)
-                .Include(p => p.Pharmacy)
-                .ThenInclude(a => a.Address)
+            var items = await BaseInventoryIncludes()
                 .Where(i => i.PharmacyId == pharmacyId)
                 .ToListAsync();
+
+            return items.Select(MedicineSelector.MapInventoryToDto).ToList();
         }
 
-        public async Task<IEnumerable<InventoryItem>> GetByMedicationIdAsync(int medicationId)
+        public async Task<IEnumerable<MedicineDto>> GetByMedicationIdAsync(int medicationId)
         {
-            return await _context.InventoryItems.AsNoTracking()
-                .Include(i => i.Medication)
-                .Include(i => i.Pharmacy)
-                .ThenInclude(a => a.Address)
+            var items = await BaseInventoryIncludes()
                 .Where(i => i.MedicationId == medicationId)
                 .ToListAsync();
+
+            return items.Select(MedicineSelector.MapInventoryToDto).ToList();
         }
+
         public async Task<InventoryItem?> GetByPharmacyAndMedicationAsync(int pharmacyId, int medicationId)
         {
-            return await _context.InventoryItems.AsNoTracking()
-                .Include(i => i.Medication)
-                .Include(i => i.Pharmacy)
-                .ThenInclude(a => a.Address)
+            var item = await BaseInventoryIncludes()
                 .FirstOrDefaultAsync(i => i.PharmacyId == pharmacyId && i.MedicationId == medicationId);
+
+            if (item == null) return null;
+
+            return item;
         }
-
     }
-
 }
+

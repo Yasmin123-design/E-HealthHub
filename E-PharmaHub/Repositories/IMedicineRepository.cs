@@ -4,12 +4,16 @@ using System.Linq.Expressions;
 
 namespace E_PharmaHub.Repositories
 {
-    public interface IMedicineRepository : IGenericRepository<Medication>
+    public interface IMedicineRepository 
     {
         Task<Medication?> FindAsync(Expression<Func<Medication, bool>> predicate);
-        Task<IEnumerable<Medication>> SearchByNameAsync(string name);
-        Task<IEnumerable<PharmacySimpleDto>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng);
-            Task<IEnumerable<Medication>> GetMedicinesByPharmacyIdAsync(int pharmacyId);
+        Task<Medication> GetByIdAsync(int id);
+        Task AddAsync(Medication entity);
+        Task Update(Medication entity);
+        void Delete(Medication entity);
+        Task<IEnumerable<Medication>> GetAllAsync();
+        Task<IEnumerable<MedicineDto>> SearchByNameAsync(string name);
+        Task<IEnumerable<MedicineDto>> GetMedicinesByPharmacyIdAsync(int pharmacyId);
 
 
     }

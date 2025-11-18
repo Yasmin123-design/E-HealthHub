@@ -92,21 +92,17 @@ namespace E_PharmaHub.Services
         }
 
 
-        public async Task<IEnumerable<Medication>> SearchMedicinesByNameAsync(string name)
+        public async Task<IEnumerable<MedicineDto>> SearchMedicinesByNameAsync(string name)
         {
             return await _unitOfWork.Medicines.SearchByNameAsync(name);
         }
 
-        public async Task<IEnumerable<Medication>> GetMedicinesByPharmacyIdAsync(int pharmacyId)
+        public async Task<IEnumerable<MedicineDto>> GetMedicinesByPharmacyIdAsync(int pharmacyId)
         {
             return await _unitOfWork.Medicines.GetMedicinesByPharmacyIdAsync(pharmacyId);
         }
 
-        public async Task<IEnumerable<PharmacySimpleDto>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng)
-        {
-            return await _unitOfWork.Medicines.GetNearestPharmaciesWithMedicationAsync(medicationName, userLat, userLng);
-
-        }
+       
         public async Task<(bool Success, string Message)> AddMedicineWithInventoryAsync(MedicineDto dto, IFormFile? image, int pharmacyId)
         {
             var existingMedicine = await _unitOfWork.Medicines

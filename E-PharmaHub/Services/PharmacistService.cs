@@ -119,8 +119,6 @@ namespace E_PharmaHub.Services
             return user;
         }
 
-
-
         public async Task AddPharmacistAsync(PharmacistProfile pharmacist)
         {
             await _unitOfWork.PharmasistsProfile.AddAsync(pharmacist);
@@ -131,20 +129,13 @@ namespace E_PharmaHub.Services
             await _unitOfWork.PharmasistsProfile.MarkAsPaid(userId);
             await _unitOfWork.CompleteAsync();
         }
-        public async Task<PharmacistDto?> GetPharmacistByUserIdAsync(string userId)
+        public async Task<PharmacistReadDto?> GetPharmacistByUserIdAsync(string userId)
         {
-            var pharmacist = await _unitOfWork.PharmasistsProfile.GetByUserIdAsync(userId);
+            var pharmacist = await _unitOfWork.PharmasistsProfile.GetPharmacistReadDtoByUserIdAsync(userId);
             if (pharmacist == null)
                 return null;
 
-            return new PharmacistDto
-            {
-                Id = pharmacist.Id,
-                Email = pharmacist.AppUser.Email,
-                PhoneNumber = pharmacist.AppUser.PhoneNumber,
-                PharmacyId = pharmacist.PharmacyId,
-                IsApproved = pharmacist.IsApproved
-            };
+            return pharmacist;
         }
 
         public async Task<(bool success, string message)> ApprovePharmacistAsync(int pharmacistId)
@@ -223,7 +214,7 @@ namespace E_PharmaHub.Services
 
         public async Task<bool> UpdatePharmacistProfileAsync(string userId, PharmacistUpdateDto dto, IFormFile? image)
         {
-            var pharmacist = await _unitOfWork.PharmasistsProfile.GetPharmacistByUserIdAsync(userId);
+            var pharmacist = await _unitOfWork.PharmasistsProfile.GetByUserIdAsync(userId);
             if (pharmacist == null)
                 return false;
 

@@ -30,7 +30,7 @@ namespace E_PharmaHub.Controllers
             if (pharmacistId == null)
                 return Unauthorized("Pharmacist not found.");
 
-            var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(pharmacistId);
+            var pharmacist = await _pharmacistService.GetPharmacistProfileByUserIdAsync(pharmacistId);
             if (pharmacist == null || pharmacist.PharmacyId == null)
                 return BadRequest("No pharmacy found for this pharmacist.");
 
@@ -45,7 +45,7 @@ namespace E_PharmaHub.Controllers
         public async Task<IActionResult> GetOrderById(int id)
         {
             var pharmacistId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(pharmacistId);
+            var pharmacist = await _pharmacistService.GetPharmacistProfileByUserIdAsync(pharmacistId);
 
             if (pharmacist == null || pharmacist.PharmacyId == null)
                 return BadRequest("No pharmacy found for this pharmacist.");

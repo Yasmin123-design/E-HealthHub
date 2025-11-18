@@ -53,6 +53,7 @@ namespace E_PharmaHub.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
         public async Task<IActionResult> GetDoctorById(int id)
         {
             var doctor = await _doctorService.GetByIdDetailsAsync(id);

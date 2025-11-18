@@ -14,7 +14,6 @@ namespace E_PharmaHub.Repositories
               string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType);
         Task<DoctorReadDto?> GetByIdDetailsAsync(int id);
         Task MarkAsPaid(string userId);
-        Task<DoctorProfile> GetDoctorByIdAsync(int id);
         Task<IEnumerable<DoctorReadDto>> GetAllDoctorsShowToAdminAsync();
         Task<bool> ApproveDoctorAsync(int id);
         Task<bool> RejectDoctorAsync(int id);

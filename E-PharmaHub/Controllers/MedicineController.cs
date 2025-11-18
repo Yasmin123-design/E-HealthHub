@@ -1,5 +1,4 @@
 ﻿using E_PharmaHub.Dtos;
-using E_PharmaHub.Helpers;
 using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -32,7 +31,7 @@ namespace E_PharmaHub.Controllers
             if (item == null)
                 return NotFound($"Medicine with ID {id} not found.");
 
-            return Ok(MappingExtensions.MapInventoryToDto(item));
+            return Ok(item);
         }
 
         [HttpPost]
@@ -48,7 +47,7 @@ namespace E_PharmaHub.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "User not authenticated." });
 
-            var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
+            var pharmacist = await _pharmacistService.GetPharmacistProfileByUserIdAsync(userId);
             if (pharmacist == null)
                 return NotFound(new { message = "Pharmacist profile not found." });
 
@@ -80,7 +79,7 @@ namespace E_PharmaHub.Controllers
             int? pharmacyId = null;
             if (!User.IsInRole("Admin"))
             {
-                var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
+                var pharmacist = await _pharmacistService.GetPharmacistProfileByUserIdAsync(userId);
                 if (pharmacist == null)
                     return NotFound(new { message = "Pharmacist profile not found." });
 
@@ -107,7 +106,7 @@ namespace E_PharmaHub.Controllers
             int? pharmacyId = null;
             if (!User.IsInRole("Admin"))
             {
-                var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
+                var pharmacist = await _pharmacistService.GetPharmacistProfileByUserIdAsync(userId);
                 if (pharmacist == null)
                     return NotFound(new { message = "Pharmacist profile not found." });
 
@@ -128,11 +127,7 @@ namespace E_PharmaHub.Controllers
             if (!medicines.Any())
                 return NotFound($"No medicines found with name '{name}'.");
 
-            var inventoryItems = medicines
-                .SelectMany(m => m.Inventories)
-                .Select(MappingExtensions.MapInventoryToDto);
-
-            return Ok(inventoryItems);
+            return Ok(medicines);
         }
 
         [HttpGet("{id}/alternatives")]
@@ -144,7 +139,7 @@ namespace E_PharmaHub.Controllers
             if (!alternatives.Any())
                 return NotFound(new { message = "No alternative medicines found." });
 
-            return Ok(alternatives.Select(MappingExtensions.MapInventoryToDto));
+            return Ok(alternatives);
         }
 
         [HttpGet("pharmacy/{pharmacyId}")]
@@ -156,20 +151,9 @@ namespace E_PharmaHub.Controllers
             if (!items.Any())
                 return NotFound($"No medicines found for pharmacy ID {pharmacyId}.");
 
-            return Ok(items.SelectMany(i => i.Inventories)
-                .Select(MappingExtensions.MapInventoryToDto));
+            return Ok(items);
         }
 
-        [HttpGet("nearest")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
-
-        public async Task<IActionResult> GetNearestPharmacies(string medicationName, double lat, double lng)
-        {
-            var pharmacies = await _medicineService.GetNearestPharmaciesWithMedicationAsync(medicationName, lat, lng);
-            if (!pharmacies.Any())
-                return NotFound($"No pharmacies found with medication '{medicationName}' near your location.");
-
-            return Ok(pharmacies);
-        }
+     
     }
 }

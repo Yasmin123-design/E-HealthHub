@@ -8,6 +8,8 @@ namespace E_PharmaHub.Repositories
         Task<IEnumerable<PharmacySimpleDto>> GetAllBriefAsync();
         Task<PharmacySimpleDto> GetByIdBriefAsync(int id);
         Task<Pharmacy?> GetPharmacyByPharmacistUserIdAsync(string userId);
+        Task<IEnumerable<PharmacySimpleDto>> GetNearestPharmaciesWithMedicationAsync(
+    string medicationName, double userLat, double userLng);
 
 
     }

@@ -108,5 +108,18 @@ namespace E_PharmaHub.Controllers
             await _pharmacyService.DeletePharmacyAsync(id);
             return NoContent();
         }
+
+
+        [HttpGet("nearest")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+
+        public async Task<IActionResult> GetNearestPharmacies(string medicationName, double lat, double lng)
+        {
+            var pharmacies = await _pharmacyService.GetNearestPharmaciesWithMedicationAsync(medicationName, lat, lng);
+            if (!pharmacies.Any())
+                return NotFound($"No pharmacies found with medication '{medicationName}' near your location.");
+
+            return Ok(pharmacies);
+        }
     }
 }

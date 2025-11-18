@@ -122,10 +122,9 @@ namespace E_PharmaHub.Services
             return user;
         }
 
-
         public async Task<(bool success, string message)> ApproveDoctorAsync(int doctorId)
         {
-            var doctor = await _unitOfWork.Doctors.GetDoctorByIdAsync(doctorId);
+            var doctor = await _unitOfWork.Doctors.GetByIdAsync(doctorId);
             if (doctor == null)
                 return (false, "Doctor not found.");
 
@@ -163,7 +162,7 @@ namespace E_PharmaHub.Services
 
         public async Task<(bool success, string message)> RejectDoctorAsync(int doctorId)
         {
-            var doctor = await _unitOfWork.Doctors.GetDoctorByIdAsync(doctorId);
+            var doctor = await _unitOfWork.Doctors.GetByIdAsync(doctorId);
             if (doctor == null)
                 return (false, "Doctor not found.");
 

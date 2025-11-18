@@ -107,6 +107,12 @@ namespace E_PharmaHub.Services
                 await _unitOfWork.CompleteAsync();
             }
         }
+
+        public async Task<IEnumerable<PharmacySimpleDto>> GetNearestPharmaciesWithMedicationAsync(string medicationName, double userLat, double userLng)
+        {
+            return await _unitOfWork.Pharmacies.GetNearestPharmaciesWithMedicationAsync(medicationName, userLat, userLng);
+
+        }
     }
 
 }

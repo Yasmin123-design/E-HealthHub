@@ -1,5 +1,6 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
+using E_PharmaHub.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_PharmaHub.Repositories
@@ -12,23 +13,27 @@ namespace E_PharmaHub.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<PharmacistProfile>> GetAllAsync()
+
+        private IQueryable<PharmacistProfile> BasePharmacistIncludes()
         {
-            return await _context
-                .Pharmacists.AsNoTracking()
+            return _context.Pharmacists
+                .AsNoTracking()
                 .Include(p => p.AppUser)
                 .Include(p => p.Pharmacy)
-                .ToListAsync();
+                .ThenInclude(ph => ph.Address);
+        }
+
+        public async Task<IEnumerable<PharmacistProfile>> GetAllAsync()
+        {
+            return await BasePharmacistIncludes().ToListAsync();
         }
 
         public async Task<PharmacistProfile> GetByIdAsync(int id)
         {
-            return await _context
-                .Pharmacists.AsNoTracking()
-                .Include(p => p.AppUser)
-                .Include(p => p.Pharmacy)
+            return await BasePharmacistIncludes()
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
+
         public async Task MarkAsPaid(string userId)
         {
             var pharmacist = await _context.Pharmacists
@@ -39,46 +44,19 @@ namespace E_PharmaHub.Repositories
 
             pharmacist.HasPaid = true;
         }
+
         public async Task<IEnumerable<PharmacistReadDto>> GetAllDetailsAsync()
         {
-            return await _context.Pharmacists.AsNoTracking()
-                .Include(p => p.AppUser)
-                .Include(p => p.Pharmacy)
-                .ThenInclude(ph => ph.Address)
-                .Select(p => new PharmacistReadDto
-                {
-                    Id = p.Id,
-                    Email = p.AppUser.Email,
-                    LicenseNumber = p.LicenseNumber,
-                    IsApproved = p.IsApproved,
-                    PharmacyName = p.Pharmacy.Name,
-                    PharmacyPhone = p.Pharmacy.Phone,
-                    PharmacyImagePath = p.Pharmacy.ImagePath,
-                    City = p.Pharmacy.Address.City,
-                    PharmacistImage = p.Image
-                })
-                .ToListAsync();
+            var pharmacists = await BasePharmacistIncludes().ToListAsync();
+            return pharmacists.Select(PharmacistSelector.MapToDto).ToList();
         }
+
         public async Task<PharmacistReadDto?> GetByIdDetailsAsync(int id)
         {
-            return await _context.Pharmacists.AsNoTracking()
-                .Include(p => p.AppUser)
-                .Include(p => p.Pharmacy)
-                .ThenInclude(ph => ph.Address)
-                .Where(p => p.Id == id)
-                .Select(p => new PharmacistReadDto
-                {
-                    Id = p.Id,
-                    Email = p.AppUser.Email,
-                    LicenseNumber = p.LicenseNumber,
-                    IsApproved = p.IsApproved,
-                    PharmacyName = p.Pharmacy.Name,
-                    PharmacyPhone = p.Pharmacy.Phone,
-                    PharmacyImagePath = p.Pharmacy.ImagePath,
-                    City = p.Pharmacy.Address.City,
-                    PharmacistImage = p.Image
-                })
-                .FirstOrDefaultAsync();
+            var pharmacist = await BasePharmacistIncludes()
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            return PharmacistSelector.MapToDto(pharmacist);
         }
 
         public async Task AddAsync(PharmacistProfile entity)
@@ -96,11 +74,15 @@ namespace E_PharmaHub.Repositories
             _context.Pharmacists.Remove(entity);
         }
 
-        public async Task<PharmacistProfile?> GetPharmacistByUserIdAsync(string userId)
+        public async Task<PharmacistReadDto?> GetPharmacistReadDtoByUserIdAsync(string userId)
         {
-            return await _context.Pharmacists.AsNoTracking()
+            var pharmacist = await BasePharmacistIncludes()
                 .FirstOrDefaultAsync(p => p.AppUserId == userId);
+
+            return PharmacistSelector.MapToDto(pharmacist);
         }
+
+
         public async Task<bool> ApprovePharmacistAsync(int id)
         {
             var pharmacist = await _context.Pharmacists.FindAsync(id);
@@ -111,13 +93,13 @@ namespace E_PharmaHub.Repositories
             pharmacist.IsRejected = false;
             return true;
         }
+
         public async Task<PharmacistProfile?> GetByUserIdAsync(string userId)
         {
-            return await _context.Pharmacists.AsNoTracking()
-                .Include(x => x.AppUser)
-                .Include(p => p.Pharmacy)
+            return await BasePharmacistIncludes()
                 .FirstOrDefaultAsync(p => p.AppUserId == userId);
         }
+
         public async Task<bool> RejectPharmacistAsync(int id)
         {
             var pharmacist = await _context.Pharmacists.FindAsync(id);
@@ -130,3 +112,4 @@ namespace E_PharmaHub.Repositories
         }
     }
 }
+

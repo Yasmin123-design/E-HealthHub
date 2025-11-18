@@ -3,7 +3,7 @@ using E_PharmaHub.Models;
 
 namespace E_PharmaHub.Helpers
 {
-    public static class MappingExtensions
+    public static class MedicineSelector
     {
         public static MedicineDto MapInventoryToDto(InventoryItem item)
         {

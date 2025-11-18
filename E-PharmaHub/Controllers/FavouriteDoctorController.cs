@@ -40,7 +40,7 @@ namespace E_PharmaHub.Controllers
 
             var success = await _doctorFavouriteService.AddToFavoritesAsync(userId, doctorId);
             if (!success)
-                return BadRequest("Could not add doctor to favorites.");
+                return BadRequest("Could not add doctor to favorites it already exist.");
 
             return Ok("Doctor added to favorites successfully.");
         }

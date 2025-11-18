@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
 
 namespace E_PharmaHub.Services
@@ -11,7 +12,7 @@ namespace E_PharmaHub.Services
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IEnumerable<InventoryItem>> GetAlternativeMedicinesAsync(int medicineId)
+        public async Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(int medicineId)
         {
             return await _unitOfWork.IinventoryItem.GetAlternativeMedicinesAsync(medicineId);
         }
@@ -29,7 +30,7 @@ namespace E_PharmaHub.Services
 
         public async Task DeleteInventoryItemAsync(int id)
         {
-            var item = await _unitOfWork.IinventoryItem.GetByIdAsync(id);
+            var item = await _unitOfWork.IinventoryItem.GetInventoryItemByIdAsync(id);
             if (item != null)
             {
                 _unitOfWork.IinventoryItem.Delete(item);
@@ -37,12 +38,12 @@ namespace E_PharmaHub.Services
             }
         }
 
-        public async Task<InventoryItem> GetInventoryItemByIdAsync(int id)
+        public async Task<MedicineDto> GetInventoryItemByIdAsync(int id)
         {
             return await _unitOfWork.IinventoryItem.GetByIdAsync(id);
         }
 
-        public async Task<IEnumerable<InventoryItem>> GetInventoryByPharmacyAsync(int pharmacyId)
+        public async Task<IEnumerable<MedicineDto>> GetInventoryByPharmacyAsync(int pharmacyId)
         {
             return await _unitOfWork.IinventoryItem.GetByPharmacyIdAsync(pharmacyId);
         }

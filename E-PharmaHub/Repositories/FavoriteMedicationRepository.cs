@@ -64,7 +64,7 @@ namespace E_PharmaHub.Repositories
 
                 if (inventoryItem != null)
                 {
-                    result.Add(MappingExtensions.MapInventoryToDto(inventoryItem));
+                    result.Add(MedicineSelector.MapInventoryToDto(inventoryItem));
                 }
             }
 

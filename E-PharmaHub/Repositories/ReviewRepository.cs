@@ -156,7 +156,7 @@ namespace E_PharmaHub.Repositories
                     .FirstOrDefaultAsync(i => i.MedicationId == med.Id);
 
                 if (inventoryItem != null)
-                    result.Add(MappingExtensions.MapInventoryToDto(inventoryItem));
+                    result.Add(MedicineSelector.MapInventoryToDto(inventoryItem));
             }
             return result;
 
