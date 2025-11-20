@@ -49,19 +49,28 @@ namespace E_PharmaHub.Services
                 if (!emailResult.Succeeded)
                     return (false, "Failed to update email ❌");
 
-                await _userManager.SetUserNameAsync(user, dto.Email);
+                var userNameResult = await _userManager.SetUserNameAsync(user, dto.Email);
+                if (!userNameResult.Succeeded)
+                    return (false, "Failed to update username ❌");
             }
 
             if (!string.IsNullOrEmpty(dto.UserName))
+            {
                 user.UserName = dto.UserName;
+                user.NormalizedUserName = dto.UserName.ToUpper();
+            }
 
             if (!string.IsNullOrEmpty(dto.PhoneNumber))
                 user.PhoneNumber = dto.PhoneNumber;
+
+            if (!string.IsNullOrEmpty(dto.Address))
+                user.Address = dto.Address;
 
             _userRepo.Update(user);
             await _unitOfWork.CompleteAsync();
             return (true, "Profile updated successfully ✅");
         }
+
 
 
         public async Task<(bool Success, string Message)> UpdatePasswordAsync(string userId, UserPasswordUpdateDto dto)

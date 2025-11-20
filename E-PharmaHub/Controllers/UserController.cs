@@ -95,7 +95,7 @@ namespace E_PharmaHub.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email.Trim());
             if (user == null)
                 return Unauthorized(new { message = "Invalid credentials ❌ – Email not found" });
 
