@@ -14,6 +14,7 @@ namespace E_PharmaHub.Repositories
         Task<IEnumerable<Medication>> GetAllAsync();
         Task<IEnumerable<MedicineDto>> SearchByNameAsync(string name);
         Task<IEnumerable<MedicineDto>> GetMedicinesByPharmacyIdAsync(int pharmacyId);
+        Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync(int count);
 
 
     }

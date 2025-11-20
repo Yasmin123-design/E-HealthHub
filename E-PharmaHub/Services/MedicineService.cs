@@ -148,7 +148,12 @@ namespace E_PharmaHub.Services
             return (true, "Medicine added successfully.");
         }
 
+        public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync()
+        {
+            var meds = await _unitOfWork.Medicines.GetTopRatedMedicationsAsync(3);
+            return meds;
 
+        }
     }
 
 }

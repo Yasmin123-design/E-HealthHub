@@ -164,5 +164,20 @@ namespace E_PharmaHub.Repositories
             return await BaseDoctorIncludes()
                            .FirstOrDefaultAsync(d => d.Id == id);
         }
+        public async Task<IEnumerable<DoctorReadDto>> GetTopRatedDoctorsAsync(int count)
+        {
+            var doctors = await BaseDoctorIncludes()
+                .OrderByDescending(d =>
+                    d.Reviews.Any()
+                        ? d.Reviews.Average(r => (double?)r.Rating)
+                        : 0
+                )
+                .Take(count)
+                .Select(Selector)
+                .ToListAsync();
+
+            return doctors;
+        }
+
     }
 }

@@ -3,6 +3,7 @@ using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
@@ -121,5 +122,13 @@ namespace E_PharmaHub.Controllers
 
             return Ok(pharmacies);
         }
+
+        [HttpGet("top-pharmacies")]
+        public async Task<IActionResult> GetTopPharmacies()
+        {
+            var result = await _pharmacyService.GetTopRatedPharmaciesAsync();
+            return Ok(result);
+        }
+
     }
 }

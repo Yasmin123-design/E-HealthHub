@@ -335,6 +335,12 @@ namespace E_PharmaHub.Services
         {
             return await _unitOfWork.Doctors.GetAllDoctorsShowToAdminAsync();
         }
+
+        public async Task<IEnumerable<DoctorReadDto>> GetTopRatedDoctorsAsync()
+        {
+            var doctors = await _unitOfWork.Doctors.GetTopRatedDoctorsAsync(3);
+            return doctors;
+        }
     }
 
 }

@@ -108,25 +108,5 @@ namespace E_PharmaHub.Controllers
             return Ok(reviews);
         }
 
-        [HttpGet("top-pharmacies")]
-        public async Task<IActionResult> GetTopPharmacies()
-        {
-            var result = await _reviewService.GetTopRatedPharmaciesAsync();
-            return Ok(result);
-        }
-
-        [HttpGet("top-doctors")]
-        public async Task<IActionResult> GetTopDoctors()
-        {
-            var result = await _reviewService.GetTopRatedDoctorsAsync();
-            return Ok(result);
-        }
-
-        [HttpGet("top-medications")]
-        public async Task<IActionResult> GetTopMedications()
-        {
-            var result = await _reviewService.GetTopRatedMedicationsAsync();
-            return Ok(result);
-        }
     }
 }

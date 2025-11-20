@@ -13,5 +13,6 @@ namespace E_PharmaHub.Services
 
         Task<(bool Success, string Message)> AddMedicineWithInventoryAsync(MedicineDto dto, IFormFile? image, int pharmacyId);
         Task<IEnumerable<MedicineDto>> SearchMedicinesByNameAsync(string name);
+        Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync();
     }
 }

@@ -110,6 +110,23 @@ namespace E_PharmaHub.Repositories
                 .Select(PharmacySelectors.PharmacySimpleDtoSelector)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<PharmacySimpleDto>> GetTopRatedPharmaciesAsync(int count)
+        {
+            var pharmacies = await BasePharmacyIncludes()
+                .Where(p => _context.Pharmacists.Any(ph => ph.PharmacyId == p.Id && ph.IsApproved))
+                .OrderByDescending(p =>
+                    p.Reviews.Any()
+                        ? p.Reviews.Average(r => (double?)r.Rating)
+                        : 0
+                )
+                .Take(count)
+                .Select(PharmacySelectors.PharmacySimpleDtoSelector)
+                .ToListAsync();
+
+            return pharmacies;
+        }
+
     }
 }
 

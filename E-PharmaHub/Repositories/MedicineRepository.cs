@@ -89,6 +89,24 @@ namespace E_PharmaHub.Repositories
 
             return dtos;
         }
+        public async Task<IEnumerable<MedicineDto>> GetTopRatedMedicationsAsync(int count)
+        {
+            var medications = await BaseMedicationIncludes()
+                .OrderByDescending(m =>
+                    m.Reviews.Any()
+                        ? m.Reviews.Average(r => (double?)r.Rating)
+                        : 0
+                )
+                .Take(count)
+                .ToListAsync();
+
+            var result = medications
+                .SelectMany(m => m.Inventories
+                    .Select(inv => MedicineSelector.MapInventoryToDto(inv)))
+                .ToList();
+
+            return result;
+        }
 
 
     }

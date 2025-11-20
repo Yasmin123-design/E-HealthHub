@@ -4,6 +4,7 @@ using E_PharmaHub.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
@@ -137,8 +138,6 @@ namespace E_PharmaHub.Controllers
         }
 
 
-
-
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 
@@ -189,6 +188,14 @@ namespace E_PharmaHub.Controllers
         {
             var doctors = await _doctorService.GetDoctorsAsync(name, gender, sort, consultationType);
             return Ok(doctors);
+        }
+
+
+        [HttpGet("top-doctors")]
+        public async Task<IActionResult> GetTopDoctors()
+        {
+            var result = await _doctorService.GetTopRatedDoctorsAsync();
+            return Ok(result);
         }
 
 
