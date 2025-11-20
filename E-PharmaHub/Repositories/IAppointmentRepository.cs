@@ -1,14 +1,16 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using System.Linq.Expressions;
 
 namespace E_PharmaHub.Repositories
 {
     public interface IAppointmentRepository : IGenericRepository<Appointment>
     {
-        Task<bool> ExistsAsync(Expression<Func<Appointment, bool>> predicate);
+        Task<AppointmentResponseDto> AddAppointmentAndReturnResponseAsync(Appointment appointment);
 
-        Task<Appointment> BookAppointmentAsync(Appointment appointment);
-        Task<IEnumerable<Appointment>> GetAppointmentsByDoctorIdAsync(string doctorId);
-        Task<IEnumerable<Appointment>> GetAppointmentsByUserIdAsync(string userId);
+        Task<bool> ExistsAsync(Expression<Func<Appointment, bool>> predicate);
+        Task<AppointmentResponseDto?> GetAppointmentResponseByIdAsync(int id);
+        Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByDoctorIdAsync(string doctorId);
+        Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByUserIdAsync(string userId);
     }
 }

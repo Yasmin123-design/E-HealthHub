@@ -19,101 +19,55 @@ namespace E_PharmaHub.Services
             _stripePaymentService = stripePaymentService;
             _emailSender = emailSender;
         }
-        public async Task<AppointmentDto> BookAppointmentAsync(AppointmentDto dto)
+        public async Task<AppointmentResponseDto> BookAppointmentAsync(AppointmentDto dto)
         {
             var doctor = await _unitOfWork.Doctors.GetByIdAsync(dto.DoctorId);
             if (doctor == null)
                 throw new Exception("Doctor not found.");
+
             var clinic = await _unitOfWork.Clinics.GetByIdAsync(dto.ClinicId);
             if (clinic == null)
                 throw new Exception("Clinic not found.");
 
-            var doctorUserId = doctor.AppUserId;
-
             var appointment = new Appointment
             {
                 UserId = dto.UserId,
-                DoctorId = doctorUserId,  
+                DoctorId = doctor.AppUserId,
                 ClinicId = dto.ClinicId,
                 StartAt = dto.StartAt,
                 EndAt = dto.EndAt,
                 Status = AppointmentStatus.Pending
             };
 
-            await _unitOfWork.Appointments.AddAsync(appointment);
-            await _unitOfWork.CompleteAsync();
+            var response = await _unitOfWork.Appointments
+                .AddAppointmentAndReturnResponseAsync(appointment);
 
-            return new AppointmentDto
-            {
-                UserId = dto.UserId,
-                DoctorId = dto.DoctorId,
-                ClinicId = appointment.ClinicId,
-                StartAt = appointment.StartAt,
-                EndAt = appointment.EndAt
-            };
+            return response;
         }
 
 
         public async Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByDoctorAsync(string doctorId)
         {
             var appointments = await _unitOfWork.Appointments.GetAppointmentsByDoctorIdAsync(doctorId);
-
-            if (!appointments.Any())
-                return Enumerable.Empty<AppointmentResponseDto>();
-
-            return appointments.Select(a => new AppointmentResponseDto
-            {
-                Id = a.Id,
-                DoctorName = a.Doctor?.UserName ?? "N/A",
-                UserName = a.User?.UserName ?? "N/A",
-                ClinicName = a.Clinic?.Name ?? "N/A",
-                StartAt = a.StartAt,
-                EndAt = a.EndAt,
-                Status = a.Status
-            });
+            return appointments ?? Enumerable.Empty<AppointmentResponseDto>();
         }
 
         public async Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByUserAsync(string userId)
         {
             var appointments = await _unitOfWork.Appointments.GetAppointmentsByUserIdAsync(userId);
-
-            if (!appointments.Any())
-                return Enumerable.Empty<AppointmentResponseDto>();
-
-            return appointments.Select(a => new AppointmentResponseDto
-            {
-                Id = a.Id,
-                DoctorName = a.Doctor?.UserName ?? "N/A",
-                UserName = a.User?.UserName ?? "N/A",
-                ClinicName = a.Clinic?.Name ?? "N/A",
-                StartAt = a.StartAt,
-                EndAt = a.EndAt,
-                Status = a.Status
-            });
+            return appointments ?? Enumerable.Empty<AppointmentResponseDto>();
         }
 
         public async Task<AppointmentResponseDto?> GetByIdAsync(int id)
         {
-            var appointment = await _unitOfWork.Appointments.GetByIdAsync(id);
-            if (appointment == null) return null;
-
-            return new AppointmentResponseDto
-            {
-                Id = appointment.Id,
-                DoctorName = appointment.Doctor?.UserName ?? "N/A",
-                UserName = appointment.User?.UserName ?? "N/A",
-                ClinicName = appointment.Clinic?.Name ?? "N/A",
-                StartAt = appointment.StartAt,
-                EndAt = appointment.EndAt,
-                Status = appointment.Status
-            };
+            return await _unitOfWork.Appointments.GetAppointmentResponseByIdAsync(id);
         }
+
         public async Task<Appointment?> GetFullAppointmemtByIdAsync(int id)
         {
-            var appointment = await _unitOfWork.Appointments.GetByIdAsync(id);
-            if (appointment == null) return null;
-            return appointment;
+            return await _unitOfWork.Appointments.GetByIdAsync(id);
         }
+
         public async Task<bool> CompleteAppointmentAsync(int id)
         {
             var appointment = await _unitOfWork.Appointments.GetByIdAsync(id);
@@ -121,9 +75,9 @@ namespace E_PharmaHub.Services
 
             appointment.Status = AppointmentStatus.Completed;
             await _unitOfWork.CompleteAsync();
-
             return true;
         }
+
         public async Task<(bool success, string message)> ApproveAppointmentAsync(int appointmentId)
         {
             var appointment = await _unitOfWork.Appointments.GetByIdAsync(appointmentId);
@@ -162,6 +116,7 @@ namespace E_PharmaHub.Services
 
             return (true, "Appointment approved successfully after confirming payment.");
         }
+
         public async Task<(bool success, string message)> RejectAppointmentAsync(int appointmentId)
         {
             var appointment = await _unitOfWork.Appointments.GetByIdAsync(appointmentId);
@@ -204,7 +159,6 @@ namespace E_PharmaHub.Services
 
             return (true, "Appointment rejected successfully and payment refunded.");
         }
-
 
     }
 }

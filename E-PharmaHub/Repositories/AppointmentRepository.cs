@@ -1,4 +1,6 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Helpers;
+using E_PharmaHub.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -19,14 +21,6 @@ namespace E_PharmaHub.Repositories
         }
 
 
-        public async Task<Appointment> BookAppointmentAsync(Appointment appointment)
-        {
-            await _context.Appointments.AddAsync(appointment);
-            await _context.SaveChangesAsync();
-            return appointment;
-
-        }
-
         public void Delete(Appointment entity)
         {
             _context.Appointments.Remove(entity);
@@ -40,30 +34,11 @@ namespace E_PharmaHub.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Appointment>> GetAppointmentsByDoctorIdAsync(string doctorId)
-        {
-            return await _context
-                .Appointments
-                .Include(a => a.User)
-                .Include(d => d.Doctor)
-                .Include(a => a.Clinic)
-                .Where(a => a.DoctorId == doctorId)
-                .ToListAsync();
-        }
         public async Task<bool> ExistsAsync(Expression<Func<Appointment, bool>> predicate)
         {
             return await _context.Appointments.AnyAsync(predicate);
         }
 
-        public async Task<IEnumerable<Appointment>> GetAppointmentsByUserIdAsync(string userId)
-        {
-            return await _context.Appointments
-                .Include(a => a.User)
-                .Include(a => a.Doctor)
-                .Include(a => a.Clinic)
-                .Where(a => a.UserId == userId)
-                .ToListAsync();
-        }
 
         public async Task<Appointment> GetByIdAsync(int id)
         {
@@ -78,5 +53,53 @@ namespace E_PharmaHub.Repositories
         {
              _context.Appointments.Update(entity);
         }
+
+        private IQueryable<Appointment> BaseAppointmentIncludes()
+        {
+            return _context.Appointments
+                .Include(a => a.User)
+                .Include(a => a.Doctor)
+                .Include(a => a.Clinic)
+                .AsNoTracking();
+        }
+
+        private Expression<Func<Appointment, AppointmentResponseDto>> Selector =>
+            AppointmentSelectors.GetAppointmentSelector();
+
+        public async Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByDoctorIdAsync(string doctorId)
+        {
+            return await BaseAppointmentIncludes()
+                .Where(a => a.DoctorId == doctorId)
+                .Select(Selector)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByUserIdAsync(string userId)
+        {
+            return await BaseAppointmentIncludes()
+                .Where(a => a.UserId == userId)
+                .Select(Selector)
+                .ToListAsync();
+        }
+
+        public async Task<AppointmentResponseDto?> GetAppointmentResponseByIdAsync(int id)
+        {
+            return await BaseAppointmentIncludes()
+                .Where(a => a.Id == id)
+                .Select(Selector)
+                .FirstOrDefaultAsync();
+        }
+        public async Task<AppointmentResponseDto> AddAppointmentAndReturnResponseAsync(Appointment appointment)
+        {
+            await _context.Appointments.AddAsync(appointment);
+            await _context.SaveChangesAsync();
+
+            return await BaseAppointmentIncludes()
+                .Where(a => a.Id == appointment.Id)
+                .Select(Selector)
+                .FirstAsync();
+        }
+
+
     }
 }

@@ -282,7 +282,7 @@ namespace E_PharmaHub.Services
             if (doctor == null)
                 throw new Exception("Doctor not found.");
             
-            var clinic = await _unitOfWork.Clinics.GetClinicByIdAsync(doctor.ClinicId);
+            var clinic = await _unitOfWork.Clinics.GetByIdAsync(doctor.ClinicId??0);
             if (clinic != null)
             {
                 if (!string.IsNullOrEmpty(clinic.ImagePath))

@@ -1,7 +1,7 @@
 ﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Helpers;
 using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
-using Stripe;
 
 namespace E_PharmaHub.Services
 {
@@ -28,13 +28,23 @@ namespace E_PharmaHub.Services
             return await _unitOfWork.Clinics.GetByIdAsync(id);
         }
 
+        public async Task<ClinicDto?> GetClinicDtoByIdAsync(int id)
+        {
+            return await _unitOfWork.Clinics.GetDtoByIdAsync(id);
+        }
+
         public async Task<IEnumerable<Clinic>> GetAllClinicsAsync()
         {
             return await _unitOfWork.Clinics.GetAllAsync();
         }
 
+        public async Task<IEnumerable<ClinicDto>> GetAllClinicsDtoAsync()
+        {
+            return await _unitOfWork.Clinics.GetAllDtoAsync();
+        }
 
-        public async Task<(bool Success, string Message)> UpdateClinicAsync(string userId, ClinicUpdateDto dto, IFormFile? image)
+        public async Task<(bool Success, string Message)> UpdateClinicAsync(
+            string userId, ClinicUpdateDto dto, IFormFile? image)
         {
             var doctor = await _unitOfWork.Doctors.GetDoctorByUserIdAsync(userId);
             if (doctor == null)
@@ -67,13 +77,11 @@ namespace E_PharmaHub.Services
                 var imagePath = await _fileStorageService.SaveFileAsync(image, "clinics");
                 clinic.ImagePath = imagePath;
             }
-
             _unitOfWork.Clinics.Update(clinic);
             await _unitOfWork.CompleteAsync();
 
             return (true, "Clinic updated successfully ✅");
         }
-
 
         public async Task<bool> DeleteClinicAsync(int id)
         {
@@ -83,6 +91,17 @@ namespace E_PharmaHub.Services
             _unitOfWork.Clinics.Delete(clinic);
             await _unitOfWork.CompleteAsync();
             return true;
+        }
+
+        public async Task<Clinic?> GetClinicByDoctorUserIdAsync(string userId)
+        {
+            return await _unitOfWork.Clinics.GetClinicByDoctorUserIdAsync(userId);
+        }
+
+        public async Task<ClinicDto?> GetClinicDtoByDoctorUserIdAsync(string userId)
+        {
+            var clinic = await _unitOfWork.Clinics.GetClinicByDoctorUserIdAsync(userId);
+            return clinic == null ? null : ClinicSelectors.MapToDto(clinic);
         }
     }
 
