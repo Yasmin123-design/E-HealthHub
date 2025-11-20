@@ -67,6 +67,8 @@ namespace E_PharmaHub.Controllers
             {
                 UserName = model.UserName,
                 Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                Address = model.Address,
                 Role = model.Role,
             };
 
@@ -79,7 +81,13 @@ namespace E_PharmaHub.Controllers
             return Ok(new
             {
                 message = "User registered successfully!",
-                role = user.Role.ToString()
+                role = user.Role.ToString(),
+                user = new
+                {
+                    user.UserName,
+                    user.Email,
+                    Roles = user.Role
+                }
             });
         }
 

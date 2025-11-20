@@ -111,11 +111,6 @@ namespace E_PharmaHub.Services
        
         public async Task<(bool Success, string Message)> AddMedicineWithInventoryAsync(MedicineDto dto, IFormFile? image, int pharmacyId)
         {
-            var existingMedicine = await _unitOfWork.Medicines
-                .FindAsync(m => m.BrandName.ToLower() == dto.BrandName.ToLower());
-
-            if (existingMedicine != null)
-                return (false, $"Medicine '{dto.BrandName}' already exists.");
 
             var medicine = new Medication
             {

@@ -13,6 +13,14 @@ namespace E_PharmaHub.Dtos
         [EmailAddress(ErrorMessage = "Invalid email format")]
         public string Email { get; set; }
 
+        [Phone(ErrorMessage = "Invalid phone number format")]
+        [StringLength(15, ErrorMessage = "Phone number cannot exceed 15 characters")]
+        public string? PhoneNumber { get; set; }
+
+        [StringLength(200, ErrorMessage = "Address cannot exceed 200 characters")]
+
+        public string? Address { get; set; }
+
         [Required(ErrorMessage = "Password is required")]
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters long")]
         [DataType(DataType.Password)]

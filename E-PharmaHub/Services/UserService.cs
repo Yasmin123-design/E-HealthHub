@@ -32,7 +32,8 @@ namespace E_PharmaHub.Services
                 Email = user.Email,
                 UserName = user.UserName,
                 PhoneNumber = user.PhoneNumber,
-                ProfileImage = user.ProfileImage
+                ProfileImage = user.ProfileImage,
+                Address = user.Address
             };
         }
 
