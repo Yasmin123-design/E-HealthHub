@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Stripe;
 using E_PharmaHub.Hubs;
+using Microsoft.Extensions.FileProviders;
 
 namespace E_PharmaHub
 {
@@ -183,6 +184,30 @@ namespace E_PharmaHub
 
             app.MapControllers();
             app.UseStaticFiles();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                  Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? "", "site", "wwwroot", "doctors")
+               ),
+                RequestPath = "/doctors"
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? "", "site", "wwwroot", "medicines")
+                ),
+                RequestPath = "/medicines"
+            });
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? "", "site", "wwwroot", "pharmacies")
+                ),
+                RequestPath = "/pharmacies"
+            });
 
             app.UseWebSockets();
             app.MapHub<ChatHub>("/hubs/chat");
