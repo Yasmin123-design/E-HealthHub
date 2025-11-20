@@ -37,7 +37,7 @@ namespace E_PharmaHub.Services
             };
         }
 
-        public async Task<(bool Success, string Message)> UpdateUserProfileAsync(string userId, UserUpdateDto dto)
+        public async Task<(bool Success, string Message)> UpdateProfileAsync(string userId, UserProfileDto dto)
         {
             var user = await _userRepo.GetByIdAsync(userId);
             if (user == null)
@@ -52,16 +52,23 @@ namespace E_PharmaHub.Services
             if (!string.IsNullOrEmpty(dto.PhoneNumber))
                 user.PhoneNumber = dto.PhoneNumber;
 
-            if (!string.IsNullOrEmpty(dto.CurrentPassword) && !string.IsNullOrEmpty(dto.NewPassword))
-            {
-                var passResult = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
-                if (!passResult.Succeeded)
-                    return (false, "Incorrect current password ❌");
-            }
-
             _userRepo.Update(user);
             await _unitOfWork.CompleteAsync();
             return (true, "Profile updated successfully ✅");
+        }
+
+        public async Task<(bool Success, string Message)> UpdatePasswordAsync(string userId, UserPasswordUpdateDto dto)
+        {
+            var user = await _userRepo.GetByIdAsync(userId);
+            if (user == null)
+                return (false, "User not found.");
+
+            var passResult = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+
+            if (!passResult.Succeeded)
+                return (false, "Incorrect current password ❌");
+
+            return (true, "Password updated successfully 🔐");
         }
 
         public async Task<(bool Success, string Message)> UploadProfilePictureAsync(string userId, IFormFile image)

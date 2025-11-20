@@ -291,16 +291,30 @@ namespace E_PharmaHub.Controllers
         [HttpPut("update-profile")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
 
-        public async Task<IActionResult> UpdateProfile([FromForm] UserUpdateDto dto)
+        public async Task<IActionResult> UpdateProfile([FromForm] UserProfileDto dto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var (success, message) = await _userService.UpdateUserProfileAsync(userId, dto);
+            var (success, message) = await _userService.UpdateProfileAsync(userId, dto);
 
             if (!success)
                 return BadRequest(new { message });
 
             return Ok(new { message });
         }
+
+        [HttpPut("update-password")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+        public async Task<IActionResult> UpdatePassword([FromBody] UserPasswordUpdateDto dto)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var (success, message) = await _userService.UpdatePasswordAsync(userId, dto);
+
+            if (!success)
+                return BadRequest(new { message });
+
+            return Ok(new { message });
+        }
+
 
         [HttpPost("upload-picture")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]

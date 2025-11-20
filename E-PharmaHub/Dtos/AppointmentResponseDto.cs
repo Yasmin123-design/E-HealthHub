@@ -6,6 +6,7 @@ namespace E_PharmaHub.Dtos
     {
         public int Id { get; set; }
         public string DoctorId { get; set; }
+        public string DoctorSpeciality { get; set; }
         public string UserId { get; set; }
         public int ClinicId { get; set; }
         public string DoctorName { get; set; }

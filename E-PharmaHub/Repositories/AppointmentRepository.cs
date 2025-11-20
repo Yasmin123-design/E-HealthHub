@@ -58,8 +58,9 @@ namespace E_PharmaHub.Repositories
         {
             return _context.Appointments
                 .Include(a => a.User)
-                .Include(a => a.Doctor)
                 .Include(a => a.Clinic)
+                .Include(a => a.Doctor)
+                .ThenInclude(a => a.DoctorProfile)
                 .AsNoTracking();
         }
 

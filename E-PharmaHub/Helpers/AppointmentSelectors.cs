@@ -12,6 +12,7 @@ namespace E_PharmaHub.Helpers
             {
                 Id = a.Id,
                 DoctorName = a.Doctor.UserName,
+                DoctorSpeciality = a.Doctor.DoctorProfile.Specialty,
                 DoctorId = a.Doctor.Id,
                 UserName = a.User.UserName,
                 UserId = a.User.Id,
