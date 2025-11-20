@@ -9,6 +9,7 @@ namespace E_PharmaHub.Helpers
         public static Expression<Func<Review, ReviewDto>> ReviewDtoSelector =>
             r => new ReviewDto
             {
+                Id = r.Id,
                 UserName = r.User.UserName,
                 Image = r.User.ProfileImage,
                 Rating = r.Rating,
