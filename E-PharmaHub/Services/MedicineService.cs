@@ -35,6 +35,12 @@ namespace E_PharmaHub.Services
             existingMedicine.DosageForm = dto.DosageForm ?? existingMedicine.DosageForm;
             existingMedicine.Strength = dto.Strength ?? existingMedicine.Strength;
             existingMedicine.ATCCode = dto.ATCCode ?? existingMedicine.ATCCode;
+            existingMedicine.Description = dto.Description ?? existingMedicine.Description;
+            existingMedicine.DirectionsForUse = dto.DirectionsForUse ?? existingMedicine.DirectionsForUse;
+            existingMedicine.SuitableFor = dto.SuitableFor ?? existingMedicine.SuitableFor;
+            existingMedicine.NotSuitableFor = dto.NotSuitableFor ?? existingMedicine.NotSuitableFor;
+            existingMedicine.Composition = dto.Composition ?? existingMedicine.Composition;
+            existingMedicine.Warning = dto.Warning ?? existingMedicine.Warning;
 
             if (image != null && image.Length > 0)
             {
@@ -117,7 +123,13 @@ namespace E_PharmaHub.Services
                 GenericName = dto.GenericName,
                 DosageForm = dto.DosageForm,
                 Strength = dto.Strength,
-                ATCCode = dto.ATCCode
+                ATCCode = dto.ATCCode,
+                Description = dto.Description,
+                Warning = dto.Warning,
+                DirectionsForUse = dto.DirectionsForUse,
+                SuitableFor = dto.SuitableFor,
+                NotSuitableFor = dto.NotSuitableFor,
+                Composition = dto.Composition
             };
 
             if (image != null && image.Length > 0)

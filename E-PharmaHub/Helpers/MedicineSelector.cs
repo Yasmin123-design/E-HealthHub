@@ -19,6 +19,12 @@ namespace E_PharmaHub.Helpers
                 DosageForm = item.Medication.DosageForm,
                 ImagePath = item.Medication.ImagePath,
                 Price = item.Price,
+                Description = item.Medication.Description,
+                Warning = item.Medication.Warning,
+                Composition = item.Medication.Composition,
+                DirectionsForUse = item.Medication.DirectionsForUse,
+                SuitableFor = item.Medication.SuitableFor,
+                NotSuitableFor = item.Medication.NotSuitableFor,
                 Quantity = item.Quantity,
                 AverageRating = item.Medication.Reviews.Any() ? item.Medication.Reviews.Average(r => r.Rating) : 0,
                 Pharmacy = new PharmacySimpleDto

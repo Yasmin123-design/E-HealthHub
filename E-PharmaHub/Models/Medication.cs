@@ -23,6 +23,25 @@ namespace E_PharmaHub.Models
         [StringLength(20, ErrorMessage = "ATC code cannot exceed 20 characters.")]
         public string ATCCode { get; set; }
 
+        [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]
+        public string? Description { get; set; }
+
+        [StringLength(300, ErrorMessage = "Warning cannot exceed 300 characters")]
+        public string? Warning { get; set; }
+
+        [StringLength(200, ErrorMessage = "SuitableFor cannot exceed 200 characters")]
+        public string? SuitableFor { get; set; }
+
+        [StringLength(200, ErrorMessage = "NotSuitableFor cannot exceed 200 characters")]
+        public string? NotSuitableFor { get; set; }
+
+        [StringLength(500, ErrorMessage = "Composition cannot exceed 500 characters")]
+        public string? Composition { get; set; }
+
+        [StringLength(500, ErrorMessage = "DirectionsForUse cannot exceed 500 characters")]
+        public string? DirectionsForUse { get; set; }
+
+
         [StringLength(255, ErrorMessage = "Image path too long.")]
         public string? ImagePath { get; set; }
 
