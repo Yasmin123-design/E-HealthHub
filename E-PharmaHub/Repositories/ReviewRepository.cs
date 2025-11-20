@@ -131,6 +131,7 @@ namespace E_PharmaHub.Repositories
                 CountPatient = _context.Appointments.Count(a => a.DoctorId == d.AppUserId),
                 CountFavourite = _context.FavouriteDoctors.Count(a => a.DoctorId == d.Id),
                 CountReviews = d.Reviews.Count,
+                ClinicId = d.Clinic.Id
 
             });
             return result;
