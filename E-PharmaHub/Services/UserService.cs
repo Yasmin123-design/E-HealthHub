@@ -43,8 +43,14 @@ namespace E_PharmaHub.Services
             if (user == null)
                 return (false, "User not found.");
 
-            if (!string.IsNullOrEmpty(dto.Email))
-                user.Email = dto.Email;
+            if (!string.IsNullOrEmpty(dto.Email) && dto.Email != user.Email)
+            {
+                var emailResult = await _userManager.SetEmailAsync(user, dto.Email);
+                if (!emailResult.Succeeded)
+                    return (false, "Failed to update email ❌");
+
+                await _userManager.SetUserNameAsync(user, dto.Email);
+            }
 
             if (!string.IsNullOrEmpty(dto.UserName))
                 user.UserName = dto.UserName;
@@ -56,6 +62,7 @@ namespace E_PharmaHub.Services
             await _unitOfWork.CompleteAsync();
             return (true, "Profile updated successfully ✅");
         }
+
 
         public async Task<(bool Success, string Message)> UpdatePasswordAsync(string userId, UserPasswordUpdateDto dto)
         {
