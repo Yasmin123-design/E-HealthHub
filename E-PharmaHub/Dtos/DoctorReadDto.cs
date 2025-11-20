@@ -13,6 +13,7 @@ namespace E_PharmaHub.Dtos
         public string Username { get; set; }
         public decimal ConsultationPrice { get; set; }
         public ConsultationType ConsultationType { get; set; }
+        public int ClinicId { get; set; }
         public string ClinicName { get; set; }
         public string ClinicPhone { get; set; }
         public string? ClinicImagePath { get; set; }

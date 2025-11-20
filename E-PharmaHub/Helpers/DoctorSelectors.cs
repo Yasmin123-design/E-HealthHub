@@ -31,7 +31,7 @@ namespace E_PharmaHub.Helpers
                 Longitude = d.Clinic.Address.Longitude,
                 Street = d.Clinic.Address.Street,
                 PostalCode = d.Clinic.Address.PostalCode,
-
+                ClinicId = d.Clinic.Id,
                 AverageRating = d.Reviews.Any() ? d.Reviews.Average(r => r.Rating) : 0,
                 CountReviews = d.Reviews.Count,
 
