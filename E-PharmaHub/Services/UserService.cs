@@ -29,6 +29,7 @@ namespace E_PharmaHub.Services
 
             return new UserProfileDto
             {
+                Id = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
                 PhoneNumber = user.PhoneNumber,
