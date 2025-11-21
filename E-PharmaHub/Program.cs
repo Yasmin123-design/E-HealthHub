@@ -183,29 +183,32 @@ namespace E_PharmaHub
             app.UseAuthorization();
 
             app.MapControllers();
-            app.UseStaticFiles();
+            string homePath = Environment.GetEnvironmentVariable("HOME") ?? "";
+            var doctorsPath = Path.Combine(homePath, "site", "wwwroot", "doctors");
+            var medicinesPath = Path.Combine(homePath, "site", "wwwroot", "medicines");
+            var pharmaciesPath = Path.Combine(homePath, "site", "wwwroot", "pharmacies");
+
+            if (!Directory.Exists(doctorsPath)) Directory.CreateDirectory(doctorsPath);
+            if (!Directory.Exists(medicinesPath)) Directory.CreateDirectory(medicinesPath);
+            if (!Directory.Exists(pharmaciesPath)) Directory.CreateDirectory(pharmaciesPath);
+
+            app.UseStaticFiles(); 
 
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(
-                  Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? "", "site", "wwwroot", "doctors")
-               ),
+                FileProvider = new PhysicalFileProvider(doctorsPath),
                 RequestPath = "/doctors"
             });
 
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? "", "site", "wwwroot", "medicines")
-                ),
+                FileProvider = new PhysicalFileProvider(medicinesPath),
                 RequestPath = "/medicines"
             });
 
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Environment.GetEnvironmentVariable("HOME") ?? "", "site", "wwwroot", "pharmacies")
-                ),
+                FileProvider = new PhysicalFileProvider(pharmaciesPath),
                 RequestPath = "/pharmacies"
             });
 

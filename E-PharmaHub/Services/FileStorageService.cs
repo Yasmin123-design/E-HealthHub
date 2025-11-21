@@ -14,11 +14,9 @@
             if (file == null || file.Length == 0)
                 return null;
 
-            var homePath = Environment.GetEnvironmentVariable("HOME")
-                           ?? _env.WebRootPath
-                           ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var homePath = Environment.GetEnvironmentVariable("HOME") ?? _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
-            var uploadsFolder = Path.Combine(homePath, "site", "wwwroot", folderName);
+            var uploadsFolder = Path.Combine(homePath, folderName);
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
 
@@ -33,14 +31,10 @@
             return $"/{folderName}/{uniqueFileName}";
         }
 
-
         public void DeleteFile(string filePath)
         {
-            var homePath = Environment.GetEnvironmentVariable("HOME")
-                           ?? _env.WebRootPath
-                           ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-
-            var fullPath = Path.Combine(homePath, "site", "wwwroot", filePath.TrimStart('/'));
+            var homePath = Environment.GetEnvironmentVariable("HOME") ?? _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var fullPath = Path.Combine(homePath, filePath.TrimStart('/'));
 
             if (File.Exists(fullPath))
                 File.Delete(fullPath);
