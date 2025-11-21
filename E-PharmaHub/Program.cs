@@ -185,29 +185,23 @@ namespace E_PharmaHub
             app.MapControllers();
             var env = app.Environment;
 
-            // 1) نحاول نقرأ HOME (للـ Azure Linux)
             string? home = Environment.GetEnvironmentVariable("HOME");
 
-            // 2) نحدد المسار الأساسي Permanent Root
             string rootPath;
 
             if (!string.IsNullOrEmpty(home))
             {
-                // شغّال على Linux Server → Azure
                 rootPath = Path.Combine(home, "site", "wwwroot");
             }
             else
             {
-                // شغّال Local → Windows
                 rootPath = env.WebRootPath;
             }
 
-            // 3) بناء مسارات الصور
             var doctorsPath = Path.Combine(rootPath, "doctors");
             var medicinesPath = Path.Combine(rootPath, "medicines");
             var pharmaciesPath = Path.Combine(rootPath, "pharmacies");
 
-            // 4) إنشاء الفولدرات لو مش موجودة
             Directory.CreateDirectory(doctorsPath);
             Directory.CreateDirectory(medicinesPath);
             Directory.CreateDirectory(pharmaciesPath);
