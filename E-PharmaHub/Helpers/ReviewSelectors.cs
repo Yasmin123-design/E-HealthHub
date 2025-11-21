@@ -11,6 +11,7 @@ namespace E_PharmaHub.Helpers
             {
                 Id = r.Id,
                 UserName = r.User.UserName,
+                UserId = r.User.Id,
                 Image = r.User.ProfileImage,
                 Rating = r.Rating,
                 Comment = r.Comment,

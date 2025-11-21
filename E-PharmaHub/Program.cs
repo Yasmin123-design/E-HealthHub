@@ -1,4 +1,4 @@
-using E_PharmaHub.Models;
+﻿using E_PharmaHub.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -183,14 +183,34 @@ namespace E_PharmaHub
             app.UseAuthorization();
 
             app.MapControllers();
-            string homePath = Environment.GetEnvironmentVariable("HOME") ?? "";
-            var doctorsPath = Path.Combine(homePath, "site", "wwwroot", "doctors");
-            var medicinesPath = Path.Combine(homePath, "site", "wwwroot", "medicines");
-            var pharmaciesPath = Path.Combine(homePath, "site", "wwwroot", "pharmacies");
+            var env = app.Environment;
 
-            if (!Directory.Exists(doctorsPath)) Directory.CreateDirectory(doctorsPath);
-            if (!Directory.Exists(medicinesPath)) Directory.CreateDirectory(medicinesPath);
-            if (!Directory.Exists(pharmaciesPath)) Directory.CreateDirectory(pharmaciesPath);
+            // 1) نحاول نقرأ HOME (للـ Azure Linux)
+            string? home = Environment.GetEnvironmentVariable("HOME");
+
+            // 2) نحدد المسار الأساسي Permanent Root
+            string rootPath;
+
+            if (!string.IsNullOrEmpty(home))
+            {
+                // شغّال على Linux Server → Azure
+                rootPath = Path.Combine(home, "site", "wwwroot");
+            }
+            else
+            {
+                // شغّال Local → Windows
+                rootPath = env.WebRootPath;
+            }
+
+            // 3) بناء مسارات الصور
+            var doctorsPath = Path.Combine(rootPath, "doctors");
+            var medicinesPath = Path.Combine(rootPath, "medicines");
+            var pharmaciesPath = Path.Combine(rootPath, "pharmacies");
+
+            // 4) إنشاء الفولدرات لو مش موجودة
+            Directory.CreateDirectory(doctorsPath);
+            Directory.CreateDirectory(medicinesPath);
+            Directory.CreateDirectory(pharmaciesPath);
 
             app.UseStaticFiles(); 
 
@@ -211,6 +231,7 @@ namespace E_PharmaHub
                 FileProvider = new PhysicalFileProvider(pharmaciesPath),
                 RequestPath = "/pharmacies"
             });
+
 
             app.UseWebSockets();
             app.MapHub<ChatHub>("/hubs/chat");
