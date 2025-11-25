@@ -10,12 +10,17 @@ namespace E_PharmaHub.Helpers
             r => new ReviewDto
             {
                 Id = r.Id,
-                UserName = r.User.UserName,
-                UserId = r.User.Id,
-                Image = r.User.ProfileImage,
                 Rating = r.Rating,
                 Comment = r.Comment,
-                UserEmail = r.User.Email
+                User = new UserProfileDto
+                {
+                    Id = r.User.Id,
+                    Address = r.User.Address,
+                    ProfileImage = r.User.ProfileImage,
+                    Email = r.User.Email,
+                    PhoneNumber = r.User.PhoneNumber,
+                    UserName = r.User.UserName
+                }
             };
     }
 }
