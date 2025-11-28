@@ -111,7 +111,7 @@ namespace E_PharmaHub.Services
 
             if (dto.PaymentFor == PaymentForType.Order && dto.OrderId.HasValue)
             {
-                var order = await _unitOfWork.Order.GetByIdAsync(dto.OrderId.Value);
+                var order = await _unitOfWork.Order.GetOrderByIdAsync(dto.OrderId.Value);
                 if (order != null)
                 {
                     order.PaymentId = payment.Id;

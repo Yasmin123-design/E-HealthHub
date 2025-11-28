@@ -53,7 +53,7 @@ namespace E_PharmaHub.Services
                     payment.Status = PaymentStatus.Captured;
                     message = "Payment authorized successfully (awaiting pharmacist approval).";
 
-                    var order = await _unitOfWork.Order.GetByPaymentIdAsync(payment.Id);
+                    var order = await _unitOfWork.Order.GetByPaymentIdEntityAsync(payment.Id);
                     if (order != null)
                     {
                         order.PaymentStatus = PaymentStatus.Captured;

@@ -7,6 +7,7 @@ namespace E_PharmaHub.Services
     public class OrderService : IOrderService
     {
         private readonly IUnitOfWork _unitOfWork;
+
         public OrderService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -14,13 +15,16 @@ namespace E_PharmaHub.Services
         public async Task<CartResult> CheckoutAsync(string userId, CheckoutDto dto)
         {
             var cart = await _unitOfWork.Carts.GetUserCartAsync(userId);
+
             if (cart == null || cart.Items == null || !cart.Items.Any())
                 return new CartResult { Success = false, Message = "Cart is empty" };
 
             var existingOrder = await _unitOfWork.Order
-                .GetPendingOrderByUserAsync(userId, dto.PharmacyId);
+                .GetPendingOrderEntityByUserAsync(userId, dto.PharmacyId);
 
-            if (existingOrder != null)
+            bool isNewOrder = existingOrder == null;
+
+            if (!isNewOrder)
             {
                 foreach (var cartItem in cart.Items)
                 {
@@ -43,6 +47,13 @@ namespace E_PharmaHub.Services
                 }
 
                 existingOrder.TotalPrice = existingOrder.Items.Sum(i => i.UnitPrice * i.Quantity);
+
+                existingOrder.City = dto.City;
+                existingOrder.Country = dto.Country;
+                existingOrder.Street = dto.Street;
+                existingOrder.PhoneNumber = dto.PhoneNumber;
+
+                await _unitOfWork.Order.UpdateAsync(existingOrder);
             }
             else
             {
@@ -54,6 +65,7 @@ namespace E_PharmaHub.Services
                     Street = dto.Street,
                     PhoneNumber = dto.PhoneNumber,
                     PharmacyId = dto.PharmacyId,
+                    Status = OrderStatus.Pending,
                     TotalPrice = cart.Items.Sum(i => i.UnitPrice * i.Quantity),
                     Items = cart.Items.Select(i => new OrderItem
                     {
@@ -72,64 +84,48 @@ namespace E_PharmaHub.Services
             return new CartResult
             {
                 Success = true,
-                Message = existingOrder.Id > 0
-                    ? "Order updated with new items successfully."
-                    : "Checkout completed. New order created successfully.",
+                Message = isNewOrder
+                    ? "Checkout completed. New order created successfully."
+                    : "Pending order updated with new items successfully.",
                 Data = new { OrderId = existingOrder.Id, existingOrder.TotalPrice }
             };
         }
-
 
         public async Task MarkAsPaid(string userId)
         {
             await _unitOfWork.Order.MarkAsPaid(userId);
             await _unitOfWork.CompleteAsync();
         }
-        public async Task<IEnumerable<BriefOrderDto>> GetAllOrdersAsync()
-        {
-            var orders = await _unitOfWork.Order.GetAllAsync();
 
-            return orders.Select(o => new BriefOrderDto
-            {
-                Id = o.Id,
-                Email = o.User.Email,
-                TotalPrice = o.TotalPrice,
-                Status = o.Status.ToString(),
-                Items = o.Items.Select(i => new BriefOrderItemDto
-                {
-                    MedicationName = i.Medication.BrandName,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
-                }).ToList()
-            });
+        public async Task<IEnumerable<OrderResponseDto>> GetAllOrdersAsync()
+        {
+            return await _unitOfWork.Order.GetAllAsync();
         }
 
-        public async Task<BriefOrderDto> GetOrderByIdAsync(int id)
+        public async Task<OrderResponseDto?> GetOrderByIdAsync(int id)
         {
-            var order = await _unitOfWork.Order.GetByIdAsync(id);
+            return await _unitOfWork.Order.GetOrderResponseByIdAsync(id);
+        }
 
-            if (order == null)
-                return null;
+        public async Task<IEnumerable<OrderResponseDto>> GetOrdersByPharmacyIdAsync(int pharmacyId)
+        {
+            return await _unitOfWork.Order.GetByPharmacyIdAsync(pharmacyId);
+        }
 
-            return new BriefOrderDto
-            {
-                Id = order.Id,
-                Email = order.User.Email,
-                PharmacyId = order.PharmacyId,
-                TotalPrice = order.TotalPrice,
-                Status = order.Status.ToString(),
-                Items = order.Items.Select(i => new BriefOrderItemDto
-                {
-                    MedicationName = i.Medication.BrandName,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
-                }).ToList()
-            };
+        public async Task<IEnumerable<OrderResponseDto>> GetOrdersByUserIdAsync(string userId)
+        {
+            return await _unitOfWork.Order.GetByUserIdAsync(userId);
+        }
+
+
+        public async Task<OrderResponseDto?> GetPendingOrderByUserAsync(string userId, int pharmacyId)
+        {
+            return await _unitOfWork.Order.GetPendingOrderByUserAsync(userId, pharmacyId);
         }
 
         public async Task<(bool Success, string Message)> AcceptOrderAsync(int id)
         {
-            var order = await _unitOfWork.Order.GetByIdAsync(id);
+            var order = await _unitOfWork.Order.GetOrderByIdAsync(id);
             if (order == null)
                 return (false, "Order not found.");
 
@@ -137,14 +133,11 @@ namespace E_PharmaHub.Services
                 return (false, "This order is already accepted.");
 
             if (order.Status == OrderStatus.Cancelled)
-                return (false, "This order has been cancelled and cannot be accepted.");
+                return (false, "This order has been cancelled.");
 
             var payment = await _unitOfWork.Payments.GetByIdAsync(order.PaymentId.Value);
             if (payment == null)
-                return (false, "Payment not found for this order.");
-
-            if (payment.Status == PaymentStatus.Paid)
-                return (false, "Payment already Paid Successfully.");
+                return (false, "Payment not found.");
 
             try
             {
@@ -154,32 +147,30 @@ namespace E_PharmaHub.Services
                 payment.Status = PaymentStatus.Paid;
                 order.Status = OrderStatus.Confirmed;
                 order.PaymentStatus = PaymentStatus.Paid;
+
                 await _unitOfWork.CompleteAsync();
 
-                return (true, "Order accepted and payment captured successfully.");
+                return (true, "Order accepted successfully.");
             }
             catch (Exception ex)
             {
-                return (false, $"Failed to capture payment: {ex.Message}");
+                return (false, ex.Message);
             }
         }
 
-
         public async Task<(bool Success, string Message)> CancelOrderAsync(int id)
         {
-            var order = await _unitOfWork.Order.GetByIdAsync(id);
+            var order = await _unitOfWork.Order.GetOrderByIdAsync(id);
             if (order == null)
                 return (false, "Order not found.");
 
             if (order.Status == OrderStatus.Confirmed)
-                return (false, "This order has already been accepted and cannot be cancelled.");
+                return (false, "Order already accepted.");
 
             if (order.Status == OrderStatus.Cancelled)
-                return (false, "This order is already cancelled.");
+                return (false, "Order already cancelled.");
 
             var payment = await _unitOfWork.Payments.GetByIdAsync(order.PaymentId.Value);
-            if (payment == null)
-                return (false, "Payment not found for this order.");
 
             try
             {
@@ -192,111 +183,44 @@ namespace E_PharmaHub.Services
 
                 foreach (var item in order.Items)
                 {
-                    var inventoryItem = await _unitOfWork.IinventoryItem
+                    var invItem = await _unitOfWork.IinventoryItem
                         .GetByPharmacyAndMedicationAsync(order.PharmacyId, item.MedicationId);
 
-                    if (inventoryItem != null)
+                    if (invItem != null)
                     {
-                        inventoryItem.Quantity += item.Quantity; 
-                        await _unitOfWork.IinventoryItem.Update(inventoryItem);
+                        invItem.Quantity += item.Quantity;
+                        await _unitOfWork.IinventoryItem.Update(invItem);
                     }
                 }
 
                 await _unitOfWork.CompleteAsync();
 
-                return (true, "Order cancelled successfully and quantities restored to inventory.");
+                return (true, "Order cancelled successfully.");
             }
             catch (Exception ex)
             {
-                return (false, $"Failed to cancel payment: {ex.Message}");
+                return (false, ex.Message);
             }
-        }
-
-        public async Task<IEnumerable<BriefOrderDto>> GetOrdersByPharmacyIdAsync(int pharmacyId)
-        {
-            var orders = await _unitOfWork.Order.GetByPharmacyId(pharmacyId);
-
-            return orders.Select(o => new BriefOrderDto
-            {
-                Id = o.Id,
-                Email = o.User?.Email ?? "N/A",
-                Status = o.Status.ToString(),
-                PharmacyId = o.PharmacyId,
-                TotalPrice = o.TotalPrice,
-                Items = o.Items.Select(i => new BriefOrderItemDto
-                {
-                    MedicationName = i.Medication.BrandName,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
-                }).ToList()
-            }).ToList();
-        }
-
-        public async Task<BriefOrderDto?> GetPendingOrderByUserAsync(string userId, int pharmacyId)
-        {
-            var order = await _unitOfWork.Order.GetPendingOrderByUserAsync(userId, pharmacyId);
-            if (order == null)
-                return null;
-
-            return new BriefOrderDto
-            {
-                Id = order.Id,
-                Email = order.User.Email,
-                PharmacyId = order.PharmacyId,
-                Status = order.Status.ToString(),
-                TotalPrice = order.TotalPrice,
-                Items = order.Items.Select(i => new BriefOrderItemDto
-                {
-                    MedicationName = i.Medication.BrandName,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
-                }).ToList()
-            };
         }
         public async Task<(bool Success, string Message)> MarkAsDeliveredAsync(int orderId)
         {
-            var order = await _unitOfWork.Order.GetByIdAsync(orderId);
+            var order = await _unitOfWork.Order.GetOrderByIdAsync(orderId);
             if (order == null)
                 return (false, "Order not found.");
 
             if (order.Status == OrderStatus.Delivered)
-                return (false, "Order is already marked as delivered.");
-
-            if (order.Status == OrderStatus.Cancelled)
-                return (false, "Cannot mark a cancelled order as delivered.");
+                return (false, "Already delivered.");
 
             if (order.Status != OrderStatus.Confirmed)
-                return (false, "Only confirmed orders can be marked as delivered.");
+                return (false, "Only confirmed orders can be delivered.");
 
             await _unitOfWork.Order.UpdateStatusAsync(orderId, OrderStatus.Delivered);
             await _unitOfWork.CompleteAsync();
 
-            return (true, "Order marked as delivered successfully.");
-        }
-
-        public async Task<IEnumerable<BriefOrderDto>> GetOrdersByUserIdAsync(string userId)
-        {
-            var orders = await _unitOfWork.Order.GetByUserIdAsync(userId);
-
-            if (orders == null || !orders.Any())
-                return new List<BriefOrderDto>();
-
-            return orders.Select(o => new BriefOrderDto
-            {
-                Id = o.Id,
-                Email = o.User?.Email ?? "N/A",
-                Status = o.Status.ToString(),
-                PharmacyId = o.PharmacyId,
-                TotalPrice = o.TotalPrice,
-                Items = o.Items.Select(i => new BriefOrderItemDto
-                {
-                    MedicationName = i.Medication.BrandName,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
-                }).ToList()
-            }).ToList();
+            return (true, "Order delivered successfully.");
         }
     }
 }
+
 
 
