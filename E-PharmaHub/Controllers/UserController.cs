@@ -317,7 +317,7 @@ namespace E_PharmaHub.Controllers
 
 
         [HttpPost("upload-picture")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> UploadOrUpdateProfilePicture(IFormFile image)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
