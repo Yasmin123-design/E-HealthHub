@@ -19,7 +19,7 @@ namespace E_PharmaHub.Helpers
                 PharmacyPhone = p.Pharmacy?.Phone,
                 PharmacyImagePath = p.Pharmacy?.ImagePath,
                 City = p.Pharmacy?.Address?.City,
-                PharmacistImage = p.Image
+                PharmacistImage = p.AppUser.ProfileImage
             };
         }
     }

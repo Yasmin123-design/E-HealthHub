@@ -21,7 +21,7 @@ namespace E_PharmaHub.Helpers
                 ClinicPhone = d.Clinic.Phone,
                 ClinicImagePath = d.Clinic.ImagePath,
                 City = d.Clinic.Address.City,
-                DoctorImage = d.Image,
+                DoctorImage = d.AppUser.ProfileImage,
                 Gender = d.Gender,
                 ConsultationType = d.ConsultationType,
                 ConsultationPrice = d.ConsultationPrice,

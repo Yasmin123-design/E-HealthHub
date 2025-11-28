@@ -318,11 +318,10 @@ namespace E_PharmaHub.Controllers
 
         [HttpPost("upload-picture")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
-
-        public async Task<IActionResult> UploadProfilePicture(IFormFile image)
+        public async Task<IActionResult> UploadOrUpdateProfilePicture(IFormFile image)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var (success, message) = await _userService.UploadProfilePictureAsync(userId, image);
+            var (success, message) = await _userService.UploadOrUpdateProfilePictureAsync(userId, image);
 
             if (!success)
                 return BadRequest(new { message });
@@ -330,21 +329,6 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message });
         }
 
-        [HttpPut("update-picture")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
-        public async Task<IActionResult> UpdateProfilePicture(IFormFile newImage)
-        {
-            if (newImage == null || newImage.Length == 0)
-                return BadRequest(new { message = "Please upload a valid image 🖼️⚠️" });
-
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var (success, message) = await _userService.UpdateProfilePictureAsync(userId, newImage);
-
-            if (!success)
-                return BadRequest(new { message });
-
-            return Ok(new { message });
-        }
 
     }
 }

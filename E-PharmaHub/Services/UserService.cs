@@ -88,40 +88,27 @@ namespace E_PharmaHub.Services
             return (true, "Password updated successfully 🔐");
         }
 
-        public async Task<(bool Success, string Message)> UploadProfilePictureAsync(string userId, IFormFile image)
+        public async Task<(bool Success, string Message)> UploadOrUpdateProfilePictureAsync(string userId, IFormFile image)
         {
-            var user = await _userRepo.GetByIdAsync(userId);
-            if (user == null)
-                return (false, "User not found.");
+            if (image == null || image.Length == 0)
+                return (false, "Please upload a valid image 🖼️⚠️");
 
-            var imagePath = await _fileStorage.SaveFileAsync(image, "users");
-            user.ProfileImage = imagePath;
-
-            _userRepo.Update(user);
-            await _unitOfWork.CompleteAsync();
-            return (true, "Profile picture updated successfully 🖼️✅");
-        }
-
-        public async Task<(bool Success, string Message)> UpdateProfilePictureAsync(string userId, IFormFile newImage)
-        {
             var user = await _unitOfWork.Useres.GetByIdAsync(userId);
             if (user == null)
                 return (false, "User not found ❌");
 
-            if (newImage == null || newImage.Length == 0)
-                return (false, "Please upload a valid image 🖼️⚠️");
-
             if (!string.IsNullOrEmpty(user.ProfileImage))
-                 _fileStorage.DeleteFile(user.ProfileImage,"users");
+                _fileStorage.DeleteFile(user.ProfileImage, "users");
 
-            var newPath = await _fileStorage.SaveFileAsync(newImage, "users");
-            user.ProfileImage = newPath;
+            var imagePath = await _fileStorage.SaveFileAsync(image, "users");
+            user.ProfileImage = imagePath;
 
             _unitOfWork.Useres.Update(user);
             await _unitOfWork.CompleteAsync();
 
-            return (true, "Profile picture updated successfully 🖼️✅");
+            return (true, "Profile picture uploaded/updated successfully 🖼️✅");
         }
+
 
         public async Task<(bool Success, string Message)> DeleteAccountAsync(string userId)
         {

@@ -111,8 +111,7 @@ namespace E_PharmaHub.Services
                 ConsultationType = dto.ConsultationType,
                 Gender = dto.Gender,
                 IsApproved = false,
-                HasPaid = false,
-                Image = doctorImagePath
+                HasPaid = false
 
             };
 
@@ -230,15 +229,6 @@ namespace E_PharmaHub.Services
             doctor.Gender = dto.Gender;
             doctor.ConsultationType = dto.ConsultationType;
 
-
-
-            if (doctorImage != null)
-            {
-                if (!string.IsNullOrEmpty(doctor.Image))
-                    _fileStorage.DeleteFile(doctor.Image,"doctors");
-
-                doctor.Image = await _fileStorage.SaveFileAsync(doctorImage, "doctors");
-            }
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)

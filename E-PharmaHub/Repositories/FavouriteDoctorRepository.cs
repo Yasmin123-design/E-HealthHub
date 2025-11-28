@@ -73,7 +73,7 @@ namespace E_PharmaHub.Repositories
                     ClinicName = doctor.Clinic.Name,
                     ClinicPhone = doctor.Clinic.Phone,
                     ClinicImagePath = doctor.Clinic.ImagePath,
-                    DoctorImage = doctor.Image,
+                    DoctorImage = doctor.AppUser.ProfileImage,
                     City = doctor.Clinic.Address.City,
                     PostalCode = doctor.Clinic.Address.PostalCode,
                     Country = doctor.Clinic.Address.Country,

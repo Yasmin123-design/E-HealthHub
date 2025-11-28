@@ -2,6 +2,7 @@
 using E_PharmaHub.Models;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing.Matching;
 using Address = E_PharmaHub.Models.Address;
 
 namespace E_PharmaHub.Services
@@ -107,14 +108,15 @@ namespace E_PharmaHub.Services
                 AppUserId = user.Id,
                 PharmacyId = pharmacy.Id,
                 LicenseNumber = dto.LicenseNumber,
-                Image = pharmacistImagePath,
                 IsApproved = false,
                 HasPaid = false  
 
             };
-
+            user.ProfileImage = pharmacistImagePath;
+             _unitOfWork.Useres.Update(user);
             await _unitOfWork.PharmasistsProfile.AddAsync(pharmacistProfile);
             await _unitOfWork.CompleteAsync();
+
 
             return user;
         }
@@ -246,9 +248,9 @@ namespace E_PharmaHub.Services
             if (image != null)
             {
                 var imagePath = await _fileStorage.SaveFileAsync(image, "pharmacistes");
-                pharmacist.Image = imagePath;
+                user.ProfileImage = imagePath;
             }
-
+            _unitOfWork.Useres.Update(user);
             _unitOfWork.PharmasistsProfile.Update(pharmacist);
             await _unitOfWork.CompleteAsync();
 
