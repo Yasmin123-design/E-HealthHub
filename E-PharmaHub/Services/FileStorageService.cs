@@ -1,45 +1,50 @@
-﻿namespace E_PharmaHub.Services
+﻿using Azure.Storage.Blobs;
+
+namespace E_PharmaHub.Services
 {
     public class FileStorageService : IFileStorageService
     {
-        private readonly IWebHostEnvironment _env;
+        private readonly BlobServiceClient _blobServiceClient;
 
-        public FileStorageService(IWebHostEnvironment env)
+        public FileStorageService(BlobServiceClient blobServiceClient)
         {
-            _env = env;
+            _blobServiceClient = blobServiceClient;
         }
 
-        public async Task<string> SaveFileAsync(IFormFile file, string folderName)
+        public async Task<string> SaveFileAsync(IFormFile file, string containerName)
         {
             if (file == null || file.Length == 0)
                 return null;
 
-            var homePath = Environment.GetEnvironmentVariable("HOME") ?? _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
-            var uploadsFolder = Path.Combine(homePath, folderName);
-            if (!Directory.Exists(uploadsFolder))
-                Directory.CreateDirectory(uploadsFolder);
+            await containerClient.CreateIfNotExistsAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
 
-            var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            var blobClient = containerClient.GetBlobClient(Guid.NewGuid() + Path.GetExtension(file.FileName));
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            using (var stream = file.OpenReadStream())
             {
-                await file.CopyToAsync(stream);
+                await blobClient.UploadAsync(stream);
             }
 
-            return $"/{folderName}/{uniqueFileName}";
+            return blobClient.Uri.ToString();
         }
 
-        public void DeleteFile(string filePath)
+
+        public void DeleteFile(string fileUrl, string containerName)
         {
-            var homePath = Environment.GetEnvironmentVariable("HOME") ?? _env.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-            var fullPath = Path.Combine(homePath, filePath.TrimStart('/'));
+            if (string.IsNullOrEmpty(fileUrl)) return;
 
-            if (File.Exists(fullPath))
-                File.Delete(fullPath);
+            var uri = new Uri(fileUrl);
+            var blobName = Path.GetFileName(uri.LocalPath);
+
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+
+            var blobClient = containerClient.GetBlobClient(blobName);
+            blobClient.DeleteIfExists();
         }
+
     }
 
 
-    }
+}

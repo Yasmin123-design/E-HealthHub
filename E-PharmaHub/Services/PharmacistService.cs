@@ -269,7 +269,7 @@ namespace E_PharmaHub.Services
             if (pharmacy != null)
             {
                 if (!string.IsNullOrEmpty(pharmacy.ImagePath))
-                    _fileStorage.DeleteFile(pharmacy.ImagePath);
+                    _fileStorage.DeleteFile(pharmacy.ImagePath,"pharmacies");
 
                 _unitOfWork.Pharmacies.Delete(pharmacy);
             }

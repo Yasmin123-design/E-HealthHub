@@ -235,7 +235,7 @@ namespace E_PharmaHub.Services
             if (doctorImage != null)
             {
                 if (!string.IsNullOrEmpty(doctor.Image))
-                    _fileStorage.DeleteFile(doctor.Image);
+                    _fileStorage.DeleteFile(doctor.Image,"doctors");
 
                 doctor.Image = await _fileStorage.SaveFileAsync(doctorImage, "doctors");
             }
@@ -286,7 +286,7 @@ namespace E_PharmaHub.Services
             if (clinic != null)
             {
                 if (!string.IsNullOrEmpty(clinic.ImagePath))
-                    _fileStorage.DeleteFile(clinic.ImagePath);
+                    _fileStorage.DeleteFile(clinic.ImagePath, "clinics");
 
                 _unitOfWork.Clinics.Delete(clinic);
             }

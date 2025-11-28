@@ -112,7 +112,7 @@ namespace E_PharmaHub.Services
                 return (false, "Please upload a valid image 🖼️⚠️");
 
             if (!string.IsNullOrEmpty(user.ProfileImage))
-                 _fileStorage.DeleteFile(user.ProfileImage);
+                 _fileStorage.DeleteFile(user.ProfileImage,"users");
 
             var newPath = await _fileStorage.SaveFileAsync(newImage, "users");
             user.ProfileImage = newPath;

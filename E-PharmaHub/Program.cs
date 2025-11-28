@@ -12,6 +12,7 @@ using System.Text;
 using Stripe;
 using E_PharmaHub.Hubs;
 using Microsoft.Extensions.FileProviders;
+using Azure.Storage.Blobs;
 
 namespace E_PharmaHub
 {
@@ -76,6 +77,13 @@ namespace E_PharmaHub
                options.AppId = builder.Configuration["AuthenticationFacebook:Facebook:AppId"];
                options.AppSecret = builder.Configuration["AuthenticationFacebook:Facebook:AppSecret"];
                options.CallbackPath = "/signin-facebook";
+            });
+
+
+            builder.Services.AddSingleton(x =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("AzureBlobStorage");
+                return new BlobServiceClient(connectionString);
             });
 
             builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();

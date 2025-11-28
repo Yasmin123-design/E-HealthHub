@@ -90,7 +90,7 @@ namespace E_PharmaHub.Services
             if (imageFile != null)
             {
                 if (!string.IsNullOrEmpty(existing.ImagePath))
-                    _fileStorage.DeleteFile(existing.ImagePath);
+                    _fileStorage.DeleteFile(existing.ImagePath,"pharmacies");
 
                 existing.ImagePath = await _fileStorage.SaveFileAsync(imageFile, "pharmacies");
             }
