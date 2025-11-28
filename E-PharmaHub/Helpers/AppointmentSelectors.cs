@@ -11,16 +11,19 @@ namespace E_PharmaHub.Helpers
             return a => new AppointmentResponseDto
             {
                 Id = a.Id,
-                DoctorName = a.Doctor.UserName,
-                DoctorSpeciality = a.Doctor.DoctorProfile.Specialty,
-                DoctorId = a.Doctor.Id,
-                UserName = a.User.UserName,
-                UserId = a.User.Id,
+                ClinicId = a.ClinicId,
                 ClinicName = a.Clinic.Name,
-                ClinicId = a.Clinic.Id, 
-                StartAt = a.StartAt,
+                ClinicImage = a.Clinic.ImagePath,
+                DoctorId = a.DoctorId,
+                DoctorName = a.Doctor.UserName,
+                DoctorImage = a.Doctor.ProfileImage,
+                DoctorSpeciality = a.Doctor.DoctorProfile.Specialty,
+                UserId = a.UserId,
+                UserName = a.User.UserName,
+                UserImage = a.User.ProfileImage,
                 EndAt = a.EndAt,
-                Status = a.Status
+                StartAt = a.StartAt,
+                Status = a.Status              
             };
         }
     }
