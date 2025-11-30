@@ -8,6 +8,6 @@ namespace E_PharmaHub.Services
         Task<CartResult> AddToCartAsync(string userId, int pharmacyId, int medicationId, int quantity);
         Task<CartResult> RemoveFromCartAsync(string userId, int cartItemId);
         Task<CartResult> ClearCartAsync(string userId);
-        Task<object> GetUserCartAsync(string userId);
+        Task<CartResponseDto> GetUserCartAsync(string userId);
     }
 }

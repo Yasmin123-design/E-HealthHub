@@ -18,6 +18,8 @@ namespace E_PharmaHub.Repositories
             return await _context.Carts
                 .Include(c => c.Items)
                 .ThenInclude(i => i.Medication)
+                .ThenInclude(i => i.Inventories)
+                .ThenInclude(p => p.Pharmacy)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 

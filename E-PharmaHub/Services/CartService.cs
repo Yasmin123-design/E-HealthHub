@@ -29,13 +29,36 @@ namespace E_PharmaHub.Services
             if (inventoryItem == null)
                 return new CartResult { Success = false, Message = "Medication not available in selected pharmacy" };
 
+            var availableQuantity = inventoryItem.Quantity;
+
             var existingItem = cart.Items?.FirstOrDefault(i => i.MedicationId == medicationId);
+
             if (existingItem != null)
             {
-                existingItem.Quantity += quantity;
+                var totalRequested = existingItem.Quantity + quantity;
+
+                if (totalRequested > availableQuantity)
+                {
+                    return new CartResult
+                    {
+                        Success = false,
+                        Message = $"Only {availableQuantity} units available"
+                    };
+                }
+
+                existingItem.Quantity = totalRequested;
             }
             else
             {
+                if (quantity > availableQuantity)
+                {
+                    return new CartResult
+                    {
+                        Success = false,
+                        Message = $"Only {availableQuantity} units available"
+                    };
+                }
+
                 await _unitOfWork.Carts.AddCartItemAsync(new CartItem
                 {
                     CartId = cart.Id,
@@ -78,26 +101,47 @@ namespace E_PharmaHub.Services
             return new CartResult { Success = true, Message = "Cart cleared successfully" };
         }
 
-        public async Task<object> GetUserCartAsync(string userId)
+        public async Task<CartResponseDto> GetUserCartAsync(string userId)
         {
             var cart = await _unitOfWork.Carts.GetUserCartAsync(userId);
-            if (cart == null)
-                return new { Message = "Cart is empty" };
 
-            return new
-            {
-                cart.Id,
-                Items = cart.Items.Select(i => new
+            if (cart == null || cart.Items == null || !cart.Items.Any())
+                return null;
+
+            var itemsWithInventory = cart.Items
+                .Select(i => new
                 {
-                    i.Id,
-                    Medication = i.Medication?.BrandName,
-                    i.Quantity,
-                    i.UnitPrice,
-                    Total = i.Quantity * i.UnitPrice
-                }),
-                TotalPrice = cart.Items.Sum(i => i.UnitPrice * i.Quantity)
+                    Item = i,
+                    Inventory = i.Medication.Inventories
+                        .FirstOrDefault(inv => inv.Price == i.UnitPrice) 
+                })
+                .Where(x => x.Inventory != null) 
+                .ToList();
+
+            var grouped = itemsWithInventory
+                .GroupBy(x => x.Inventory.PharmacyId)
+                .Select(g => new CartPharmacyGroupDto
+                {
+                    PharmacyId = g.Key,
+                    PharmacyName = g.First().Inventory.Pharmacy?.Name,
+                    Items = g.Select(x => new CartItemDto
+                    {
+                        Id = x.Item.Id,
+                        Medication = x.Item.Medication.BrandName,
+                        Quantity = x.Item.Quantity,
+                        UnitPrice = x.Item.UnitPrice
+                    }).ToList()
+                })
+                .ToList();
+
+            return new CartResponseDto
+            {
+                CartId = cart.Id,
+                Pharmacies = grouped
             };
         }
+
+
 
     }
 }
