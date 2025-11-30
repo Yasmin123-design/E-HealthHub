@@ -24,14 +24,30 @@ namespace E_PharmaHub.Services
                 {
                     CartItem = i,
                     Inventory = i.Medication.Inventories
-                        .FirstOrDefault(inv => inv.Price == i.UnitPrice)
+                        .FirstOrDefault(inv => inv.Price == i.UnitPrice &&
+                                               inv.PharmacyId == dto.PharmacyId)
                 })
-                .Where(x => x.Inventory != null && x.Inventory.PharmacyId == dto.PharmacyId)
-                .Select(x => x.CartItem)
+                .Where(x => x.Inventory != null)
                 .ToList();
 
             if (!itemsForThisPharmacy.Any())
                 return new CartResult { Success = false, Message = "No items for this pharmacy" };
+
+            foreach (var x in itemsForThisPharmacy)
+            {
+                if (x.Inventory.Quantity < x.CartItem.Quantity)
+                    return new CartResult
+                    {
+                        Success = false,
+                        Message = $"Not enough quantity for {x.CartItem.Medication.BrandName}"
+                    };
+            }
+
+            foreach (var x in itemsForThisPharmacy)
+            {
+                x.Inventory.Quantity -= x.CartItem.Quantity;
+                await _unitOfWork.IinventoryItem.Update(x.Inventory);
+            }
 
             var existingOrder = await _unitOfWork.Order
                 .GetPendingOrderEntityByUserAsync(userId, dto.PharmacyId);
@@ -40,8 +56,10 @@ namespace E_PharmaHub.Services
 
             if (!isNewOrder)
             {
-                foreach (var cartItem in itemsForThisPharmacy)
+                foreach (var x in itemsForThisPharmacy)
                 {
+                    var cartItem = x.CartItem;
+
                     var existingItem = existingOrder.Items
                         .FirstOrDefault(i => i.MedicationId == cartItem.MedicationId);
 
@@ -79,12 +97,12 @@ namespace E_PharmaHub.Services
                     Street = dto.Street,
                     PhoneNumber = dto.PhoneNumber,
                     Status = OrderStatus.Pending,
-                    TotalPrice = itemsForThisPharmacy.Sum(i => i.UnitPrice * i.Quantity),
-                    Items = itemsForThisPharmacy.Select(i => new OrderItem
+                    TotalPrice = itemsForThisPharmacy.Sum(x => x.CartItem.UnitPrice * x.CartItem.Quantity),
+                    Items = itemsForThisPharmacy.Select(x => new OrderItem
                     {
-                        MedicationId = i.MedicationId,
-                        Quantity = i.Quantity,
-                        UnitPrice = i.UnitPrice
+                        MedicationId = x.CartItem.MedicationId,
+                        Quantity = x.CartItem.Quantity,
+                        UnitPrice = x.CartItem.UnitPrice
                     }).ToList()
                 };
 
@@ -104,6 +122,7 @@ namespace E_PharmaHub.Services
                 Data = new { OrderId = existingOrder.Id, existingOrder.TotalPrice }
             };
         }
+
 
 
         public async Task MarkAsPaid(string userId)
