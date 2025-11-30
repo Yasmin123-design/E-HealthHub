@@ -40,5 +40,21 @@ namespace E_PharmaHub.Repositories
         {
             _context.CartItems.RemoveRange(cart.Items);
         }
+        public async Task ClearCartItemsByPharmacyAsync(int cartId, int pharmacyId)
+        {
+            var items = await _context.CartItems
+                .Include(i => i.Medication)
+                    .ThenInclude(m => m.Inventories)
+                .Where(i => i.CartId == cartId)
+                .ToListAsync();
+
+            var itemsToRemove = items
+                .Where(i => i.Medication.Inventories
+                    .Any(inv => inv.PharmacyId == pharmacyId && inv.Price == i.UnitPrice))
+                .ToList();
+
+            _context.CartItems.RemoveRange(itemsToRemove);
+        }
+
     }
 }
