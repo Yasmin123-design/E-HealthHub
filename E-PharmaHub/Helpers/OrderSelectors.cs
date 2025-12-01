@@ -31,6 +31,7 @@ namespace E_PharmaHub.Helpers
                 {
                     MedicationId = i.MedicationId,
                     MedicationName = i.Medication.BrandName,
+                    MedicicationImage = i.Medication.ImagePath,
                     Quantity = i.Quantity,
                     UnitPrice = i.UnitPrice
                 }).ToList()
