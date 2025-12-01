@@ -14,7 +14,7 @@ namespace E_PharmaHub.Helpers
                 ClinicId = a.ClinicId,
                 ClinicName = a.Clinic.Name,
                 ClinicImage = a.Clinic.ImagePath,
-                DoctorId = a.DoctorId,
+                DoctorId = a.Doctor.DoctorProfile.Id,
                 DoctorName = a.Doctor.UserName,
                 DoctorImage = a.Doctor.ProfileImage,
                 DoctorSpeciality = a.Doctor.DoctorProfile.Specialty,

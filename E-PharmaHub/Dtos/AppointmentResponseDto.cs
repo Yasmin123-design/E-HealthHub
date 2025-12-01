@@ -5,7 +5,7 @@ namespace E_PharmaHub.Dtos
     public class AppointmentResponseDto
     {
         public int Id { get; set; }
-        public string DoctorId { get; set; }
+        public int DoctorId { get; set; }
         public string DoctorName { get; set; }
         public string DoctorSpeciality { get; set; }
         public string? DoctorImage { get; set; }
