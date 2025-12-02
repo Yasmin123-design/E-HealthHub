@@ -70,6 +70,10 @@ namespace E_PharmaHub.Services.PaymentServ
                                 if (inventoryItem.Quantity < 0)
                                     inventoryItem.Quantity = 0;
 
+
+                                inventoryItem.Pharmacy = null;
+                                inventoryItem.Medication = null;
+
                                 await _unitOfWork.IinventoryItem.Update(inventoryItem);
                             }
                         }
