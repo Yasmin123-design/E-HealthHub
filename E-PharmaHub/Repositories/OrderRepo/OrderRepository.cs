@@ -137,7 +137,12 @@ namespace E_PharmaHub.Repositories.OrderRepo
 
         public async Task<Order?> GetOrderByIdAsync(int orderId)
         {
-            return await BaseOrderIncludes()
+            return await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.Pharmacy)
+                .Include(o => o.Payment)
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Medication)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 

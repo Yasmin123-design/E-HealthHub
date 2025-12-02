@@ -2,10 +2,12 @@
 using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.AppointmentServ;
 using E_PharmaHub.Services.DoctorServ;
+using E_PharmaHub.Services.OrderServ;
 using E_PharmaHub.Services.PaymentServ;
 using E_PharmaHub.Services.PharmacistServ;
 using E_PharmaHub.Services.StripePaymentServ;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
 {
@@ -18,11 +20,13 @@ namespace E_PharmaHub.Controllers
         private readonly IDoctorService _doctorService;
         private readonly IPharmacistService _pharmacistService;
         private readonly IAppointmentService _appointmentService;
+        private readonly IOrderService _orderService;
         public PaymentsController(IStripePaymentService stripePaymentService ,
             IPaymentService paymentService ,
             IDoctorService doctorService ,
             IPharmacistService pharmacistService,
-            IAppointmentService appointmentService
+            IAppointmentService appointmentService,
+            IOrderService orderService
             )
         {
             _stripePaymentService = stripePaymentService;
@@ -30,11 +34,14 @@ namespace E_PharmaHub.Controllers
             _doctorService = doctorService;
             _pharmacistService = pharmacistService;
             _appointmentService = appointmentService;
+            _orderService = orderService;
         }
 
         [HttpPost("create-session")]
         public async Task<IActionResult> CreatePaymentSession([FromBody] PaymentRequestDto dto)
         {
+            
+
             if (dto.DoctorId.HasValue)
             {
                 var doctor = await _doctorService.GetDoctorByIdAsync(dto.DoctorId.Value);
@@ -59,6 +66,12 @@ namespace E_PharmaHub.Controllers
                 dto.ReferenceId = appointment.UserId;
             }
 
+            if (dto.PaymentFor == PaymentForType.Order)
+            {
+                var order = await _orderService.GetOrderByIdAsync(dto.OrderId??0);
+                    dto.ReferenceId = order.UserId; 
+
+            }
             var result = await _stripePaymentService.CreateCheckoutSessionAsync(dto);
 
             if (result == null)

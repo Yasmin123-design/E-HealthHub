@@ -181,8 +181,6 @@ namespace E_PharmaHub.Services.PharmacistServ
 
             return (true, "Pharmacist approved successfully after confirming payment.");
         }
-
-
         public async Task<(bool success, string message)> RejectPharmacistAsync(int pharmacistId)
         {
             var pharmacist = await _unitOfWork.PharmasistsProfile.GetByIdAsync(pharmacistId);
