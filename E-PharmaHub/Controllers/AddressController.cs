@@ -1,5 +1,7 @@
 ﻿using E_PharmaHub.Models;
-using E_PharmaHub.Services;
+using E_PharmaHub.Services.AddressServ;
+using E_PharmaHub.Services.DoctorServ;
+using E_PharmaHub.Services.PharmacistServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

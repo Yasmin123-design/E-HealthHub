@@ -715,6 +715,42 @@ namespace E_PharmaHub.Migrations
                     b.ToTable("MessageThreadParticipant");
                 });
 
+            modelBuilder.Entity("E_PharmaHub.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("E_PharmaHub.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -1426,6 +1462,17 @@ namespace E_PharmaHub.Migrations
                         .IsRequired();
 
                     b.Navigation("Thread");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("E_PharmaHub.Models.Notification", b =>
+                {
+                    b.HasOne("E_PharmaHub.Models.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

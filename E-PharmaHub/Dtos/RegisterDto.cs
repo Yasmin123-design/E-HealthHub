@@ -1,4 +1,4 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace E_PharmaHub.Dtos

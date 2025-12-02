@@ -1,6 +1,10 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
-using E_PharmaHub.Services;
+using E_PharmaHub.Models.Enums;
+using E_PharmaHub.Services.DoctorServ;
+using E_PharmaHub.Services.EmailSenderServ;
+using E_PharmaHub.Services.PharmacistServ;
+using E_PharmaHub.Services.UserServ;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

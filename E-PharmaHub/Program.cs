@@ -13,6 +13,52 @@ using Stripe;
 using E_PharmaHub.Hubs;
 using Microsoft.Extensions.FileProviders;
 using Azure.Storage.Blobs;
+using E_PharmaHub.Repositories.AddressRepo;
+using E_PharmaHub.Repositories.AppointmentRepo;
+using E_PharmaHub.Repositories.CartRepo;
+using E_PharmaHub.Repositories.ChatRepo;
+using E_PharmaHub.Repositories.ClinicRepo;
+using E_PharmaHub.Repositories.DoctorRepo;
+using E_PharmaHub.Repositories.FavoriteMedicationRepo;
+using E_PharmaHub.Repositories.FavouriteClinicRepo;
+using E_PharmaHub.Repositories.FavouriteDoctorRepo;
+using E_PharmaHub.Repositories.InventoryItemRepo;
+using E_PharmaHub.Repositories.MedicineRepo;
+using E_PharmaHub.Repositories.UserRepo;
+using E_PharmaHub.Repositories.ReviewRepo;
+using E_PharmaHub.Repositories.OrderRepo;
+using E_PharmaHub.Repositories.PaymentRepo;
+using E_PharmaHub.Repositories.PharmacistRepo;
+using E_PharmaHub.Repositories.PharmacyRepo;
+using E_PharmaHub.Repositories.MessageThreadRepo;
+using E_PharmaHub.Repositories.PrescriptionRepo;
+using E_PharmaHub.Services.AddressServ;
+using E_PharmaHub.Services.AppointmentServ;
+using E_PharmaHub.Services.CartServ;
+using E_PharmaHub.Services.ChatServ;
+using E_PharmaHub.Services.DoctorFavouriteServ;
+using E_PharmaHub.Services.ClinicServ;
+using E_PharmaHub.Services.DoctorServ;
+using E_PharmaHub.Services.EmailSenderServ;
+using E_PharmaHub.Services.FavoriteClinicServ;
+using E_PharmaHub.Services.FavoriteMedicationServ;
+using E_PharmaHub.Services.FileStorageServ;
+using E_PharmaHub.Services.InventoryServ;
+using E_PharmaHub.Services.PharmacyServ;
+using E_PharmaHub.Services.MedicineServ;
+using E_PharmaHub.Services.PaymentServ;
+using E_PharmaHub.Services.OrderServ;
+using E_PharmaHub.Services.ReviewServ;
+using E_PharmaHub.Services.UserServ;
+using E_PharmaHub.Services.PharmacistServ;
+using E_PharmaHub.Services.StripePaymentServ;
+using E_PharmaHub.Services.PrescriptionServ;
+using E_PharmaHub.Models.Enums;
+using Hangfire;
+using E_PharmaHub.Services.NotificationServ;
+using E_PharmaHub.Repositories.NotificationRepo;
+using E_PharmaHub.Services.AppointmentNotificationScheduleServe;
+using E_PharmaHub.Services.UserIdProviderServ;
 
 namespace E_PharmaHub
 {
@@ -90,7 +136,7 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IMedicineService, MedicineService>();
 
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-            builder.Services.AddScoped<E_PharmaHub.Services.IReviewService, E_PharmaHub.Services.ReviewService>();
+            builder.Services.AddScoped<IReviewService, Services.ReviewServ.ReviewService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
@@ -136,10 +182,19 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
             builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<IAppointmentNotificationScheduler, AppointmentNotificationScheduler>();
+            builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
 
             builder.Services.AddHttpContextAccessor();
 
+            builder.Services.AddHangfire(config =>
+    config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
+            builder.Services.AddHangfireServer();
 
 
             builder.Services.AddEndpointsApiExplorer();
@@ -237,6 +292,8 @@ namespace E_PharmaHub
 
             app.UseWebSockets();
             app.MapHub<ChatHub>("/hubs/chat");
+            app.MapHub<NotificationHub>("/hubs/notification");
+            app.UseHangfireDashboard();
 
             app.Run();
         }

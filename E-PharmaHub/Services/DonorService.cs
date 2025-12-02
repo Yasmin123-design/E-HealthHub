@@ -1,5 +1,7 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
+using E_PharmaHub.Models.Enums;
+using E_PharmaHub.Services.PaymentServ;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
 

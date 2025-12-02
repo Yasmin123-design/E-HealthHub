@@ -1,5 +1,24 @@
-﻿using E_PharmaHub.Models;
-using E_PharmaHub.Repositories;
+﻿using E_PharmaHub.Repositories;
+using E_PharmaHub.Repositories.AddressRepo;
+using E_PharmaHub.Repositories.AppointmentRepo;
+using E_PharmaHub.Repositories.CartRepo;
+using E_PharmaHub.Repositories.ChatRepo;
+using E_PharmaHub.Repositories.ClinicRepo;
+using E_PharmaHub.Repositories.DoctorRepo;
+using E_PharmaHub.Repositories.FavoriteMedicationRepo;
+using E_PharmaHub.Repositories.FavouriteClinicRepo;
+using E_PharmaHub.Repositories.FavouriteDoctorRepo;
+using E_PharmaHub.Repositories.InventoryItemRepo;
+using E_PharmaHub.Repositories.MedicineRepo;
+using E_PharmaHub.Repositories.MessageThreadRepo;
+using E_PharmaHub.Repositories.NotificationRepo;
+using E_PharmaHub.Repositories.OrderRepo;
+using E_PharmaHub.Repositories.PaymentRepo;
+using E_PharmaHub.Repositories.PharmacistRepo;
+using E_PharmaHub.Repositories.PharmacyRepo;
+using E_PharmaHub.Repositories.PrescriptionRepo;
+using E_PharmaHub.Repositories.ReviewRepo;
+using E_PharmaHub.Repositories.UserRepo;
 
 namespace E_PharmaHub.UnitOfWorkes
 {
@@ -29,6 +48,8 @@ namespace E_PharmaHub.UnitOfWorkes
         IBloodRequestRepository BloodRequest { get; }
         IAddressRepository Addresses { get; }
         IDonorMatchRepository donorMatches { get; }
+        INotificationRepository Notifications { get; }
+
         Task<int> CompleteAsync();
     }
 }

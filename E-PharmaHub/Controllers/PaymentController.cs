@@ -1,5 +1,10 @@
 ﻿using E_PharmaHub.Dtos;
-using E_PharmaHub.Services;
+using E_PharmaHub.Models.Enums;
+using E_PharmaHub.Services.AppointmentServ;
+using E_PharmaHub.Services.DoctorServ;
+using E_PharmaHub.Services.PaymentServ;
+using E_PharmaHub.Services.PharmacistServ;
+using E_PharmaHub.Services.StripePaymentServ;
 using Microsoft.AspNetCore.Mvc;
 
 namespace E_PharmaHub.Controllers
@@ -46,7 +51,7 @@ namespace E_PharmaHub.Controllers
 
                 dto.ReferenceId = doctor.AppUserId;
             }
-            if(dto.PaymentFor == Models.PaymentForType.Appointment && dto.AppointmentId.HasValue)
+            if(dto.PaymentFor == PaymentForType.Appointment && dto.AppointmentId.HasValue)
             {
                 var appointment = await _appointmentService.GetFullAppointmemtByIdAsync(dto.AppointmentId.Value);
                 var doctor = await _doctorService.GetDoctorByUserIdAsync(appointment.DoctorId);

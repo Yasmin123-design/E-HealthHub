@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using E_PharmaHub.Models.Enums;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace E_PharmaHub.Models

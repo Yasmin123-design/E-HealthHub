@@ -1,6 +1,25 @@
 ﻿using E_PharmaHub.Models;
 using E_PharmaHub.Repositories;
-
+using E_PharmaHub.Repositories.AddressRepo;
+using E_PharmaHub.Repositories.AppointmentRepo;
+using E_PharmaHub.Repositories.CartRepo;
+using E_PharmaHub.Repositories.ChatRepo;
+using E_PharmaHub.Repositories.ClinicRepo;
+using E_PharmaHub.Repositories.DoctorRepo;
+using E_PharmaHub.Repositories.FavoriteMedicationRepo;
+using E_PharmaHub.Repositories.FavouriteClinicRepo;
+using E_PharmaHub.Repositories.FavouriteDoctorRepo;
+using E_PharmaHub.Repositories.MedicineRepo;
+using E_PharmaHub.Repositories.PharmacyRepo;
+using E_PharmaHub.Repositories.PrescriptionRepo;
+using E_PharmaHub.Repositories.OrderRepo;
+using E_PharmaHub.Repositories.PaymentRepo;
+using E_PharmaHub.Repositories.PharmacistRepo;
+using E_PharmaHub.Repositories.ReviewRepo;
+using E_PharmaHub.Repositories.UserRepo;
+using E_PharmaHub.Repositories.InventoryItemRepo;
+using E_PharmaHub.Repositories.MessageThreadRepo;
+using E_PharmaHub.Repositories.NotificationRepo;
 
 namespace E_PharmaHub.UnitOfWorkes
 {
@@ -34,6 +53,7 @@ namespace E_PharmaHub.UnitOfWorkes
         public IAppointmentRepository Appointments { get; private set; }
 
         public IPrescriptionRepository Prescriptions { get; private set; }
+        public INotificationRepository Notifications { get; private set; }
 
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
@@ -57,7 +77,8 @@ namespace E_PharmaHub.UnitOfWorkes
             IMessageThreadRepository messageThreadRepository,
             IAppointmentRepository appointmentRepository,
             IPrescriptionRepository prescriptionRepository,
-            IFavouriteDoctorRepository favouriteDoctorRepository
+            IFavouriteDoctorRepository favouriteDoctorRepository,
+            INotificationRepository notificationRepository
             )
         {
             _context = context;
@@ -79,6 +100,7 @@ namespace E_PharmaHub.UnitOfWorkes
             FavouriteClinic = favouriteClinicRepository;
             Clinics = clinicRepository;
             Useres = userRepository;
+            Notifications = notificationRepository;
             Chat = chatRepository;
             MessageThread = messageThreadRepository;
             Appointments = appointmentRepository;

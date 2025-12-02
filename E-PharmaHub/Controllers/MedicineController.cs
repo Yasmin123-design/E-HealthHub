@@ -1,5 +1,7 @@
 ﻿using E_PharmaHub.Dtos;
-using E_PharmaHub.Services;
+using E_PharmaHub.Services.InventoryServ;
+using E_PharmaHub.Services.MedicineServ;
+using E_PharmaHub.Services.PharmacistServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
