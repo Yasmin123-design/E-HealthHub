@@ -224,7 +224,7 @@ namespace E_PharmaHub.Services.OrderServ
 
         public async Task<(bool Success, string Message)> CancelOrderAsync(int id)
         {
-            var order = await _unitOfWork.Order.GetOrderByIdAsync(id);
+            var order = await _unitOfWork.Order.GetByIdForUpdateAsync(id);
             if (order == null)
                 return (false, "Order not found.");
 
