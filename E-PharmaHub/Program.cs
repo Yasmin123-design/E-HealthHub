@@ -111,6 +111,24 @@ namespace E_PharmaHub
               ValidAudience = builder.Configuration["JWT:Audience"],
               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
             };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        Console.WriteLine($"Path: {path}, Token: {accessToken}");
+
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/hubs/notification"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             })
             .AddGoogle(options =>
             {
@@ -292,6 +310,15 @@ namespace E_PharmaHub
 
             app.UseWebSockets();
             app.MapHub<ChatHub>("/hubs/chat");
+            app.Use(async (context, next) =>
+            {
+                if (context.User.Identity.IsAuthenticated)
+                    Console.WriteLine("User Authenticated: " + context.User.Identity.Name);
+                else
+                    Console.WriteLine("User NOT Authenticated");
+                await next();
+            });
+
             app.MapHub<NotificationHub>("/hubs/notification");
             app.UseHangfireDashboard();
 
