@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace E_PharmaHub.Hubs
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class NotificationHub : Hub
     {
 
