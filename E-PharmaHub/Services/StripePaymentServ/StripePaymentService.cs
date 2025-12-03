@@ -48,6 +48,24 @@ namespace E_PharmaHub.Services.StripePaymentServ
             }
         }
 
+        public async Task<bool> RefundPaymentAsync(string paymentIntentId)
+        {
+            var refundService = new RefundService();
+            try
+            {
+                var refund = await refundService.CreateAsync(new RefundCreateOptions
+                {
+                    PaymentIntent = paymentIntentId
+                });
+                return refund.Status == "succeeded";
+            }
+            catch (StripeException ex)
+            {
+                Console.WriteLine($"Stripe refund error: {ex.Message}");
+                return false;
+            }
+        }
+
         public async Task<StripeSessionResponseDto> CreateCheckoutSessionAsync(PaymentRequestDto dto)
         {
             var options = new SessionCreateOptions
@@ -112,7 +130,7 @@ namespace E_PharmaHub.Services.StripePaymentServ
 
             if (dto.PaymentFor == PaymentForType.Order && dto.OrderId.HasValue)
             {
-                var order = await _unitOfWork.Order.GetOrderByIdAsync(dto.OrderId.Value);
+                var order = await _unitOfWork.Order.GetByIdForUpdateAsync(dto.OrderId.Value);
                 if (order != null)
                 {
                     order.PaymentId = payment.Id;

@@ -147,6 +147,55 @@ namespace E_PharmaHub.Repositories.OrderRepo
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
+
+        public async Task<Order?> GetPendingOrderEntityByUserForUpdateAsync(string userId, int pharmacyId)
+        {
+            return await _context.Orders
+                .Include(o => o.Items) 
+                .FirstOrDefaultAsync(o =>
+                    o.UserId == userId &&
+                    o.PharmacyId == pharmacyId &&
+                    o.Status == OrderStatus.Pending);
+        }
+
+        public async Task<Order?> GetByIdForUpdateAsync(int id)
+        {
+            return await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        public async Task UpdateWithItemsAsync(Order order)
+        {
+            _context.Orders.Update(order);
+
+            foreach (var item in order.Items)
+            {
+                if (item.Id > 0)
+                {
+                    _context.Entry(item).State = EntityState.Modified;
+                }
+                else
+                {
+                    _context.OrderItems.Add(item);
+                }
+            }
+        }
+
+        public async Task<Order?> GetPendingOrderEntityByUserAsync(string userId, int pharmacyId, bool asNoTracking = false)
+        {
+            var query = _context.Orders
+                .Include(o => o.Items)
+                .Where(o =>
+                    o.UserId == userId &&
+                    o.PharmacyId == pharmacyId &&
+                    o.Status == OrderStatus.Pending);
+
+            if (asNoTracking)
+                query = query.AsNoTracking();
+
+            return await query.FirstOrDefaultAsync();
+        }
     }
 
 }

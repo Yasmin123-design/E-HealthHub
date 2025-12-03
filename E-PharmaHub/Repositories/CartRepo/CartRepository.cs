@@ -13,14 +13,18 @@ namespace E_PharmaHub.Repositories.CartRepo
             _context = context;
         }
 
-        public async Task<Cart> GetUserCartAsync(string userId)
+        public async Task<Cart> GetUserCartAsync(string userId, bool asNoTracking = false)
         {
-            return await _context.Carts
+            IQueryable<Cart> query = _context.Carts
                 .Include(c => c.Items)
-                .ThenInclude(i => i.Medication)
-                .ThenInclude(i => i.Inventories)
-                .ThenInclude(p => p.Pharmacy)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+                    .ThenInclude(i => i.Medication)
+                        .ThenInclude(m => m.Inventories)
+                .Where(c => c.UserId == userId);
+
+            if (asNoTracking)
+                query = query.AsNoTracking();
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task AddCartItemAsync(CartItem item)
@@ -56,5 +60,14 @@ namespace E_PharmaHub.Repositories.CartRepo
             _context.CartItems.RemoveRange(itemsToRemove);
         }
 
+
+        public async Task<List<CartItem>> GetCartItemsWithDetailsAsync(int cartId)
+        {
+            return await _context.CartItems
+                .Include(ci => ci.Medication)
+                .Where(ci => ci.CartId == cartId)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

@@ -2,36 +2,53 @@
 using E_PharmaHub.Models;
 using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.NotificationServ;
+using E_PharmaHub.Services.StripePaymentServ;
 using E_PharmaHub.UnitOfWorkes;
+using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 namespace E_PharmaHub.Services.OrderServ
 {
     public class OrderService : IOrderService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _config;
         private readonly INotificationService _notificationService;
-        public OrderService(IUnitOfWork unitOfWork,INotificationService notificationService)
+        public OrderService(IUnitOfWork unitOfWork,IConfiguration config,INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _notificationService = notificationService;
+            _config = config;
+
         }
         public async Task<CartResult> CheckoutAsync(string userId, CheckoutDto dto)
         {
-            var cart = await _unitOfWork.Carts.GetUserCartAsync(userId);
+            var cart = await _unitOfWork.Carts.GetUserCartAsync(userId, asNoTracking: true);
 
             if (cart == null || cart.Items == null || !cart.Items.Any())
                 return new CartResult { Success = false, Message = "Cart is empty" };
 
-            var itemsForThisPharmacy = cart.Items
-                .Select(i => new
+            var cartItems = await _unitOfWork.Carts.GetCartItemsWithDetailsAsync(cart.Id);
+
+            var itemsForThisPharmacy = new List<dynamic>();
+
+            foreach (var cartItem in cartItems)
+            {
+                var inventory = await _unitOfWork.IinventoryItem
+                    .GetInventoryForCheckoutAsync(
+                        cartItem.MedicationId,
+                        dto.PharmacyId,
+                        cartItem.UnitPrice);
+
+                if (inventory != null)
                 {
-                    CartItem = i,
-                    Inventory = i.Medication.Inventories
-                        .FirstOrDefault(inv => inv.Price == i.UnitPrice &&
-                                               inv.PharmacyId == dto.PharmacyId)
-                })
-                .Where(x => x.Inventory != null)
-                .ToList();
+                    itemsForThisPharmacy.Add(new
+                    {
+                        CartItem = cartItem,
+                        Inventory = inventory
+                    });
+                }
+            }
 
             if (!itemsForThisPharmacy.Any())
                 return new CartResult { Success = false, Message = "No items for this pharmacy" };
@@ -48,12 +65,12 @@ namespace E_PharmaHub.Services.OrderServ
 
             foreach (var x in itemsForThisPharmacy)
             {
-                x.Inventory.Quantity -= x.CartItem.Quantity;
-                await _unitOfWork.IinventoryItem.Update(x.Inventory);
+                await _unitOfWork.IinventoryItem
+                    .DecreaseQuantityAsync(x.Inventory.Id, x.CartItem.Quantity);
             }
 
             var existingOrder = await _unitOfWork.Order
-                .GetPendingOrderEntityByUserAsync(userId, dto.PharmacyId);
+                .GetPendingOrderEntityByUserForUpdateAsync(userId, dto.PharmacyId);
 
             bool isNewOrder = existingOrder == null;
 
@@ -81,13 +98,13 @@ namespace E_PharmaHub.Services.OrderServ
                     }
                 }
 
-                existingOrder.TotalPrice = existingOrder.Items.Sum(i => i.UnitPrice * i.Quantity);
+                existingOrder.TotalPrice = existingOrder.Items.Sum(i => (decimal)(i.UnitPrice * i.Quantity));
                 existingOrder.City = dto.City;
                 existingOrder.Country = dto.Country;
                 existingOrder.Street = dto.Street;
                 existingOrder.PhoneNumber = dto.PhoneNumber;
 
-                await _unitOfWork.Order.UpdateAsync(existingOrder);
+                await _unitOfWork.Order.UpdateWithItemsAsync(existingOrder);
             }
             else
             {
@@ -100,7 +117,7 @@ namespace E_PharmaHub.Services.OrderServ
                     Street = dto.Street,
                     PhoneNumber = dto.PhoneNumber,
                     Status = OrderStatus.Pending,
-                    TotalPrice = itemsForThisPharmacy.Sum(x => x.CartItem.UnitPrice * x.CartItem.Quantity),
+                    TotalPrice = itemsForThisPharmacy.Sum(x => (decimal)(x.CartItem.UnitPrice * x.CartItem.Quantity)),
                     Items = itemsForThisPharmacy.Select(x => new OrderItem
                     {
                         MedicationId = x.CartItem.MedicationId,
@@ -125,6 +142,9 @@ namespace E_PharmaHub.Services.OrderServ
                 Data = new { OrderId = existingOrder.Id, existingOrder.TotalPrice }
             };
         }
+
+
+
 
         public async Task MarkAsPaid(string userId)
         {
@@ -218,12 +238,38 @@ namespace E_PharmaHub.Services.OrderServ
 
             try
             {
-                var paymentIntentService = new Stripe.PaymentIntentService();
-                await paymentIntentService.CancelAsync(payment.PaymentIntentId);
+                var paymentIntentService = new PaymentIntentService();
+                var intent = await paymentIntentService.GetAsync(payment.PaymentIntentId);
 
-                payment.Status = PaymentStatus.Refunded;
-                order.Status = OrderStatus.Cancelled;
-                order.PaymentStatus = PaymentStatus.Refunded;
+                string notificationMessage = string.Empty;
+
+                if (intent.Status == "canceled")
+                {
+                    payment.Status = PaymentStatus.Refunded;
+                    order.Status = OrderStatus.Cancelled;
+                    order.PaymentStatus = PaymentStatus.Refunded;
+                    notificationMessage = "Order cancelled successfully (Stripe already canceled the payment).";
+                }
+                else if (intent.Status == "succeeded" || intent.Status == "requires_capture")
+                {
+                    var stripeService = new StripePaymentService(_config, _unitOfWork);
+                    await stripeService.RefundPaymentAsync(payment.PaymentIntentId);
+
+                    payment.Status = PaymentStatus.Refunded;
+                    order.Status = OrderStatus.Cancelled;
+                    order.PaymentStatus = PaymentStatus.Refunded;
+                    notificationMessage = "Order cancelled and money refunded successfully.";
+                }
+                else if (intent.Status == "requires_payment_method" || intent.Status == "requires_confirmation" || intent.Status == "requires_action")
+                {
+                    var stripeService = new StripePaymentService(_config, _unitOfWork);
+                    await stripeService.CancelPaymentAsync(payment.PaymentIntentId);
+
+                    payment.Status = PaymentStatus.Failed;
+                    order.Status = OrderStatus.Cancelled;
+                    order.PaymentStatus = PaymentStatus.Failed;
+                    notificationMessage = "Order cancelled before payment was completed.";
+                }
 
                 foreach (var item in order.Items)
                 {
@@ -240,19 +286,20 @@ namespace E_PharmaHub.Services.OrderServ
                 await _unitOfWork.CompleteAsync();
 
                 await _notificationService.CreateAndSendAsync(
-               userId: order.UserId,
-               title: "Order Cancelled",
-               message: $"Your medicine order from pharmacy {order.Pharmacy.Name} has been cancelled",
-               type: NotificationType.OrderCancelled
-           );
+                    userId: order.UserId,
+                    title: "Order Cancelled",
+                    message: notificationMessage,
+                    type: NotificationType.OrderCancelled
+                );
 
-                return (true, "Order cancelled successfully.");
+                return (true, notificationMessage);
             }
             catch (Exception ex)
             {
                 return (false, ex.Message);
             }
         }
+
         public async Task<(bool Success, string Message)> MarkAsDeliveredAsync(int orderId)
         {
             var order = await _unitOfWork.Order.GetOrderByIdAsync(orderId);

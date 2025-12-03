@@ -122,5 +122,25 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
 
             return item;
         }
+
+        public async Task<InventoryItem> GetInventoryForCheckoutAsync(int medicationId, int pharmacyId, decimal price)
+        {
+            return await _context.InventoryItems
+                .AsNoTracking()
+                .FirstOrDefaultAsync(i =>
+                    i.MedicationId == medicationId &&
+                    i.PharmacyId == pharmacyId &&
+                    i.Price == price);
+        }
+
+        public async Task DecreaseQuantityAsync(int inventoryId, int quantity)
+        {
+            var inventory = await _context.InventoryItems.FindAsync(inventoryId);
+            if (inventory != null)
+            {
+                inventory.Quantity -= quantity;
+                _context.InventoryItems.Update(inventory);
+            }
+        }
     }
 }

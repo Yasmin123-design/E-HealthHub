@@ -6,6 +6,11 @@ namespace E_PharmaHub.Repositories.OrderRepo
 {
     public interface IOrderRepository
     {
+        Task<Order?> GetPendingOrderEntityByUserForUpdateAsync(string userId, int pharmacyId);
+        Task<Order?> GetByIdForUpdateAsync(int id);
+        Task UpdateWithItemsAsync(Order order);
+        Task<Order?> GetPendingOrderEntityByUserAsync(string userId, int pharmacyId, bool asNoTracking = false);
+
         Task AddAsync(Order order);
         Task<IEnumerable<OrderResponseDto>> GetAllAsync();
         Task<OrderResponseDto?> GetOrderResponseByIdAsync(int id);
