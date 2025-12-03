@@ -1,10 +1,16 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
+using E_PharmaHub.Models.Enums;
 
 namespace E_PharmaHub.Services.MedicineServ
 {
     public interface IMedicineService
     {
+
+        Task<IEnumerable<MedicineDto>> FilterMedicationsAsync(
+            DosageFormType? dosageForm,
+            StrengthUnit? strengthUnit,
+            GenderSuitability? gender);
         Task<IEnumerable<Medication>> GetAllMedicinesAsync();
         Task<Medication> GetMedicineByIdAsync(int id);
         Task UpdateMedicineAsync(int id, MedicineDto dto, IFormFile? image, int? pharmacyId);

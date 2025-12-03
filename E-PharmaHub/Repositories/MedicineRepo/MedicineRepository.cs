@@ -3,6 +3,7 @@ using E_PharmaHub.Models;
 using E_PharmaHub.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using E_PharmaHub.Models.Enums;
 
 namespace E_PharmaHub.Repositories.MedicineRepo
 {
@@ -108,6 +109,31 @@ namespace E_PharmaHub.Repositories.MedicineRepo
             return result;
         }
 
+        public async Task<IEnumerable<MedicineDto>> FilterAsync(
+      DosageFormType? dosageForm = null,
+      StrengthUnit? strengthUnit = null,
+      GenderSuitability? gender = null)
+        {
+            var query = BaseMedicationIncludes();
+
+            if (dosageForm.HasValue)
+                query = query.Where(m => m.DosageFormType == dosageForm);
+
+            if (strengthUnit.HasValue)
+                query = query.Where(m => m.StrengthUnit == strengthUnit.Value);
+
+            if (gender.HasValue)
+                query = query.Where(m => m.GenderSuitability == gender);
+
+            var medications = await query.ToListAsync();
+
+            var dtos = medications
+                .SelectMany(m => m.Inventories
+                    .Select(inv => MedicineSelector.MapInventoryToDto(inv)))
+                .ToList();
+
+            return dtos;
+        }
 
     }
 }

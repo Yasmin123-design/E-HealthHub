@@ -1,5 +1,6 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
+using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.FileStorageServ;
 using E_PharmaHub.UnitOfWorkes;
 
@@ -14,6 +15,17 @@ namespace E_PharmaHub.Services.MedicineServ
         {
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
+        }
+        public async Task<IEnumerable<MedicineDto>> FilterMedicationsAsync(
+      DosageFormType? dosageForm,
+      StrengthUnit? strengthUnit,
+      GenderSuitability? gender)
+        {
+            return await _unitOfWork.Medicines.FilterAsync(
+                dosageForm,
+                strengthUnit,
+                gender
+            );
         }
 
         public async Task<IEnumerable<Medication>> GetAllMedicinesAsync()
@@ -33,7 +45,6 @@ namespace E_PharmaHub.Services.MedicineServ
 
             existingMedicine.BrandName = dto.BrandName ?? existingMedicine.BrandName;
             existingMedicine.GenericName = dto.GenericName ?? existingMedicine.GenericName;
-            existingMedicine.DosageForm = dto.DosageForm ?? existingMedicine.DosageForm;
             existingMedicine.Strength = dto.Strength ?? existingMedicine.Strength;
             existingMedicine.ATCCode = dto.ATCCode ?? existingMedicine.ATCCode;
             existingMedicine.Description = dto.Description ?? existingMedicine.Description;
@@ -42,6 +53,9 @@ namespace E_PharmaHub.Services.MedicineServ
             existingMedicine.NotSuitableFor = dto.NotSuitableFor ?? existingMedicine.NotSuitableFor;
             existingMedicine.Composition = dto.Composition ?? existingMedicine.Composition;
             existingMedicine.Warning = dto.Warning ?? existingMedicine.Warning;
+            existingMedicine.DosageFormType = dto.DosageFormType ?? Models.Enums.DosageFormType.Tablet;
+            existingMedicine.GenderSuitability = dto.GenderSuitability ?? Models.Enums.GenderSuitability.Any;
+            existingMedicine.StrengthUnit = dto.StrengthUnit ?? Models.Enums.StrengthUnit.mg;
 
             if (image != null && image.Length > 0)
             {
@@ -117,7 +131,6 @@ namespace E_PharmaHub.Services.MedicineServ
             {
                 BrandName = dto.BrandName,
                 GenericName = dto.GenericName,
-                DosageForm = dto.DosageForm,
                 Strength = dto.Strength,
                 ATCCode = dto.ATCCode,
                 Description = dto.Description,
@@ -125,7 +138,10 @@ namespace E_PharmaHub.Services.MedicineServ
                 DirectionsForUse = dto.DirectionsForUse,
                 SuitableFor = dto.SuitableFor,
                 NotSuitableFor = dto.NotSuitableFor,
-                Composition = dto.Composition
+                Composition = dto.Composition,
+                StrengthUnit = dto.StrengthUnit ?? Models.Enums.StrengthUnit.mg,
+                DosageFormType = dto.DosageFormType ?? Models.Enums.DosageFormType.Tablet,
+                GenderSuitability = dto.GenderSuitability ?? Models.Enums.GenderSuitability.Any
             };
 
             if (image != null && image.Length > 0)

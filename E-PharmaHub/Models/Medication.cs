@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using E_PharmaHub.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace E_PharmaHub.Models
 {
@@ -14,8 +15,13 @@ namespace E_PharmaHub.Models
         [StringLength(100, ErrorMessage = "Generic name cannot exceed 100 characters.")]
         public string GenericName { get; set; }
 
-        [StringLength(50, ErrorMessage = "Dosage form cannot exceed 50 characters.")]
-        public string DosageForm { get; set; }
+        //[StringLength(50, ErrorMessage = "Dosage form cannot exceed 50 characters.")]
+        //public string DosageForm { get; set; }
+
+        public DosageFormType DosageFormType { get; set; } = DosageFormType.Tablet;
+        public StrengthUnit StrengthUnit { get; set; } = StrengthUnit.mg;
+        public GenderSuitability GenderSuitability { get; set; } = GenderSuitability.Any;
+
 
         [StringLength(50, ErrorMessage = "Strength cannot exceed 50 characters.")]
         public string Strength { get; set; }

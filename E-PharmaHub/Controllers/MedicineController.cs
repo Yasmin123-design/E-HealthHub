@@ -1,4 +1,5 @@
 ﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.InventoryServ;
 using E_PharmaHub.Services.MedicineServ;
 using E_PharmaHub.Services.PharmacistServ;
@@ -64,7 +65,6 @@ namespace E_PharmaHub.Controllers
 
             return Ok(new { message = result.Message });
         }
-
 
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist")]
@@ -163,6 +163,28 @@ namespace E_PharmaHub.Controllers
         {
             var result = await _medicineService.GetTopRatedMedicationsAsync();
             return Ok(result);
+        }
+
+        [HttpGet("filter")]
+        public async Task<IActionResult> FilterMedications(
+    [FromQuery]  DosageFormType? dosageForm,
+    [FromQuery] StrengthUnit? strengthUnit,
+    [FromQuery] GenderSuitability? gender)
+        {
+            try
+            {
+                var result = await _medicineService.FilterMedicationsAsync(
+                    dosageForm,
+                    strengthUnit,
+                    gender
+                );
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
     }
 }
