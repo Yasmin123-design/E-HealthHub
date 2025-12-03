@@ -115,7 +115,6 @@ namespace E_PharmaHub.Services.ChatServ
 
             return message;
         }
-
         public async Task<IEnumerable<ChatMessage>> GetMessagesAsync(int threadId)
         {
             return await _unitOfWork.Chat.GetMessagesByThreadIdAsync(threadId);
