@@ -47,9 +47,23 @@ namespace E_PharmaHub.Services.NotificationServ
 
             return notification;
         }
-        public async Task<IEnumerable<Notification>> GetAllForUserAsync(string userId)
+        public async Task<(IEnumerable<Notification> Orders, IEnumerable<Notification> Appointments)> GetUserNotificationsByCategoryAsync(string userId)
         {
-            return await _unitOfWork.Notifications.GetUserNotificationsAsync(userId);
+            var notifications = await _unitOfWork.Notifications.GetUserNotificationsAsync(userId);
+
+            var orders = notifications
+                .Where(n => n.Type == NotificationType.OrderCancelled
+                         || n.Type == NotificationType.OrderConfirmed
+                         || n.Type == NotificationType.OrderDelivered);
+
+            var appointments = notifications
+                .Where(n => n.Type == NotificationType.AppointmentApproved
+                         || n.Type == NotificationType.AppointmentRejected
+                         || n.Type == NotificationType.AppointmentReminder
+                         || n.Type == NotificationType.AppointmentStartingSoon);
+
+            return (orders, appointments);
         }
+
     }
 }

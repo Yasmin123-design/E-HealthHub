@@ -25,10 +25,15 @@ namespace E_PharmaHub.Controllers
             if (userId == null)
                 return Unauthorized();
 
-            var notifications = await _notificationService.GetAllForUserAsync(userId);
+            var (orders, appointments) = await _notificationService.GetUserNotificationsByCategoryAsync(userId);
 
-            return Ok(notifications);
+            return Ok(new
+            {
+                Orders = orders,
+                Appointments = appointments
+            });
         }
+
 
     }
 }
