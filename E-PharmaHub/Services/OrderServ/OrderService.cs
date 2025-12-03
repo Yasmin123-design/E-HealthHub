@@ -269,13 +269,6 @@ namespace E_PharmaHub.Services.OrderServ
             await _unitOfWork.CompleteAsync();
 
             await _notificationService.CreateAndSendAsync(
-               userId: order.UserId,
-               title: "Order Confirmed",
-               message: "Your medicine order has been confirmed",
-               type: NotificationType.OrderConfirmed
-           );
-
-            await _notificationService.CreateAndSendAsync(
               userId: order.UserId,
               title: "Order Delivered",
               message: $"Your medicine order from pharmacy {order.Pharmacy.Name} has been delivered successfully",

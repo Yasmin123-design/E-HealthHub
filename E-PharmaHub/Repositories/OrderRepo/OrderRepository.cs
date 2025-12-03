@@ -138,6 +138,7 @@ namespace E_PharmaHub.Repositories.OrderRepo
         public async Task<Order?> GetOrderByIdAsync(int orderId)
         {
             return await _context.Orders
+                    .AsNoTracking()
                 .Include(o => o.User)
                 .Include(o => o.Pharmacy)
                 .Include(o => o.Payment)
