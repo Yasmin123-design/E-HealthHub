@@ -40,10 +40,12 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
                 return Enumerable.Empty<MedicineDto>();
 
             var alternatives = await BaseInventoryIncludes()
-                .Where(i =>
-                    (i.Medication.GenericName == originalMedicine.GenericName ||
-                     i.Medication.ATCCode == originalMedicine.ATCCode))
-                .ToListAsync();
+    .Where(i =>
+        (i.Medication.GenericName == originalMedicine.GenericName ||
+         i.Medication.ATCCode == originalMedicine.ATCCode) &&
+        i.Medication.BrandName != originalMedicine.BrandName)
+    .ToListAsync();
+
 
             return alternatives
                 .Select(MedicineSelector.MapInventoryToDto)
