@@ -16,6 +16,7 @@ namespace E_PharmaHub.Dtos
         public DosageFormType? DosageFormType { get; set; } 
         public StrengthUnit? StrengthUnit { get; set; } 
         public GenderSuitability? GenderSuitability { get; set; } 
+        public MedicationCategory? MedicationCategory { get; set; }
         public double? AverageRating { get; set; }
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters")]

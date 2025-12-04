@@ -21,6 +21,7 @@ namespace E_PharmaHub.Helpers
                 DosageFormType = item.Medication.DosageFormType,
                 ImagePath = item.Medication.ImagePath,
                 Price = item.Price,
+                MedicationCategory = item.Medication.Category,
                 Description = item.Medication.Description,
                 Warning = item.Medication.Warning,
                 Composition = item.Medication.Composition,
