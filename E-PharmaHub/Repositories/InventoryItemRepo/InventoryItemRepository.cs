@@ -41,10 +41,12 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
 
             var alternatives = await BaseInventoryIncludes()
     .Where(i =>
-        (i.Medication.GenericName == originalMedicine.GenericName ||
-         i.Medication.ATCCode == originalMedicine.ATCCode) &&
-        i.Medication.BrandName != originalMedicine.BrandName)
+        (i.Medication.BrandName != originalMedicine.BrandName &&
+         i.Medication.GenericName == originalMedicine.GenericName) ||
+        (i.Medication.BrandName != originalMedicine.BrandName &&
+         i.Medication.ATCCode == originalMedicine.ATCCode))
     .ToListAsync();
+
 
 
             return alternatives
