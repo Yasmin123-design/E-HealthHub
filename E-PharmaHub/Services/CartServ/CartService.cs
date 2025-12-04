@@ -128,6 +128,7 @@ namespace E_PharmaHub.Services.CartServ
                     {
                         Id = x.Item.Id,
                         Medication = x.Item.Medication.BrandName,
+                        MedicationImage = x.Item.Medication.ImagePath,
                         Quantity = x.Item.Quantity,
                         UnitPrice = x.Item.UnitPrice
                     }).ToList()

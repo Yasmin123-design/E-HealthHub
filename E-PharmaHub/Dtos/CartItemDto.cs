@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Medication { get; set; }
+        public string? MedicationImage { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Total => Quantity * UnitPrice;
