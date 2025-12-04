@@ -85,8 +85,6 @@ namespace E_PharmaHub.Services.MedicineServ
 
             await _unitOfWork.CompleteAsync();
         }
-
-
         public async Task DeleteMedicineAsync(int id, int? pharmacyId)
         {
             if (pharmacyId.HasValue)
@@ -115,8 +113,6 @@ namespace E_PharmaHub.Services.MedicineServ
 
             await _unitOfWork.CompleteAsync();
         }
-
-
         public async Task<IEnumerable<MedicineDto>> SearchMedicinesByNameAsync(string name)
         {
             return await _unitOfWork.Medicines.SearchByNameAsync(name);

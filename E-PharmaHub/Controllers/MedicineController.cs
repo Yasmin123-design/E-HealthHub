@@ -134,12 +134,12 @@ namespace E_PharmaHub.Controllers
             return Ok(medicines);
         }
 
-        [HttpGet("{id}/alternatives")]
+        [HttpGet("{name}/alternatives")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
 
-        public async Task<IActionResult> GetAlternatives(int id)
+        public async Task<IActionResult> GetAlternatives(string name)
         {
-            var alternatives = await _inventoryService.GetAlternativeMedicinesAsync(id);
+            var alternatives = await _inventoryService.GetAlternativeMedicinesAsync(name);
             if (!alternatives.Any())
                 return NotFound(new { message = "No alternative medicines found." });
 

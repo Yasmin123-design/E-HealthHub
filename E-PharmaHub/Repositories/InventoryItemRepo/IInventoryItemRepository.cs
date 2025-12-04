@@ -11,7 +11,7 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
         Task<InventoryItem> GetInventoryForCheckoutAsync(int medicationId, int pharmacyId, decimal price);
         Task DecreaseQuantityAsync(int inventoryId, int quantity);
         Task<IEnumerable<InventoryItem>> GetAllAsync();
-        Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(int medicineId);
+        Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(string name);
         Task<MedicineDto?> GetByIdAsync(int id);
         Task AddAsync(InventoryItem entity);
 

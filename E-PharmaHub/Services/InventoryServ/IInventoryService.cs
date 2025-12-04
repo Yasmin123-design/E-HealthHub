@@ -5,7 +5,7 @@ namespace E_PharmaHub.Services.InventoryServ
 {
     public interface IInventoryService
     {
-        Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(int medicineId);
+        Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(string name);
         Task AddInventoryItemAsync(InventoryItem item);
         Task UpdateInventoryItemAsync(InventoryItem item);
         Task DeleteInventoryItemAsync(int id);

@@ -12,9 +12,9 @@ namespace E_PharmaHub.Services.InventoryServ
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(int medicineId)
+        public async Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(string name)
         {
-            return await _unitOfWork.IinventoryItem.GetAlternativeMedicinesAsync(medicineId);
+            return await _unitOfWork.IinventoryItem.GetAlternativeMedicinesAsync(name);
         }
         public async Task AddInventoryItemAsync(InventoryItem item)
         {

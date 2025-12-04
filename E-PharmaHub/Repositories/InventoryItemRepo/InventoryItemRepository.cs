@@ -1,6 +1,7 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Helpers;
 using E_PharmaHub.Models;
+using E_PharmaHub.Repositories.MedicineRepo;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -9,10 +10,12 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
     public class InventoryItemRepository : IInventoryItemRepository
     {
         private readonly EHealthDbContext _context;
+        private readonly IMedicineRepository _medicineRepository;
 
-        public InventoryItemRepository(EHealthDbContext context)
+        public InventoryItemRepository(EHealthDbContext context,IMedicineRepository medicineRepository)
         {
             _context = context;
+            _medicineRepository = medicineRepository;
         }
 
         private IQueryable<InventoryItem> BaseInventoryIncludes()
@@ -30,15 +33,14 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
             return await BaseInventoryIncludes().ToListAsync();
         }
 
-        public async Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(int medicineId)
+        public async Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(string name)
         {
-            var originalMedicine = await _context.Medications.FindAsync(medicineId);
+            var originalMedicine = await _medicineRepository.FindAsync(m => m.BrandName == name);
             if (originalMedicine == null)
                 return Enumerable.Empty<MedicineDto>();
 
             var alternatives = await BaseInventoryIncludes()
                 .Where(i =>
-                    i.Medication.Id != medicineId &&
                     (i.Medication.GenericName == originalMedicine.GenericName ||
                      i.Medication.ATCCode == originalMedicine.ATCCode))
                 .ToListAsync();
