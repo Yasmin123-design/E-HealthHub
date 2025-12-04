@@ -18,6 +18,8 @@ namespace E_PharmaHub.Models
         //[StringLength(50, ErrorMessage = "Dosage form cannot exceed 50 characters.")]
         //public string DosageForm { get; set; }
 
+        public MedicationCategory Category { get; set; } = MedicationCategory.Other;
+
         public DosageFormType DosageFormType { get; set; } = DosageFormType.Tablet;
         public StrengthUnit StrengthUnit { get; set; } = StrengthUnit.mg;
         public GenderSuitability GenderSuitability { get; set; } = GenderSuitability.Any;

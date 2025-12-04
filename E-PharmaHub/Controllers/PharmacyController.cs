@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using E_PharmaHub.Services.PharmacistServ;
 using E_PharmaHub.Services.PharmacyServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -58,9 +59,9 @@ namespace E_PharmaHub.Controllers
 
         [HttpPut("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Pharmacist")]
-        public async Task<IActionResult> Update(int id, [FromForm] Pharmacy pharmacy, IFormFile? image)
+        public async Task<IActionResult> Update(int id, [FromForm] PharmacyUpdateDto dto, IFormFile? image)
         {
-            if (pharmacy == null)
+            if (dto == null)
                 return BadRequest("Pharmacy data is invalid.");
 
             if (!ModelState.IsValid)
@@ -88,7 +89,8 @@ namespace E_PharmaHub.Controllers
                         return Forbid("Your account is pending admin approval.");
                 }
 
-                await _pharmacyService.UpdatePharmacyAsync(id, pharmacy, image);
+                await _pharmacyService.UpdatePharmacyAsync(id, dto, image);
+
                 return NoContent();
             }
             catch (Exception ex)
@@ -96,6 +98,7 @@ namespace E_PharmaHub.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
 
 
         [HttpDelete("{id}")]

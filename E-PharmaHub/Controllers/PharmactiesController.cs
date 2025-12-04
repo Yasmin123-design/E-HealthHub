@@ -73,13 +73,24 @@ namespace E_PharmaHub.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "User not authenticated." });
 
-            var (success, message) = await _pharmacyService.UpdatePharmacyAsync(userId, dto, image);
+            var pharmacistProfile = await _pharmacistService.GetPharmacistProfileByUserIdAsync(userId);
+            if (pharmacistProfile == null)
+                return NotFound(new { message = "Pharmacist profile not found." });
+
+            if (pharmacistProfile.PharmacyId == null)
+                return BadRequest(new { message = "You are not assigned to any pharmacy." });
+
+            int pharmacyId = pharmacistProfile.PharmacyId;
+
+            var (success, message) = await _pharmacyService.UpdatePharmacyAsync(pharmacyId, dto, image);
 
             if (!success)
-                return BadRequest(new { message }); 
+                return BadRequest(new { message });
 
             return Ok(new { message });
         }
+
+
 
 
 

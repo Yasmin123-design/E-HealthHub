@@ -15,38 +15,35 @@ namespace E_PharmaHub.Services.PharmacyServ
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
         }
-        public async Task<(bool Success, string Message)> UpdatePharmacyAsync(string userId, PharmacyUpdateDto dto, IFormFile? image)
+        public async Task<(bool Success, string Message)> UpdatePharmacyAsync(int id, PharmacyUpdateDto dto, IFormFile? image)
         {
-            var pharmacy = await _unitOfWork.Pharmacies.GetPharmacyByPharmacistUserIdAsync(userId);
-            if (pharmacy == null)
-                return (false, "Pharmacy not found.");
+            var existing = await _unitOfWork.Pharmacies.GetByIdAsync(id);
+            if (existing == null)
+                return (false, "Pharmacy not found");
 
-            if (!string.IsNullOrEmpty(dto.Name))
-                pharmacy.Name = dto.Name;
+            if (!string.IsNullOrWhiteSpace(dto.Name))
+                existing.Name = dto.Name;
 
-            if (!string.IsNullOrEmpty(dto.Phone))
-                pharmacy.Phone = dto.Phone;
+            if (!string.IsNullOrWhiteSpace(dto.Phone))
+                existing.Phone = dto.Phone;
 
-            if (dto.AddressId.HasValue)
-            {
-                var addressExists = await _unitOfWork.Addresses.GetByIdAsync(dto.AddressId.Value);
-                if (addressExists == null)
-                    return (false, "The provided address does not exist ❌");
-
-                pharmacy.AddressId = dto.AddressId.Value;
-            }
+            if (dto.AddressId.HasValue && dto.AddressId > 0)
+                existing.AddressId = dto.AddressId.Value;
 
             if (image != null)
             {
-                var imagePath = await _fileStorage.SaveFileAsync(image, "pharmacies");
-                pharmacy.ImagePath = imagePath;
+                if (!string.IsNullOrEmpty(existing.ImagePath))
+                    _fileStorage.DeleteFile(existing.ImagePath, "pharmacies");
+
+                existing.ImagePath = await _fileStorage.SaveFileAsync(image, "pharmacies");
             }
 
-            _unitOfWork.Pharmacies.Update(pharmacy);
+            _unitOfWork.Pharmacies.Update(existing);
             await _unitOfWork.CompleteAsync();
 
-            return (true, "Pharmacy updated successfully ✅");
+            return (true, "Updated successfully");
         }
+
 
 
         public async Task<IEnumerable<PharmacySimpleDto>> GetAllPharmaciesAsync()
@@ -71,33 +68,7 @@ namespace E_PharmaHub.Services.PharmacyServ
             await _unitOfWork.CompleteAsync();
         }
 
-        public async Task UpdatePharmacyAsync(int id, Pharmacy updatedPharmacy, IFormFile imageFile)
-        {
-            var existing = await _unitOfWork.Pharmacies.GetByIdAsync(id);
-            if (existing == null)
-                throw new KeyNotFoundException("Pharmacy not found");
 
-            existing.Name = updatedPharmacy.Name;
-            existing.Phone = updatedPharmacy.Phone;
-            existing.AddressId = updatedPharmacy.AddressId;
-            if (updatedPharmacy.Address != null && updatedPharmacy.Address.Id != 0)
-            {
-                var address = await _unitOfWork.Addresses.GetByIdAsync(updatedPharmacy.Address.Id);
-                if (address != null)
-                    existing.Address = address;
-            }
-
-
-            if (imageFile != null)
-            {
-                if (!string.IsNullOrEmpty(existing.ImagePath))
-                    _fileStorage.DeleteFile(existing.ImagePath, "pharmacies");
-
-                existing.ImagePath = await _fileStorage.SaveFileAsync(imageFile, "pharmacies");
-            }
-            _unitOfWork.Pharmacies.Update(existing);
-            await _unitOfWork.CompleteAsync();
-        }
 
         public async Task DeletePharmacyAsync(int id)
         {
