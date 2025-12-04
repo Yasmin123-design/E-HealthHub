@@ -8,6 +8,9 @@ namespace E_PharmaHub.Repositories.MedicineRepo
     public interface IMedicineRepository
     {
         Task<IEnumerable<MedicineDto>> FilterAsync(
+
+            string? name = null,
+
       DosageFormType? dosageForm = null,
       StrengthUnit? strengthUnit = null,
       GenderSuitability? gender = null,

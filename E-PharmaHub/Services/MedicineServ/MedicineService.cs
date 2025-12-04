@@ -18,6 +18,7 @@ namespace E_PharmaHub.Services.MedicineServ
             _fileStorage = fileStorage;
         }
         public async Task<IEnumerable<MedicineDto>> FilterMedicationsAsync(
+            string? name,
       DosageFormType? dosageForm,
       StrengthUnit? strengthUnit,
       GenderSuitability? gender,
@@ -25,6 +26,7 @@ namespace E_PharmaHub.Services.MedicineServ
       )
         {
             return await _unitOfWork.Medicines.FilterAsync(
+                name,
                 dosageForm,
                 strengthUnit,
                 gender,

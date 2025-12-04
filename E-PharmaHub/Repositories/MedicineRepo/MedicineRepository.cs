@@ -110,6 +110,7 @@ namespace E_PharmaHub.Repositories.MedicineRepo
         }
 
         public async Task<IEnumerable<MedicineDto>> FilterAsync(
+            string? name = null,
       DosageFormType? dosageForm = null,
       StrengthUnit? strengthUnit = null,
       GenderSuitability? gender = null,
@@ -117,6 +118,9 @@ namespace E_PharmaHub.Repositories.MedicineRepo
       )
         {
             var query = BaseMedicationIncludes();
+
+            if (name != null)
+                query = query.Where(m => m.BrandName == name);
 
             if (dosageForm.HasValue)
                 query = query.Where(m => m.DosageFormType == dosageForm);

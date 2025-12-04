@@ -168,6 +168,7 @@ namespace E_PharmaHub.Controllers
 
         [HttpGet("filter")]
         public async Task<IActionResult> FilterMedications(
+            [FromQuery] string? name,
     [FromQuery]  DosageFormType? dosageForm,
     [FromQuery] StrengthUnit? strengthUnit,
     [FromQuery] GenderSuitability? gender,
@@ -177,6 +178,7 @@ namespace E_PharmaHub.Controllers
             try
             {
                 var result = await _medicineService.FilterMedicationsAsync(
+                    name,
                     dosageForm,
                     strengthUnit,
                     gender,

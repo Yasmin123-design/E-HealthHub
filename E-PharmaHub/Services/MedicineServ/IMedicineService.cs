@@ -9,6 +9,7 @@ namespace E_PharmaHub.Services.MedicineServ
     {
 
         Task<IEnumerable<MedicineDto>> FilterMedicationsAsync(
+            string? name,
             DosageFormType? dosageForm,
             StrengthUnit? strengthUnit,
             GenderSuitability? gender,
