@@ -32,8 +32,8 @@ namespace E_PharmaHub.Services.PharmacyServ
 
             if (image != null)
             {
-                if (!string.IsNullOrEmpty(existing.ImagePath))
-                    _fileStorage.DeleteFile(existing.ImagePath, "pharmacies");
+                //if (!string.IsNullOrEmpty(existing.ImagePath))
+                //    _fileStorage.DeleteFile(existing.ImagePath, "pharmacies");
 
                 existing.ImagePath = await _fileStorage.SaveFileAsync(image, "pharmacies");
             }
