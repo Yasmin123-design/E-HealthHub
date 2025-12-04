@@ -112,7 +112,9 @@ namespace E_PharmaHub.Repositories.MedicineRepo
         public async Task<IEnumerable<MedicineDto>> FilterAsync(
       DosageFormType? dosageForm = null,
       StrengthUnit? strengthUnit = null,
-      GenderSuitability? gender = null)
+      GenderSuitability? gender = null,
+      MedicationCategory? category = null
+      )
         {
             var query = BaseMedicationIncludes();
 
@@ -124,6 +126,8 @@ namespace E_PharmaHub.Repositories.MedicineRepo
 
             if (gender.HasValue)
                 query = query.Where(m => m.GenderSuitability == gender);
+            if (category.HasValue)
+                query = query.Where(m => m.Category == category);
 
             var medications = await query.ToListAsync();
 

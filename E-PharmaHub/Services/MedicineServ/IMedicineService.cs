@@ -1,6 +1,7 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
 using E_PharmaHub.Models.Enums;
+using System.ComponentModel;
 
 namespace E_PharmaHub.Services.MedicineServ
 {
@@ -10,7 +11,9 @@ namespace E_PharmaHub.Services.MedicineServ
         Task<IEnumerable<MedicineDto>> FilterMedicationsAsync(
             DosageFormType? dosageForm,
             StrengthUnit? strengthUnit,
-            GenderSuitability? gender);
+            GenderSuitability? gender,
+            MedicationCategory? category
+            );
         Task<IEnumerable<Medication>> GetAllMedicinesAsync();
         Task<Medication> GetMedicineByIdAsync(int id);
         Task UpdateMedicineAsync(int id, MedicineDto dto, IFormFile? image, int? pharmacyId);

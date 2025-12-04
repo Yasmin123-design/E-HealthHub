@@ -10,7 +10,9 @@ namespace E_PharmaHub.Repositories.MedicineRepo
         Task<IEnumerable<MedicineDto>> FilterAsync(
       DosageFormType? dosageForm = null,
       StrengthUnit? strengthUnit = null,
-      GenderSuitability? gender = null);
+      GenderSuitability? gender = null,
+      MedicationCategory? category = null
+      );
         Task<Medication?> FindAsync(Expression<Func<Medication, bool>> predicate);
         Task<Medication> GetByIdAsync(int id);
         Task AddAsync(Medication entity);

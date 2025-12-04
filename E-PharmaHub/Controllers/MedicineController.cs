@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
+using System.ComponentModel;
 using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
@@ -169,14 +170,17 @@ namespace E_PharmaHub.Controllers
         public async Task<IActionResult> FilterMedications(
     [FromQuery]  DosageFormType? dosageForm,
     [FromQuery] StrengthUnit? strengthUnit,
-    [FromQuery] GenderSuitability? gender)
+    [FromQuery] GenderSuitability? gender,
+    [FromQuery] MedicationCategory? category
+    )
         {
             try
             {
                 var result = await _medicineService.FilterMedicationsAsync(
                     dosageForm,
                     strengthUnit,
-                    gender
+                    gender,
+                    category
                 );
 
                 return Ok(result);

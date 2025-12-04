@@ -3,6 +3,7 @@ using E_PharmaHub.Models;
 using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.FileStorageServ;
 using E_PharmaHub.UnitOfWorkes;
+using System.ComponentModel;
 
 namespace E_PharmaHub.Services.MedicineServ
 {
@@ -19,12 +20,15 @@ namespace E_PharmaHub.Services.MedicineServ
         public async Task<IEnumerable<MedicineDto>> FilterMedicationsAsync(
       DosageFormType? dosageForm,
       StrengthUnit? strengthUnit,
-      GenderSuitability? gender)
+      GenderSuitability? gender,
+      MedicationCategory? category
+      )
         {
             return await _unitOfWork.Medicines.FilterAsync(
                 dosageForm,
                 strengthUnit,
-                gender
+                gender,
+                category
             );
         }
 
