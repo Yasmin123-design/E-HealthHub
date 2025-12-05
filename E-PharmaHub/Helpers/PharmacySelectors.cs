@@ -14,6 +14,7 @@ namespace E_PharmaHub.Helpers
                Phone = p.Phone,
                City = p.Address.City,
                ImagePath = p.ImagePath,
+               DeliveryFee = p.DeliveryFee,
                Country = p.Address.Country,
                Latitude = p.Address.Latitude,
                Longitude = p.Address.Longitude,

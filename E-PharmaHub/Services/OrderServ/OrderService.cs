@@ -35,10 +35,7 @@ namespace E_PharmaHub.Services.OrderServ
             foreach (var cartItem in cartItems)
             {
                 var inventory = await _unitOfWork.IinventoryItem
-                    .GetInventoryForCheckoutAsync(
-                        cartItem.MedicationId,
-                        dto.PharmacyId,
-                        cartItem.UnitPrice);
+                    .GetInventoryForCheckoutAsync(cartItem.MedicationId, dto.PharmacyId, cartItem.UnitPrice);
 
                 if (inventory != null)
                 {
@@ -65,8 +62,7 @@ namespace E_PharmaHub.Services.OrderServ
 
             foreach (var x in itemsForThisPharmacy)
             {
-                await _unitOfWork.IinventoryItem
-                    .DecreaseQuantityAsync(x.Inventory.Id, x.CartItem.Quantity);
+                await _unitOfWork.IinventoryItem.DecreaseQuantityAsync(x.Inventory.Id, x.CartItem.Quantity);
             }
 
             var existingOrder = await _unitOfWork.Order
@@ -74,31 +70,31 @@ namespace E_PharmaHub.Services.OrderServ
 
             bool isNewOrder = existingOrder == null;
 
+            var pharmacy = await _unitOfWork.Pharmacies.GetByIdAsync(dto.PharmacyId);
+            decimal deliveryFee = pharmacy?.DeliveryFee ?? 0m;
+
+            decimal itemsTotal = itemsForThisPharmacy.Sum(x => (decimal)(x.CartItem.UnitPrice * x.CartItem.Quantity));
+            decimal totalPrice = itemsTotal + deliveryFee;
+
             if (!isNewOrder)
             {
                 foreach (var x in itemsForThisPharmacy)
                 {
                     var cartItem = x.CartItem;
-
-                    var existingItem = existingOrder.Items
-                        .FirstOrDefault(i => i.MedicationId == cartItem.MedicationId);
+                    var existingItem = existingOrder.Items.FirstOrDefault(i => i.MedicationId == cartItem.MedicationId);
 
                     if (existingItem != null)
-                    {
                         existingItem.Quantity += cartItem.Quantity;
-                    }
                     else
-                    {
                         existingOrder.Items.Add(new OrderItem
                         {
                             MedicationId = cartItem.MedicationId,
                             Quantity = cartItem.Quantity,
                             UnitPrice = cartItem.UnitPrice
                         });
-                    }
                 }
 
-                existingOrder.TotalPrice = existingOrder.Items.Sum(i => (decimal)(i.UnitPrice * i.Quantity));
+                existingOrder.TotalPrice = totalPrice;
                 existingOrder.City = dto.City;
                 existingOrder.Country = dto.Country;
                 existingOrder.Street = dto.Street;
@@ -117,7 +113,7 @@ namespace E_PharmaHub.Services.OrderServ
                     Street = dto.Street,
                     PhoneNumber = dto.PhoneNumber,
                     Status = OrderStatus.Pending,
-                    TotalPrice = itemsForThisPharmacy.Sum(x => (decimal)(x.CartItem.UnitPrice * x.CartItem.Quantity)),
+                    TotalPrice = totalPrice,
                     Items = itemsForThisPharmacy.Select(x => new OrderItem
                     {
                         MedicationId = x.CartItem.MedicationId,
@@ -130,7 +126,6 @@ namespace E_PharmaHub.Services.OrderServ
             }
 
             await _unitOfWork.Carts.ClearCartItemsByPharmacyAsync(cart.Id, dto.PharmacyId);
-
             await _unitOfWork.CompleteAsync();
 
             return new CartResult
@@ -139,9 +134,16 @@ namespace E_PharmaHub.Services.OrderServ
                 Message = isNewOrder
                     ? "Checkout completed. New order created successfully."
                     : "Pending order updated with new items successfully.",
-                Data = new { OrderId = existingOrder.Id, existingOrder.TotalPrice }
+                Data = new
+                {
+                    OrderId = existingOrder.Id,
+                    ItemsTotal = itemsTotal,       
+                    DeliveryFee = deliveryFee,     
+                    TotalPrice = totalPrice       
+                }
             };
         }
+
 
 
 

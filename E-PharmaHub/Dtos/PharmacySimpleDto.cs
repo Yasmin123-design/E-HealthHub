@@ -15,6 +15,8 @@
         public double? Longitude { get; set; }
 
         public double? DistanceFromUser { get; set; }
+        public decimal? DeliveryFee { get; set; }
+
 
     }
 }

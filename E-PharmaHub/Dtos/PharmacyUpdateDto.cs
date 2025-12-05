@@ -12,6 +12,8 @@ namespace E_PharmaHub.Dtos
         [Phone(ErrorMessage = "Invalid phone number format.")]
         [StringLength(15, ErrorMessage = "Phone number can't exceed 15 digits.")]
         public string? Phone { get; set; }
+        public decimal? DeliveryFee { get; set; }
+
     }
 
 }

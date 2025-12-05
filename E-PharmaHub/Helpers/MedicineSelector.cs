@@ -35,6 +35,7 @@ namespace E_PharmaHub.Helpers
                     Id = item.Pharmacy.Id,
                     Name = item.Pharmacy.Name,
                     City = item.Pharmacy.Address?.City,
+                    DeliveryFee = item.Pharmacy?.DeliveryFee,
                     ImagePath = item.Pharmacy.ImagePath,
                     Phone = item.Pharmacy.Phone,
                     PostalCode = item.Pharmacy.Address?.PostalCode,

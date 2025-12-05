@@ -20,6 +20,7 @@ namespace E_PharmaHub.Models
 
         [StringLength(255, ErrorMessage = "Image path too long.")]
         public string? ImagePath { get; set; }
+        public decimal? DeliveryFee { get; set; }
 
         public virtual Address? Address { get; set; }
         public virtual ICollection<InventoryItem>? Inventory { get; set; }
