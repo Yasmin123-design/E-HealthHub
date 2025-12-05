@@ -120,18 +120,25 @@ namespace E_PharmaHub.Services.CartServ
 
             var grouped = itemsWithInventory
                 .GroupBy(x => x.Inventory.PharmacyId)
-                .Select(g => new CartPharmacyGroupDto
+                .Select(g =>
                 {
-                    PharmacyId = g.Key,
-                    PharmacyName = g.First().Inventory.Pharmacy?.Name,
-                    Items = g.Select(x => new CartItemDto
+                    var pharmacy = g.First().Inventory.Pharmacy;
+
+                    return new CartPharmacyGroupDto
                     {
-                        Id = x.Item.Id,
-                        Medication = x.Item.Medication.BrandName,
-                        MedicationImage = x.Item.Medication.ImagePath,
-                        Quantity = x.Item.Quantity,
-                        UnitPrice = x.Item.UnitPrice
-                    }).ToList()
+                        PharmacyId = pharmacy.Id,
+                        PharmacyName = pharmacy.Name,
+                        DeliveryFee = pharmacy.DeliveryFee ?? 0m,
+
+                        Items = g.Select(x => new CartItemDto
+                        {
+                            Id = x.Item.Id,
+                            Medication = x.Item.Medication.BrandName,
+                            MedicationImage = x.Item.Medication.ImagePath,
+                            Quantity = x.Item.Quantity,
+                            UnitPrice = x.Item.UnitPrice
+                        }).ToList()
+                    };
                 })
                 .ToList();
 

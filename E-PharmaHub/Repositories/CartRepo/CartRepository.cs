@@ -19,6 +19,7 @@ namespace E_PharmaHub.Repositories.CartRepo
                 .Include(c => c.Items)
                     .ThenInclude(i => i.Medication)
                         .ThenInclude(m => m.Inventories)
+                        .ThenInclude(p => p.Pharmacy)
                 .Where(c => c.UserId == userId);
 
             if (asNoTracking)
