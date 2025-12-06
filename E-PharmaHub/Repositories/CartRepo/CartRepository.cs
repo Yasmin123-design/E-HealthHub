@@ -28,15 +28,7 @@ namespace E_PharmaHub.Repositories.CartRepo
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task AddCartItemAsync(CartItem item)
-        {
-            await _context.CartItems.AddAsync(item);
-        }
-
-        public async Task RemoveCartItemAsync(CartItem item)
-        {
-            _context.CartItems.Remove(item);
-        }
+   
         public async Task AddAsync(Cart cart)
         {
             await _context.Carts.AddAsync(cart);
@@ -61,14 +53,5 @@ namespace E_PharmaHub.Repositories.CartRepo
             _context.CartItems.RemoveRange(itemsToRemove);
         }
 
-
-        public async Task<List<CartItem>> GetCartItemsWithDetailsAsync(int cartId)
-        {
-            return await _context.CartItems
-                .Include(ci => ci.Medication)
-                .Where(ci => ci.CartId == cartId)
-                .AsNoTracking()
-                .ToListAsync();
-        }
     }
 }

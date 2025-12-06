@@ -59,7 +59,7 @@ namespace E_PharmaHub.Services.CartServ
                     };
                 }
 
-                await _unitOfWork.Carts.AddCartItemAsync(new CartItem
+                await _unitOfWork.CartItemRepository.AddCartItemAsync(new CartItem
                 {
                     CartId = cart.Id,
                     MedicationId = medicationId,
@@ -83,7 +83,7 @@ namespace E_PharmaHub.Services.CartServ
             if (item == null)
                 return new CartResult { Success = false, Message = "Item not found" };
 
-            await _unitOfWork.Carts.RemoveCartItemAsync(item);
+            await _unitOfWork.CartItemRepository.RemoveCartItemAsync(item);
             await _unitOfWork.CompleteAsync();
 
             return new CartResult { Success = true, Message = "Item removed from cart" };
@@ -100,6 +100,7 @@ namespace E_PharmaHub.Services.CartServ
 
             return new CartResult { Success = true, Message = "Cart cleared successfully" };
         }
+
 
         public async Task<CartResponseDto> GetUserCartAsync(string userId)
         {
@@ -148,6 +149,22 @@ namespace E_PharmaHub.Services.CartServ
                 Pharmacies = grouped
             };
         }
+
+        public async Task<(bool, string)> UpdateQuantityAsync(string userId, int cartItemId, int quantity)
+        {
+            var cartItem = await _unitOfWork.CartItemRepository.GetByIdAsync(cartItemId);
+
+            if (cartItem == null || cartItem.Cart.UserId != userId)
+                return (false, "Invalid cart item.");
+
+            cartItem.Quantity = quantity;
+
+            _unitOfWork.CartItemRepository.Update(cartItem);
+            await _unitOfWork.CompleteAsync();
+
+            return (true, "Quantity updated.");
+        }
+
 
 
 

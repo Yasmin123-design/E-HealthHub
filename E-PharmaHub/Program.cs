@@ -59,6 +59,7 @@ using E_PharmaHub.Services.NotificationServ;
 using E_PharmaHub.Repositories.NotificationRepo;
 using E_PharmaHub.Services.AppointmentNotificationScheduleServe;
 using E_PharmaHub.Services.UserIdProviderServ;
+using E_PharmaHub.Repositories.CartItemRepo;
 
 namespace E_PharmaHub
 {
@@ -202,9 +203,9 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
             builder.Services.AddScoped<IAppointmentNotificationScheduler, AppointmentNotificationScheduler>();
             builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
-
 
             builder.Services.AddHttpContextAccessor();
 

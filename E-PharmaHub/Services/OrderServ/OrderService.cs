@@ -28,7 +28,7 @@ namespace E_PharmaHub.Services.OrderServ
             if (cart == null || cart.Items == null || !cart.Items.Any())
                 return new CartResult { Success = false, Message = "Cart is empty" };
 
-            var cartItems = await _unitOfWork.Carts.GetCartItemsWithDetailsAsync(cart.Id);
+            var cartItems = await _unitOfWork.CartItemRepository.GetCartItemsWithDetailsByCartIdAsync(cart.Id);
 
             var itemsForThisPharmacy = new List<dynamic>();
 

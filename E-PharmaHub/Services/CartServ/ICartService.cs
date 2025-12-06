@@ -5,6 +5,8 @@ namespace E_PharmaHub.Services.CartServ
 {
     public interface ICartService
     {
+        Task<(bool, string)> UpdateQuantityAsync(string userId, int cartItemId, int quantity);
+
         Task<CartResult> AddToCartAsync(string userId, int pharmacyId, int medicationId, int quantity);
         Task<CartResult> RemoveFromCartAsync(string userId, int cartItemId);
         Task<CartResult> ClearCartAsync(string userId);

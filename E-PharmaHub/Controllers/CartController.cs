@@ -10,9 +10,7 @@ namespace E_PharmaHub.Controllers
     [ApiController]
     public class CartController : ControllerBase
     {
-
         private readonly ICartService _cartService;
-
         public CartController(ICartService cartService)
         {
             _cartService = cartService;
@@ -68,6 +66,23 @@ namespace E_PharmaHub.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var cart = await _cartService.GetUserCartAsync(userId);
             return Ok(cart);
+        }
+
+        [HttpPatch("update/{cartItemId}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+        public async Task<IActionResult> UpdateQuantity(int cartItemId, [FromQuery] int quantity)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (quantity < 1)
+                return BadRequest("Quantity must be at least 1.");
+
+            var (success, message) = await _cartService.UpdateQuantityAsync(userId, cartItemId, quantity);
+
+            if (!success)
+                return BadRequest(message);
+
+            return Ok(message);
         }
 
     }
