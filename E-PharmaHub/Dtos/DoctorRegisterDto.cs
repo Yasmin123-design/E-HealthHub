@@ -34,7 +34,7 @@ namespace E_PharmaHub.Dtos
         public string ClinicPhone { get; set; }
 
         [Required(ErrorMessage = "Clinic address is required.")]
-        public AddressDto ClinicAddress { get; set; }
+        public AddressDto? ClinicAddress { get; set; }
 
     }
 

@@ -71,8 +71,6 @@ namespace E_PharmaHub.Services.CartServ
             await _unitOfWork.CompleteAsync();
             return new CartResult { Success = true, Message = "Item added to cart successfully" };
         }
-
-
         public async Task<CartResult> RemoveFromCartAsync(string userId, int cartItemId)
         {
             var cart = await _unitOfWork.Carts.GetUserCartAsync(userId);
@@ -107,7 +105,13 @@ namespace E_PharmaHub.Services.CartServ
             var cart = await _unitOfWork.Carts.GetUserCartAsync(userId);
 
             if (cart == null || cart.Items == null || !cart.Items.Any())
-                return null;
+            {
+                return new CartResponseDto
+                {
+                    CartId = cart?.Id ?? 0,
+                    Pharmacies = new List<CartPharmacyGroupDto>()
+                };
+            }
 
             var itemsWithInventory = cart.Items
                 .Select(i => new

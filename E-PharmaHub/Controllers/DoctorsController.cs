@@ -52,7 +52,42 @@ namespace E_PharmaHub.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+        [HttpPut("update-clinic")]
+        public async Task<IActionResult> UpdateClinic([FromForm] ClinicUpdateDto dto, IFormFile? image)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "User not authenticated." });
 
+            var (success, message) = await _clinicService.UpdateClinicAsync(userId, dto, image);
+
+            if (!success)
+                return BadRequest(new { message });
+
+            return Ok(new { message });
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+        [HttpPut("update-profile")]
+        public async Task<IActionResult> UpdateProfile([FromForm] DoctorUpdateDto dto, IFormFile? doctorImage)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            try
+            {
+                var result = await _doctorService.UpdateDoctorProfileAsync(userId, dto, doctorImage);
+
+                if (!result)
+                    return NotFound(new { message = "Doctor profile not found." });
+
+                return Ok(new { message = "Doctor profile updated successfully ✅" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
         [HttpGet("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
@@ -96,23 +131,6 @@ namespace E_PharmaHub.Controllers
         {
             var doctors = await _doctorService.GetDoctorsBySpecialtyAsync(specialty);
             return Ok(doctors);
-        }
-
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
-        [HttpPut("update-clinic")]
-        public async Task<IActionResult> UpdateClinic([FromForm] ClinicUpdateDto dto, IFormFile? image)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized(new { message = "User not authenticated." });
-
-            var (success, message) = await _clinicService.UpdateClinicAsync(userId, dto, image);
-
-            if (!success)
-                return BadRequest(new { message });
-
-            return Ok(new { message });
         }
 
 
