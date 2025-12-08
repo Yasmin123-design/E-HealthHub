@@ -134,29 +134,6 @@ namespace E_PharmaHub.Controllers
         }
 
 
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
-        [HttpPut("update-profile")]
-        public async Task<IActionResult> UpdateProfile([FromForm] DoctorUpdateDto dto, IFormFile? doctorImage)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            try
-            {
-                var result = await _doctorService.UpdateDoctorProfileAsync(userId, dto, doctorImage);
-
-                if (!result)
-                    return NotFound(new { message = "Doctor profile not found." });
-
-                return Ok(new { message = "Doctor profile updated successfully ✅" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-
-
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 
