@@ -20,7 +20,7 @@ namespace E_PharmaHub.Models
         public string Street { get; set; }
 
         [StringLength(20, ErrorMessage = "PostalCode can't exceed 20 characters.")]
-        public string PostalCode { get; set; }
+        public string? PostalCode { get; set; }
 
         [Range(-90, 90, ErrorMessage = "Latitude must be between -90 and 90.")]
         public double? Latitude { get; set; }

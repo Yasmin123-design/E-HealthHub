@@ -16,9 +16,8 @@ namespace E_PharmaHub.Dtos
         [StringLength(200, ErrorMessage = "Street name cannot exceed 200 characters.")]
         public string Street { get; set; }
 
-        [Required(ErrorMessage = "Postal code is required.")]
         [StringLength(20, ErrorMessage = "Postal code cannot exceed 20 characters.")]
-        public string PostalCode { get; set; }
+        public string? PostalCode { get; set; }
 
         [Range(-90, 90, ErrorMessage = "Latitude must be between -90 and 90.")]
         public double? Latitude { get; set; }
