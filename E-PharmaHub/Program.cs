@@ -60,6 +60,8 @@ using E_PharmaHub.Repositories.NotificationRepo;
 using E_PharmaHub.Services.AppointmentNotificationScheduleServe;
 using E_PharmaHub.Services.UserIdProviderServ;
 using E_PharmaHub.Repositories.CartItemRepo;
+using E_PharmaHub.CustomValidator;
+using System;
 
 namespace E_PharmaHub
 {
@@ -214,7 +216,7 @@ namespace E_PharmaHub
 );
 
             builder.Services.AddHangfireServer();
-
+       
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -222,9 +224,18 @@ namespace E_PharmaHub
             builder.Services.AddDbContext<EHealthDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddIdentity<AppUser, IdentityRole>()
+            builder.Services.AddIdentity<AppUser, IdentityRole>(
+                options =>
+                {
+                    options.User.RequireUniqueEmail = true;
+                })
                 .AddEntityFrameworkStores<EHealthDbContext>()
                 .AddDefaultTokenProviders();
+
+            builder.Services.AddScoped<UserManager<AppUser>, CustomUserManager>();
+
+
+
             builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
