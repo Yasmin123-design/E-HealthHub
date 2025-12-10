@@ -33,8 +33,6 @@ namespace E_PharmaHub.Dtos
         [Phone(ErrorMessage = "Invalid phone number format.")]
         public string ClinicPhone { get; set; }
 
-        [Required(ErrorMessage = "Clinic address is required.")]
-        public AddressDto? ClinicAddress { get; set; }
 
     }
 

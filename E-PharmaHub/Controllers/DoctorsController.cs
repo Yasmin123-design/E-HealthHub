@@ -26,7 +26,7 @@ namespace E_PharmaHub.Controllers
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] DoctorRegisterDto dto,
-            IFormFile clinicImage,
+            IFormFile? clinicImage,
             IFormFile doctorImage
             )
         {
@@ -132,7 +132,6 @@ namespace E_PharmaHub.Controllers
             var doctors = await _doctorService.GetDoctorsBySpecialtyAsync(specialty);
             return Ok(doctors);
         }
-
 
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]

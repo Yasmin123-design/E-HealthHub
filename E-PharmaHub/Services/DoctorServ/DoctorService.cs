@@ -57,34 +57,6 @@ namespace E_PharmaHub.Services.DoctorServ
 
             await _userManager.AddToRoleAsync(user, UserRole.Doctor.ToString());
 
-            var existingAddress = await _unitOfWork.Addresses.FindAsync(a =>
-                a.Country == dto.ClinicAddress.Country &&
-                a.City == dto.ClinicAddress.City &&
-                a.Street == dto.ClinicAddress.Street &&
-                a.PostalCode == dto.ClinicAddress.PostalCode &&
-                a.Latitude == dto.ClinicAddress.Latitude &&
-                a.Longitude == dto.ClinicAddress.Longitude
-            );
-
-            Address address;
-            if (existingAddress != null)
-            {
-                address = existingAddress;
-            }
-            else
-            {
-                address = new Address
-                {
-                    Country = dto.ClinicAddress.Country,
-                    City = dto.ClinicAddress.City,
-                    Street = dto.ClinicAddress.Street,
-                    PostalCode = dto.ClinicAddress.PostalCode,
-                    Latitude = dto.ClinicAddress.Latitude,
-                    Longitude = dto.ClinicAddress.Longitude
-                };
-                await _unitOfWork.Addresses.AddAsync(address);
-                await _unitOfWork.CompleteAsync();
-            }
 
             string clinicImagePath = null;
             if (clinicImage != null)
@@ -96,7 +68,6 @@ namespace E_PharmaHub.Services.DoctorServ
             {
                 Name = dto.ClinicName,
                 Phone = dto.ClinicPhone,
-                AddressId = address.Id,
                 ImagePath = clinicImagePath
             };
 
