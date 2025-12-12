@@ -335,6 +335,8 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message });
         }
         [HttpPut("location")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
         public async Task<IActionResult> UpdateLocation([FromBody] UpdateLocationDto dto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
