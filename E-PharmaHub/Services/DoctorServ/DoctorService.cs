@@ -206,14 +206,11 @@ namespace E_PharmaHub.Services.DoctorServ
             await _unitOfWork.Doctors.MarkAsPaid(userId);
             await _unitOfWork.CompleteAsync();
         }
-        public async Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty)
-        {
-            return await _unitOfWork.Doctors.GetDoctorsBySpecialtyAsync(specialty);
-        }
-        public async Task<IEnumerable<DoctorReadDto>> GetDoctorsAsync(
+      
+        public async Task<IEnumerable<DoctorReadDto>> GetDoctorsAsync(string? specialty,
     string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType)
         {
-            return await _unitOfWork.Doctors.GetFilteredDoctorsAsync(name, gender, sortOrder, consultationType);
+            return await _unitOfWork.Doctors.GetFilteredDoctorsAsync(specialty,name, gender, sortOrder, consultationType);
         }
 
         public async Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto, IFormFile? doctorImage)

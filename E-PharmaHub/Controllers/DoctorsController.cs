@@ -124,14 +124,7 @@ namespace E_PharmaHub.Controllers
             return Ok(doctor);
         }
 
-        [HttpGet("specialty/{specialty}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
-
-        public async Task<IActionResult> GetDoctorsBySpecialty(string specialty)
-        {
-            var doctors = await _doctorService.GetDoctorsBySpecialtyAsync(specialty);
-            return Ok(doctors);
-        }
+    
 
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -176,12 +169,13 @@ namespace E_PharmaHub.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
 
         public async Task<IActionResult> GetDoctors(
+            [FromQuery] string? specialty,
             [FromQuery] string? name,
             [FromQuery] Gender? gender,
             [FromQuery] string? sort,
             [FromQuery] ConsultationType? consultationType)
         {
-            var doctors = await _doctorService.GetDoctorsAsync(name, gender, sort, consultationType);
+            var doctors = await _doctorService.GetDoctorsAsync(specialty, name, gender, sort, consultationType);
             return Ok(doctors);
         }
 

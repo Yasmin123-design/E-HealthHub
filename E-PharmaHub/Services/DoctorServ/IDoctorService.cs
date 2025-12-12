@@ -7,7 +7,6 @@ namespace E_PharmaHub.Services.DoctorServ
     public interface IDoctorService
     {
         Task<AppUser> RegisterDoctorAsync(DoctorRegisterDto dto, IFormFile clinicImage, IFormFile doctorImage);
-        Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty);
         Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId);
         Task<DoctorProfile?> GetDoctorDetailsByUserIdAsync(string userId);
 
@@ -19,7 +18,7 @@ namespace E_PharmaHub.Services.DoctorServ
         Task MarkAsPaid(string userId);
         Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto, IFormFile? doctorImage);
         Task DeleteDoctorAsync(int id);
-        Task<IEnumerable<DoctorReadDto>> GetDoctorsAsync(
+        Task<IEnumerable<DoctorReadDto>> GetDoctorsAsync(string? specialty,
     string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType);
 
         Task<(bool success, string message)> ApproveDoctorAsync(int doctorId);

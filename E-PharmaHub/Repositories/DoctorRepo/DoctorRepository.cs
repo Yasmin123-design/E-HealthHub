@@ -95,10 +95,13 @@ namespace E_PharmaHub.Repositories.DoctorRepo
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<DoctorReadDto>> GetFilteredDoctorsAsync(
+        public async Task<IEnumerable<DoctorReadDto>> GetFilteredDoctorsAsync(string? specialty,
                              string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType)
         {
             var query = BaseDoctorIncludes();
+
+            if (!string.IsNullOrEmpty(specialty))
+                query = query.Where(d => d.Specialty == specialty);
 
             if (!string.IsNullOrEmpty(name))
                 query = query.Where(d => d.AppUser.UserName.Contains(name));
