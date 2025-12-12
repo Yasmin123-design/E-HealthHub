@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using E_PharmaHub.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace E_PharmaHub.Models
@@ -19,6 +20,10 @@ namespace E_PharmaHub.Models
         [ForeignKey(nameof(PaymentId))]
         public virtual Payment? Payment { get; set; }
 
+        public string PatientName { get; set; }
+        public string PatientPhone { get; set; }
+        public int PatientAge { get; set; }
+        public Gender PatientGender { get; set; }
         public bool IsPaid { get; set; } = false;
         public int ClinicId { get; set; }
         public virtual Clinic? Clinic { get; set; }

@@ -45,9 +45,11 @@ namespace E_PharmaHub.Services.PharmacistServ
             if (existingUser != null)
                 throw new Exception("This email is already registered. Please use another one.");
 
+            string generatedUsername = dto.UserName + "_" + Guid.NewGuid().ToString("N").Substring(0, 6);
+
             var user = new AppUser
             {
-                UserName = dto.UserName,
+                UserName = generatedUsername,
                 Email = dto.Email,
                 Role = UserRole.Pharmacist,
             };

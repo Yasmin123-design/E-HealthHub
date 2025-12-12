@@ -110,7 +110,6 @@ namespace E_PharmaHub.Services.UserServ
             return (true, "Profile picture uploaded/updated successfully 🖼️✅");
         }
 
-
         public async Task<(bool Success, string Message)> DeleteAccountAsync(string userId)
         {
             var user = await _userRepo.GetByIdAsync(userId);
@@ -120,6 +119,22 @@ namespace E_PharmaHub.Services.UserServ
             await _userManager.DeleteAsync(user);
             await _unitOfWork.CompleteAsync();
             return (true, "Account deleted successfully 🗑️");
+        }
+
+        public async Task UpdateUserLocationAsync(string userId, double latitude, double longitude)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                throw new Exception("User not found");
+
+            user.Latitude = latitude;
+            user.Longitude = longitude;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                throw new Exception("Failed to update user location");
         }
     }
 }

@@ -11,6 +11,7 @@ namespace E_PharmaHub.Helpers
             return a => new AppointmentResponseDto
             {
                 Id = a.Id,
+
                 ClinicId = a.ClinicId,
                 ClinicName = a.Clinic.Name,
                 ClinicImage = a.Clinic.ImagePath,
@@ -19,8 +20,12 @@ namespace E_PharmaHub.Helpers
                 DoctorImage = a.Doctor.ProfileImage,
                 DoctorSpeciality = a.Doctor.DoctorProfile.Specialty,
                 UserId = a.UserId,
-                UserName = a.User.UserName,
-                UserImage = a.User.ProfileImage,
+                UserNameLogged = a.User.UserName,
+                UserImageLogged = a.User.ProfileImage,
+                PatientAge = a.PatientAge,
+                PatientPhone = a.PatientPhone,
+                PatientName = a.PatientName,
+                PatientGender = a.PatientGender,
                 EndAt = a.EndAt,
                 StartAt = a.StartAt,
                 Status = a.Status              

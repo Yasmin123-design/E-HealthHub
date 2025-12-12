@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Stripe.Terminal;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -29,7 +30,6 @@ namespace E_PharmaHub.Controllers
         private readonly IUserService _userService;
         private readonly IDoctorService _doctorService;
         private readonly IPharmacistService _pharmacistService;
-
         public UserController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
@@ -67,9 +67,11 @@ namespace E_PharmaHub.Controllers
                     return BadRequest("Invalid role selection. You can only register as RegularUser");
             }
 
+            string generatedUsername = model.UserName + "_" + Guid.NewGuid().ToString("N").Substring(0, 6);
+
             var user = new AppUser
             {
-                UserName = model.UserName,
+                UserName = generatedUsername,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Address = model.Address,
@@ -205,7 +207,7 @@ namespace E_PharmaHub.Controllers
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(2),
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: creds
             );
 
@@ -332,7 +334,19 @@ namespace E_PharmaHub.Controllers
 
             return Ok(new { message });
         }
+        [HttpPut("location")]
+        public async Task<IActionResult> UpdateLocation([FromBody] UpdateLocationDto dto)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            await _userService.UpdateUserLocationAsync(
+                userId!,
+                dto.Latitude,
+                dto.Longitude
+            );
+
+            return Ok(new { message = "Location updated successfully" });
+        }
 
     }
 }

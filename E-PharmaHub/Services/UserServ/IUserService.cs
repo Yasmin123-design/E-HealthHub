@@ -5,6 +5,7 @@ namespace E_PharmaHub.Services.UserServ
     public interface IUserService
     {
         Task<(bool Success, string Message)> UpdatePasswordAsync(string userId, UserPasswordUpdateDto dto);
+        Task UpdateUserLocationAsync(string userId, double latitude, double longitude);
 
         Task<UserProfileDto?> GetUserProfileAsync(string userId);
         Task<(bool Success, string Message)> UpdateProfileAsync(string userId, UserProfileDto dto);

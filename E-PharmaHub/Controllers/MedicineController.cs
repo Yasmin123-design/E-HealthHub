@@ -124,16 +124,7 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message = "Medicine deleted successfully." });
         }
 
-        [HttpGet("search/{name}")]
-        public async Task<IActionResult> Search(string name)
-        {
-            var medicines = await _medicineService.SearchMedicinesByNameAsync(name);
-            if (!medicines.Any())
-                return NotFound($"No medicines found with name '{name}'.");
-
-            return Ok(medicines);
-        }
-
+     
         [HttpGet("{name}/alternatives")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
 

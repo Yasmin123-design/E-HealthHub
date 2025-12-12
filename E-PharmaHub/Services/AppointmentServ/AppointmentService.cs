@@ -47,6 +47,10 @@ namespace E_PharmaHub.Services.AppointmentServ
                 ClinicId = dto.ClinicId,
                 StartAt = dto.StartAt,
                 EndAt = dto.EndAt,
+                PatientAge = dto.PatientAge,
+                PatientGender = dto.PatientGender,
+                PatientName = dto.PatientName,
+                PatientPhone = dto.PatientPhone,
                 Status = AppointmentStatus.Pending
             };
 

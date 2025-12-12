@@ -7,6 +7,8 @@ namespace E_PharmaHub.Models
 
     public class AppUser : IdentityUser
     {
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
         public UserRole Role { get; set; } = UserRole.RegularUser;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string? ProfileImage { get; set; }
