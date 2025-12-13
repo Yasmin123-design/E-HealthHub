@@ -5,6 +5,7 @@ namespace E_PharmaHub.Repositories.ReviewRepo
 {
     public interface IReviewRepository : IGenericRepository<Review>
     {
+        Task<int> GetReviewsCountAsync(int doctorId);
         Task<IEnumerable<ReviewDto>> GetReviewDtosByPharmacyIdAsync(int pharmacyId);
         Task<IEnumerable<Review>> GetReviewsByPharmacyIdAsync(int pharmacyId);
         Task<IEnumerable<Review>> GetReviewsByMedicationIdAsync(int medicationId);

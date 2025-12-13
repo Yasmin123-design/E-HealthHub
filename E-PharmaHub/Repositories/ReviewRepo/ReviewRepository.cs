@@ -90,6 +90,11 @@ namespace E_PharmaHub.Repositories.ReviewRepo
                 .Select(ReviewSelectors.ReviewDtoSelector)
                 .ToListAsync();
         }
+        public async Task<int> GetReviewsCountAsync(int doctorId)
+        {
+            return await _context.Reviews
+                .CountAsync(r => r.DoctorId == doctorId);
+        }
     }
 
 }

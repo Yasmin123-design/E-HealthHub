@@ -5,7 +5,6 @@ using E_PharmaHub.Services.DoctorServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stripe;
 using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
@@ -187,6 +186,17 @@ namespace E_PharmaHub.Controllers
             return Ok(result);
         }
 
+        [HttpGet("stats")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> GetStats()
+        {
+            var doctorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var result = await _doctorService.GetDashboardStatsAsync(doctorId);
+
+            return Ok(result);
+        }
 
     }
 }

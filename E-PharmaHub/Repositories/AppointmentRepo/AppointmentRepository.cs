@@ -28,10 +28,7 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
 
         public async Task<IEnumerable<Appointment>> GetAllAsync()
         {
-            return await _context.Appointments
-                .Include(a => a.UserId)
-                .Include(a => a.Clinic)
-                .ToListAsync();
+            return await BaseAppointmentIncludes().ToListAsync();
         }
 
         public async Task<bool> ExistsAsync(Expression<Func<Appointment, bool>> predicate)
@@ -101,6 +98,48 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
                 .FirstAsync();
         }
 
+        public async Task<int> GetTodayAppointmentsCountAsync(string doctorId)
+        {
+            var today = DateTime.Today;
+
+            return await _context.Appointments
+                .CountAsync(a =>
+                a.Status == AppointmentStatus.Confirmed &&
+                    a.DoctorId == doctorId &&
+                    a.StartAt.Date == today);
+        }
+
+        public async Task<int> GetTotalPatientsCountAsync(string doctorId)
+        {
+            return await _context.Appointments
+                .Where(a => a.DoctorId == doctorId && a.Status == AppointmentStatus.Confirmed)
+                .Select(a => a.UserId)
+                .Distinct()
+                .CountAsync();
+        }
+
+        public async Task<decimal> GetTodayRevenueAsync(string doctorId)
+        {
+            var today = DateTime.Today;
+
+            return await _context.Appointments
+                .Where(a =>
+                    a.DoctorId == doctorId &&
+                    a.IsPaid &&
+                    a.Status == AppointmentStatus.Confirmed &&
+                    a.StartAt.Date == today)
+                .SumAsync(a => a.Payment!.Amount);
+        }
+
+        public async Task<decimal> GetTotalRevenueAsync(string doctorId)
+        {
+            return await _context.Appointments
+                .Where(a =>
+                    a.DoctorId == doctorId && 
+                    a.Status == AppointmentStatus.Confirmed &&
+                    a.IsPaid)
+                .SumAsync(a => a.Payment!.Amount);
+        }
 
     }
 }

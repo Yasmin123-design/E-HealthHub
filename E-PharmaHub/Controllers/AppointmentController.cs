@@ -83,7 +83,10 @@ namespace E_PharmaHub.Controllers
         [HttpPut("approve/{appointmentId}")]
         public async Task<IActionResult> ApproveAppointment(int appointmentId)
         {
-            var (success, message) = await _appointmentService.ApproveAppointmentAsync(appointmentId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized(new { message = "User not authorized" });
+            var (success, message) = await _appointmentService.ApproveAppointmentAsync(appointmentId,userId);
             if (!success)
                 return BadRequest(new { message });
 

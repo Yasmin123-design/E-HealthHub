@@ -9,7 +9,7 @@ namespace E_PharmaHub.Models
         [Required(ErrorMessage = "Specialty is required.")]
         [StringLength(100, ErrorMessage = "Specialty cannot exceed 100 characters.")]
         public string Specialty { get; set; }
-        //public string? Image { get; set; }
+
         [Range(1, int.MaxValue, ErrorMessage = "ClinicId must be a valid positive number.")]
         public int? ClinicId { get; set; }
 

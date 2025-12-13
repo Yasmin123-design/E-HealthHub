@@ -60,7 +60,6 @@ using E_PharmaHub.Repositories.NotificationRepo;
 using E_PharmaHub.Services.AppointmentNotificationScheduleServe;
 using E_PharmaHub.Services.UserIdProviderServ;
 using E_PharmaHub.Repositories.CartItemRepo;
-using E_PharmaHub.CustomValidator;
 using System;
 
 namespace E_PharmaHub
@@ -232,7 +231,6 @@ namespace E_PharmaHub
                 .AddEntityFrameworkStores<EHealthDbContext>()
                 .AddDefaultTokenProviders();
 
-            builder.Services.AddScoped<UserManager<AppUser>, CustomUserManager>();
 
 
 
@@ -270,7 +268,7 @@ namespace E_PharmaHub
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();

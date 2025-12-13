@@ -34,7 +34,29 @@ namespace E_PharmaHub.Services.DoctorServ
             _paymentService = paymentService;
             _emailSender = emailSender;
         }
-        public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
+
+        public async Task<DoctorDashboardStatsDto> GetDashboardStatsAsync(string doctorId)
+        {
+            var doctor = await _unitOfWork.Doctors.GetDoctorByUserIdAsync(doctorId);
+            return new DoctorDashboardStatsDto
+            {
+                TodayAppointmentsCount =
+                    await _unitOfWork.Appointments.GetTodayAppointmentsCountAsync(doctorId),
+
+                TotalPatientsCount =
+                    await _unitOfWork.Appointments.GetTotalPatientsCountAsync(doctorId),
+
+                TodayRevenue =
+                    await _unitOfWork.Appointments.GetTodayRevenueAsync(doctorId),
+
+                TotalRevenue =
+                    await _unitOfWork.Appointments.GetTotalRevenueAsync(doctorId),
+
+                ReviewsCount =
+                    await _unitOfWork.Reviews.GetReviewsCountAsync(doctor.Id)
+            };
+        }
+            public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
         {
             return await _unitOfWork.Doctors.GetDoctorByUserIdReadDtoAsync(userId);
         }

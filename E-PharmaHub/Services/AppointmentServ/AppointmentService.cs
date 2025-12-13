@@ -93,9 +93,12 @@ namespace E_PharmaHub.Services.AppointmentServ
             return true;
         }
 
-        public async Task<(bool success, string message)> ApproveAppointmentAsync(int appointmentId)
+        public async Task<(bool success, string message)> ApproveAppointmentAsync(int appointmentId,string userId)
         {
             var appointment = await _unitOfWork.Appointments.GetByIdAsync(appointmentId);
+
+            if (appointment.DoctorId != userId)
+                return (false, "This Appointment not belong to this doctor");
             if (appointment == null)
                 return (false, "Appointment not found.");
 

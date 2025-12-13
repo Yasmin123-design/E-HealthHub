@@ -14,6 +14,7 @@ namespace E_PharmaHub.Helpers
 
                 ClinicId = a.ClinicId,
                 ClinicName = a.Clinic.Name,
+                AppointmentAmount = a.Doctor.DoctorProfile.ConsultationPrice,
                 ClinicImage = a.Clinic.ImagePath,
                 DoctorId = a.Doctor.DoctorProfile.Id,
                 DoctorName = a.Doctor.UserName,
