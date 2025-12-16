@@ -5,6 +5,7 @@ namespace E_PharmaHub.Services.AppointmentServ
 {
     public interface IAppointmentService
     {
+        Task<List<DoctorPatientDto>> GetDoctorPatientsAsync(string doctorId);
         Task<Appointment?> GetFullAppointmemtByIdAsync(int id);
         Task<AppointmentResponseDto> BookAppointmentAsync(AppointmentDto dto);
         Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByDoctorAsync(string doctorId);

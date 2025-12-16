@@ -32,6 +32,24 @@ namespace E_PharmaHub.Helpers
                 Status = a.Status              
             };
         }
+
+        public static DoctorPatientDto ToDoctorPatientDto(Appointment appointment)
+        {
+            return new DoctorPatientDto
+            {
+                AppointmentId = appointment.Id,
+                PatientName = appointment.PatientName,
+                PatientPhone = appointment.PatientPhone,
+                PatientAge = appointment.PatientAge,
+                PatientGender = appointment.PatientGender,
+                StartAt = appointment.StartAt,
+                EndAt = appointment.EndAt,
+                Status = appointment.Status,
+                IsPaid = appointment.IsPaid,
+                ClinicName = appointment.Clinic?.Name
+            };
+        }
+
     }
 
 }

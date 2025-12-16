@@ -9,7 +9,7 @@ namespace E_PharmaHub.Dtos
         public int DoctorId { get; set; }
         public decimal? AppointmentAmount { get; set; }
         public string DoctorName { get; set; }
-        public string DoctorSpeciality { get; set; }
+        public Speciality DoctorSpeciality { get; set; }
         public string? DoctorImage { get; set; }
         public string UserId { get; set; }
         public string UserNameLogged { get; set; }

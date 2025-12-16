@@ -18,6 +18,21 @@ namespace E_PharmaHub.Controllers
             _appointmentService = appointmentService;
         }
 
+        [HttpGet("patients")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> GetMyPatients()
+        {
+            var doctorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(doctorId))
+                return Unauthorized(new { message = "Invalid token" });
+
+            var patients = await _appointmentService.GetDoctorPatientsAsync(doctorId);
+
+            return Ok(patients);
+        }
+
         [HttpPost("book")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
         public async Task<IActionResult> BookAppointment([FromBody] AppointmentDto dto)

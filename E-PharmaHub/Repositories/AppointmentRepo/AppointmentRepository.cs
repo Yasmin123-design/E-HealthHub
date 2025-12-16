@@ -60,7 +60,12 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
                 .ThenInclude(a => a.DoctorProfile)
                 .AsNoTracking();
         }
-
+        public async Task<List<Appointment>> GetPatientsOfDoctorAsync(string doctorId)
+        {
+            return await BaseAppointmentIncludes()
+                .Where(a => a.DoctorId == doctorId)
+                .ToListAsync();
+        }
         private Expression<Func<Appointment, AppointmentResponseDto>> Selector =>
             AppointmentSelectors.GetAppointmentSelector();
 

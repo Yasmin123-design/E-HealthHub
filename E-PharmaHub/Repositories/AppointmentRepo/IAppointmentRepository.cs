@@ -6,6 +6,7 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
 {
     public interface IAppointmentRepository : IGenericRepository<Appointment>
     {
+        Task<List<Appointment>> GetPatientsOfDoctorAsync(string doctorId);
         Task<int> GetTodayAppointmentsCountAsync(string doctorId);
         Task<int> GetTotalPatientsCountAsync(string doctorId);
         Task<decimal> GetTodayRevenueAsync(string doctorId);

@@ -331,8 +331,9 @@ namespace E_PharmaHub
 
             app.MapHub<NotificationHub>("/hubs/notification");
             app.UseHangfireDashboard();
-
+            //5221
             app.Run();
+
         }
     }
 }

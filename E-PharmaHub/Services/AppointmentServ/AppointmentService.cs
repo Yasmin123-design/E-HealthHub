@@ -1,4 +1,5 @@
 ﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Helpers;
 using E_PharmaHub.Models;
 using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.AppointmentNotificationScheduleServe;
@@ -29,6 +30,16 @@ namespace E_PharmaHub.Services.AppointmentServ
             _appointmentNotificationScheduler = appointmentNotificationScheduler;
             _emailSender = emailSender;
             _notificationService = notificationService;
+        }
+        public async Task<List<DoctorPatientDto>> GetDoctorPatientsAsync(string doctorId)
+        {
+            var appointments = await _unitOfWork.Appointments
+                .GetPatientsOfDoctorAsync(doctorId);
+
+            return appointments
+    .Select(AppointmentSelectors.ToDoctorPatientDto)
+    .ToList();
+
         }
         public async Task<AppointmentResponseDto> BookAppointmentAsync(AppointmentDto dto)
         {

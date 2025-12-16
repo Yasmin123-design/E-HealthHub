@@ -45,7 +45,7 @@ namespace E_PharmaHub.Services.ClinicServ
         }
 
         public async Task<(bool Success, string Message)> UpdateClinicAsync(
-            string userId, ClinicUpdateDto dto, IFormFile? image)
+    string userId, ClinicUpdateDto dto, IFormFile? image)
         {
             var doctor = await _unitOfWork.Doctors.GetDoctorByUserIdAsync(userId);
             if (doctor == null)
@@ -54,35 +54,53 @@ namespace E_PharmaHub.Services.ClinicServ
             if (doctor.ClinicId == null)
                 return (false, "Doctor does not have an assigned clinic ❌");
 
-            var clinic = await _unitOfWork.Clinics.GetByIdAsync(doctor.ClinicId.Value);
+            var clinic = await _unitOfWork.Clinics
+                .GetByIdAsync(doctor.ClinicId.Value);
+
             if (clinic == null)
                 return (false, "Clinic not found ❌");
 
-            if (!string.IsNullOrEmpty(dto.Name))
+            if (!string.IsNullOrWhiteSpace(dto.Name))
                 clinic.Name = dto.Name;
 
-            if (!string.IsNullOrEmpty(dto.Phone))
+            if (!string.IsNullOrWhiteSpace(dto.Phone))
                 clinic.Phone = dto.Phone;
 
-            if (dto.AddressId.HasValue)
+            if (clinic.Address == null)
             {
-                var addressExists = await _unitOfWork.Addresses.GetByIdAsync(dto.AddressId.Value);
-                if (addressExists == null)
-                    return (false, "The provided address does not exist ❌");
-
-                clinic.AddressId = dto.AddressId.Value;
+                clinic.Address = new Address();
             }
+
+            if (!string.IsNullOrWhiteSpace(dto.Country))
+                clinic.Address.Country = dto.Country;
+
+            if (!string.IsNullOrWhiteSpace(dto.City))
+                clinic.Address.City = dto.City;
+
+            if (!string.IsNullOrWhiteSpace(dto.Street))
+                clinic.Address.Street = dto.Street;
+
+            if (!string.IsNullOrWhiteSpace(dto.PostalCode))
+                clinic.Address.PostalCode = dto.PostalCode;
+
+            if (dto.Latitude.HasValue)
+                clinic.Address.Latitude = dto.Latitude;
+
+            if (dto.Longitude.HasValue)
+                clinic.Address.Longitude = dto.Longitude;
 
             if (image != null)
             {
                 var imagePath = await _fileStorageService.SaveFileAsync(image, "clinics");
                 clinic.ImagePath = imagePath;
             }
+
             _unitOfWork.Clinics.Update(clinic);
             await _unitOfWork.CompleteAsync();
 
             return (true, "Clinic updated successfully ✅");
         }
+
 
         public async Task<bool> DeleteClinicAsync(int id)
         {

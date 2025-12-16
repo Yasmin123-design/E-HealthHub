@@ -15,35 +15,79 @@ namespace E_PharmaHub.Services.PharmacyServ
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
         }
-        public async Task<(bool Success, string Message)> UpdatePharmacyAsync(int id, PharmacyUpdateDto dto, IFormFile? image)
+        public async Task<(bool Success, string Message)> UpdatePharmacyAsync(
+    int id,
+    PharmacyUpdateDto dto,
+    IFormFile? image)
         {
-            var existing = await _unitOfWork.Pharmacies.GetByIdAsync(id);
-            if (existing == null)
-                return (false, "Pharmacy not found");
+            var pharmacy = await _unitOfWork.Pharmacies
+                .GetByIdAsync(id);
+
+            if (pharmacy == null)
+                return (false, "Pharmacy not found ❌");
 
             if (!string.IsNullOrWhiteSpace(dto.Name))
-                existing.Name = dto.Name;
+                pharmacy.Name = dto.Name;
 
             if (!string.IsNullOrWhiteSpace(dto.Phone))
-                existing.Phone = dto.Phone;
+                pharmacy.Phone = dto.Phone;
 
-            if (dto.AddressId.HasValue && dto.AddressId > 0)
-                existing.AddressId = dto.AddressId.Value;
+            if (
+                dto.Country != null ||
+                dto.City != null ||
+                dto.Street != null ||
+                dto.PostalCode != null ||
+                dto.Latitude.HasValue ||
+                dto.Longitude.HasValue
+            )
+            {
+                if (pharmacy.Address == null)
+                {
+                    pharmacy.Address = new Address
+                    {
+                        Country = dto.Country ?? "",
+                        City = dto.City ?? "",
+                        Street = dto.Street ?? "",
+                        PostalCode = dto.PostalCode,
+                        Latitude = dto.Latitude,
+                        Longitude = dto.Longitude
+                    };
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(dto.Country))
+                        pharmacy.Address.Country = dto.Country;
+
+                    if (!string.IsNullOrWhiteSpace(dto.City))
+                        pharmacy.Address.City = dto.City;
+
+                    if (!string.IsNullOrWhiteSpace(dto.Street))
+                        pharmacy.Address.Street = dto.Street;
+
+                    if (!string.IsNullOrWhiteSpace(dto.PostalCode))
+                        pharmacy.Address.PostalCode = dto.PostalCode;
+
+                    if (dto.Latitude.HasValue)
+                        pharmacy.Address.Latitude = dto.Latitude;
+
+                    if (dto.Longitude.HasValue)
+                        pharmacy.Address.Longitude = dto.Longitude;
+                }
+            }
 
             if (image != null)
             {
-                if (!string.IsNullOrEmpty(existing.ImagePath))
-                    _fileStorage.DeleteFile(existing.ImagePath, "pharmacies");
+                if (!string.IsNullOrEmpty(pharmacy.ImagePath))
+                    _fileStorage.DeleteFile(pharmacy.ImagePath, "pharmacies");
 
-                existing.ImagePath = await _fileStorage.SaveFileAsync(image, "pharmacies");
+                pharmacy.ImagePath = await _fileStorage.SaveFileAsync(image, "pharmacies");
             }
 
-            _unitOfWork.Pharmacies.Update(existing);
+            _unitOfWork.Pharmacies.Update(pharmacy);
             await _unitOfWork.CompleteAsync();
 
-            return (true, "Updated successfully");
+            return (true, "Pharmacy updated successfully ✅");
         }
-
 
 
         public async Task<IEnumerable<PharmacySimpleDto>> GetAllPharmaciesAsync()

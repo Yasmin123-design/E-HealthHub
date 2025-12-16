@@ -80,22 +80,11 @@ namespace E_PharmaHub.Services.DoctorServ
 
             await _userManager.AddToRoleAsync(user, UserRole.Doctor.ToString());
 
-            var existingAddress = await _unitOfWork.Addresses.FindAsync(a =>
-                a.Country == dto.ClinicAddress.Country &&
-                a.City == dto.ClinicAddress.City &&
-                a.Street == dto.ClinicAddress.Street &&
-                a.PostalCode == dto.ClinicAddress.PostalCode &&
-                a.Latitude == dto.ClinicAddress.Latitude &&
-                a.Longitude == dto.ClinicAddress.Longitude
-            );
+            
 
             Address address;
-            if (existingAddress != null)
-            {
-                address = existingAddress;
-            }
-            else
-            {
+            
+            
                 address = new Address
                 {
                     Country = dto.ClinicAddress.Country,
@@ -107,7 +96,7 @@ namespace E_PharmaHub.Services.DoctorServ
                 };
                 await _unitOfWork.Addresses.AddAsync(address);
                 await _unitOfWork.CompleteAsync();
-            }
+            
 
             string clinicImagePath = null;
             if (clinicImage != null)
@@ -229,7 +218,7 @@ namespace E_PharmaHub.Services.DoctorServ
             await _unitOfWork.CompleteAsync();
         }
       
-        public async Task<IEnumerable<DoctorReadDto>> GetDoctorsAsync(string? specialty,
+        public async Task<IEnumerable<DoctorReadDto>> GetDoctorsAsync(Speciality? specialty,
     string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType)
         {
             return await _unitOfWork.Doctors.GetFilteredDoctorsAsync(specialty,name, gender, sortOrder, consultationType);
@@ -244,8 +233,8 @@ namespace E_PharmaHub.Services.DoctorServ
             if (doctor == null)
                 return false;
 
-            if (!string.IsNullOrEmpty(dto.Specialty))
-                doctor.Specialty = dto.Specialty;
+            if (dto.Specialty.HasValue)
+                doctor.Specialty = dto.Specialty?? Speciality.Oncology;
 
             if (dto.ConsultationPrice != 0)
                 doctor.ConsultationPrice = dto.ConsultationPrice;

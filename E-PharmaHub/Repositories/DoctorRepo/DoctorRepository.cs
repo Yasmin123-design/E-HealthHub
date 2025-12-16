@@ -95,12 +95,12 @@ namespace E_PharmaHub.Repositories.DoctorRepo
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<DoctorReadDto>> GetFilteredDoctorsAsync(string? specialty,
+        public async Task<IEnumerable<DoctorReadDto>> GetFilteredDoctorsAsync(Speciality? specialty,
                              string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType)
         {
             var query = BaseDoctorIncludes();
 
-            if (!string.IsNullOrEmpty(specialty))
+            if (specialty.HasValue)
                 query = query.Where(d => d.Specialty == specialty);
 
             if (!string.IsNullOrEmpty(name))
@@ -122,7 +122,7 @@ namespace E_PharmaHub.Repositories.DoctorRepo
             return await query.Select(Selector).ToListAsync();
         }
 
-        public async Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(string specialty)
+        public async Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(Speciality specialty)
         {
             return await BaseDoctorIncludes()
                 .Where(d => d.Specialty == specialty)

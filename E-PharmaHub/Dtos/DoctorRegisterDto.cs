@@ -18,7 +18,7 @@ namespace E_PharmaHub.Dtos
 
         [Required(ErrorMessage = "Specialty is required.")]
         [StringLength(100, ErrorMessage = "Specialty cannot exceed 100 characters.")]
-        public string Specialty { get; set; }
+        public Speciality Specialty { get; set; }
 
         public Gender Gender { get; set; }
         public decimal? ConsultationPrice { get; set; }

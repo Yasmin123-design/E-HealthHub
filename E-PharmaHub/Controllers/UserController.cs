@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Stripe.Terminal;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -224,8 +223,11 @@ namespace E_PharmaHub.Controllers
         [HttpGet("google-response")]
         public async Task<IActionResult> GoogleResponse()
         {
-            var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
-            if (!result.Succeeded) return BadRequest("Google login failed");
+            var result = await HttpContext.AuthenticateAsync(
+                IdentityConstants.ExternalScheme);
+
+            if (!result.Succeeded)
+                return Redirect($"{_config["Frontend:BaseUrl"]}/login?error=google");
 
             var email = result.Principal.FindFirst(ClaimTypes.Email)?.Value;
             var user = await _userManager.FindByEmailAsync(email);
@@ -244,8 +246,22 @@ namespace E_PharmaHub.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             var token = GenerateJwtToken(user, roles);
 
-            return Ok(new { token, user = new { user.UserName, user.Email, Roles = roles } });
+            var userObj = new
+            {
+                user.UserName,
+                user.Email,
+                Roles = roles
+            };
+
+            var encodedUser = Uri.EscapeDataString(
+                System.Text.Json.JsonSerializer.Serialize(userObj));
+
+            var frontendUrl = _config["Frontend:BaseUrl"];
+
+            return Redirect(
+                $"{frontendUrl}/auth/callback?token={token}&user={encodedUser}");
         }
+
 
         [HttpGet("facebook-login")]
         public IActionResult FacebookLogin()
@@ -281,7 +297,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpGet("profile")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
         public async Task<IActionResult> GetProfile()
         {
@@ -295,7 +311,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPut("update-profile")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
         public async Task<IActionResult> UpdateProfile([FromForm] UserProfileDto dto)
         {
@@ -309,7 +325,7 @@ namespace E_PharmaHub.Controllers
         }
 
         [HttpPut("update-password")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> UpdatePassword([FromBody] UserPasswordUpdateDto dto)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
