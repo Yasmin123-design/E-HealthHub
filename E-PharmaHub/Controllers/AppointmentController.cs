@@ -1,4 +1,5 @@
 ﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 using E_PharmaHub.Services.AppointmentServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -63,7 +64,7 @@ namespace E_PharmaHub.Controllers
             var appointments = await _appointmentService.GetAppointmentsByDoctorAsync(doctorId);
             if (!appointments.Any())
                 return NotFound(new { message = "No appointments found for this doctor." });
-
+     
             return Ok(appointments);
         }
 
@@ -119,5 +120,17 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message });
         }
 
+        [HttpGet("filter-by-status")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> FilterByStatus(
+           [FromQuery] AppointmentStatus status)
+        {
+            IEnumerable<AppointmentResponseDto> result;
+          
+            result = await _appointmentService
+                        .FilterByStatusAsync(status);
+
+            return Ok(result);
+        }
     }
 }

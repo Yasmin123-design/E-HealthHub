@@ -1,4 +1,6 @@
-﻿namespace E_PharmaHub.Dtos
+﻿using E_PharmaHub.Models.Enums;
+
+namespace E_PharmaHub.Dtos
 {
     public class ClinicUpdateDto
     {
@@ -10,5 +12,7 @@
         public string? PostalCode { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+        public decimal? ConsultationPrice { get; set; }
+        public ConsultationType? ConsultationType { get; set; }
     }
 }

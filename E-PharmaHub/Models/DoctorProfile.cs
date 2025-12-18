@@ -12,7 +12,6 @@ namespace E_PharmaHub.Models
 
         [Range(1, int.MaxValue, ErrorMessage = "ClinicId must be a valid positive number.")]
         public int? ClinicId { get; set; }
-
         public decimal ConsultationPrice { get; set; }
         public Gender Gender { get; set; }
 

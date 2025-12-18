@@ -1,6 +1,8 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models;
 using E_PharmaHub.Models.Enums;
+using E_PharmaHub.Services.AppointmentNotificationScheduleServe;
+using E_PharmaHub.Services.NotificationServ;
 using E_PharmaHub.UnitOfWorkes;
 using Stripe;
 using Stripe.Checkout;
@@ -11,8 +13,10 @@ namespace E_PharmaHub.Services.StripePaymentServ
     {
         private readonly IConfiguration _config;
         private readonly IUnitOfWork _unitOfWork;
-
-        public StripePaymentService(IConfiguration config, IUnitOfWork unitOfWork)
+        public StripePaymentService(
+            IConfiguration config,
+            IUnitOfWork unitOfWork
+            )
         {
             _config = config;
             StripeConfiguration.ApiKey = _config["Stripe:SecretKey"];
@@ -139,11 +143,12 @@ namespace E_PharmaHub.Services.StripePaymentServ
             }
             if (dto.PaymentFor == PaymentForType.Appointment && dto.AppointmentId.HasValue)
             {
-                var appontment = await _unitOfWork.Appointments.GetByIdAsync(dto.AppointmentId.Value);
-                if (appontment != null)
+                var appointment = await _unitOfWork.Appointments.GetByIdAsync(dto.AppointmentId.Value);
+                if (appointment != null)
                 {
-                    appontment.PaymentId = payment.Id;
+                    appointment.PaymentId = payment.Id;
                     await _unitOfWork.CompleteAsync();
+                    
                 }
             }
             return new StripeSessionResponseDto

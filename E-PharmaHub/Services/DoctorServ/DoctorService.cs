@@ -42,6 +42,8 @@ namespace E_PharmaHub.Services.DoctorServ
             {
                 TodayAppointmentsCount =
                     await _unitOfWork.Appointments.GetTodayAppointmentsCountAsync(doctorId),
+                TotalAppointmentCount = 
+                    await _unitOfWork.Appointments.GetTotalAppointmentsCountAsync(doctorId),
 
                 TotalPatientsCount =
                     await _unitOfWork.Appointments.GetTotalPatientsCountAsync(doctorId),
@@ -224,60 +226,47 @@ namespace E_PharmaHub.Services.DoctorServ
             return await _unitOfWork.Doctors.GetFilteredDoctorsAsync(specialty,name, gender, sortOrder, consultationType);
         }
 
-        public async Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto, IFormFile? doctorImage)
+        public async Task<bool> UpdateDoctorProfileAsync(
+    string userId,
+    DoctorUpdateDto dto)
         {
-            var doctor = await _unitOfWork.Doctors.GetByIdAsync(
-                (await _unitOfWork.Doctors.GetDoctorByUserIdAsync(userId))?.Id ?? 0
-            );
-
+            var doctor = await _unitOfWork.Doctors.GetDoctorByUserIdAsync(userId);
             if (doctor == null)
                 return false;
 
-            if (dto.Specialty.HasValue)
-                doctor.Specialty = dto.Specialty?? Speciality.Oncology;
-
-            if (dto.ConsultationPrice != 0)
-                doctor.ConsultationPrice = dto.ConsultationPrice;
-
-
-            doctor.Gender = dto.Gender;
-            doctor.ConsultationType = dto.ConsultationType;
-
-
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = doctor.AppUser;
             if (user == null)
-                throw new Exception("User account not found.");
+                return false;
 
             if (!string.IsNullOrEmpty(dto.Email) && dto.Email != user.Email)
             {
-                var token = await _userManager.GenerateChangeEmailTokenAsync(user, dto.Email);
-                var emailResult = await _userManager.ChangeEmailAsync(user, dto.Email, token);
-
+                var emailResult = await _userManager.SetEmailAsync(user, dto.Email);
                 if (!emailResult.Succeeded)
-                    throw new Exception(string.Join(", ", emailResult.Errors.Select(e => e.Description)));
+                    return false;
 
-                user.Email = dto.Email;
-                await _userManager.UpdateAsync(user);
+                var userNameResult = await _userManager.SetUserNameAsync(user, dto.Email);
+                if (!userNameResult.Succeeded)
+                    return false;
             }
 
             if (!string.IsNullOrEmpty(dto.UserName) && dto.UserName != user.UserName)
             {
                 user.UserName = dto.UserName;
-                await _userManager.UpdateAsync(user);
+                user.NormalizedUserName = dto.UserName.ToUpper();
             }
 
-            if (!string.IsNullOrEmpty(dto.CurrentPassword) && !string.IsNullOrEmpty(dto.NewPassword))
-            {
-                var passResult = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
-                if (!passResult.Succeeded)
-                    throw new Exception(string.Join(", ", passResult.Errors.Select(e => e.Description)));
-            }
+            if (dto.Specialty.HasValue)
+                doctor.Specialty = dto.Specialty.Value;
+
+            if (dto.Gender.HasValue)
+                doctor.Gender = dto.Gender.Value;
 
             _unitOfWork.Doctors.Update(doctor);
             await _unitOfWork.CompleteAsync();
 
             return true;
         }
+
 
 
         public async Task DeleteDoctorAsync(int id)

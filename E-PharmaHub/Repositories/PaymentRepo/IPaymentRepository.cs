@@ -4,6 +4,8 @@ namespace E_PharmaHub.Repositories.PaymentRepo
 {
     public interface IPaymentRepository
     {
+        Task<Payment> GetByCheckoutSessionIdAsync(string sessionId);
+        Task<Payment> GetByPaymentIntendIdAsync(string paymentIntentId);
         void Delete(Payment entity);
         Task AddAsync(Payment payment);
         Task<Payment> GetByReferenceIdAsync(string referenceId);

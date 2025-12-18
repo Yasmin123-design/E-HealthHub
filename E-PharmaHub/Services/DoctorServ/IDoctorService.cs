@@ -17,7 +17,7 @@ namespace E_PharmaHub.Services.DoctorServ
         Task<IEnumerable<DoctorReadDto>> GetAllDoctorsShowToAdmin();
 
         Task MarkAsPaid(string userId);
-        Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto, IFormFile? doctorImage);
+        Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto);
         Task DeleteDoctorAsync(int id);
         Task<IEnumerable<DoctorReadDto>> GetDoctorsAsync(Speciality? specialty,
     string? name, Gender? gender, string? sortOrder, ConsultationType? consultationType);

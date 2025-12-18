@@ -66,13 +66,19 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
                 .Where(a => a.DoctorId == doctorId)
                 .ToListAsync();
         }
+        public async Task<Appointment> GetAppointmentByPaymentIdAsync(int paymentId)
+        {
+            return await BaseAppointmentIncludes()
+                .Where(a => a.PaymentId == paymentId)
+                .FirstOrDefaultAsync();
+        }
         private Expression<Func<Appointment, AppointmentResponseDto>> Selector =>
             AppointmentSelectors.GetAppointmentSelector();
 
         public async Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByDoctorIdAsync(string doctorId)
         {
             return await BaseAppointmentIncludes()
-                .Where(a => a.DoctorId == doctorId)
+                .Where(a => a.DoctorId == doctorId && a.PaymentId != null && a.Payment.PaymentIntentId != null)
                 .Select(Selector)
                 .ToListAsync();
         }
@@ -80,7 +86,7 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
         public async Task<IEnumerable<AppointmentResponseDto>> GetAppointmentsByUserIdAsync(string userId)
         {
             return await BaseAppointmentIncludes()
-                .Where(a => a.UserId == userId)
+                .Where(a => a.UserId == userId && a.PaymentId != null)
                 .Select(Selector)
                 .ToListAsync();
         }
@@ -112,6 +118,22 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
                 a.Status == AppointmentStatus.Confirmed &&
                     a.DoctorId == doctorId &&
                     a.StartAt.Date == today);
+        }
+        public async Task<int> GetTotalAppointmentsCountAsync(string doctorId)
+        {
+
+            return await _context.Appointments
+                .CountAsync(a =>
+                a.Status == AppointmentStatus.Confirmed &&
+                    a.DoctorId == doctorId );
+        }
+        public async Task<IEnumerable<AppointmentResponseDto>> GetByStatusAsync(
+    AppointmentStatus status)
+        {
+            return await BaseAppointmentIncludes()
+                .Where(a => a.Status == status)
+                .Select(Selector)
+                .ToListAsync();
         }
 
         public async Task<int> GetTotalPatientsCountAsync(string doctorId)

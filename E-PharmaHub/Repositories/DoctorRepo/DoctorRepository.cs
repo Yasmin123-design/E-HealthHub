@@ -57,7 +57,11 @@ namespace E_PharmaHub.Repositories.DoctorRepo
             return await BaseDoctorIncludes()
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
-
+        public async Task<DoctorProfile?> GetDoctorProfileByClinicIdAsync(int clinicId)
+        {
+            return await BaseDoctorIncludes()
+                .FirstOrDefaultAsync(d => d.ClinicId == clinicId);
+        }
         public async Task<DoctorProfile?> GetDoctorByUserIdAsync(string userId)
         {
             return await BaseDoctorIncludes()

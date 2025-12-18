@@ -1,7 +1,6 @@
 ﻿using E_PharmaHub.Services.NotificationServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -9,7 +8,7 @@ namespace E_PharmaHub.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
     public class NotificationsController : ControllerBase
     {
@@ -22,18 +21,17 @@ namespace E_PharmaHub.Controllers
         public async Task<IActionResult> GetUserNotifications()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
             if (userId == null)
                 return Unauthorized();
 
-            var (orders, appointments) = await _notificationService.GetUserNotificationsByCategoryAsync(userId);
+            var result = await _notificationService
+                .GetUserNotificationsByCategoryAsync(userId, role);
 
-            return Ok(new
-            {
-                Orders = orders,
-                Appointments = appointments
-            });
+            return Ok(result);
         }
+
 
 
     }

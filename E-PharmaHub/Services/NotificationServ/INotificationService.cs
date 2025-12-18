@@ -12,7 +12,9 @@ namespace E_PharmaHub.Services.NotificationServ
             NotificationType type
             );
 
-        Task<(IEnumerable<Notification> Orders, IEnumerable<Notification> Appointments)> GetUserNotificationsByCategoryAsync(string userId);
+        Task<object> GetUserNotificationsByCategoryAsync(
+            string userId,
+            string role);
 
     }
 }

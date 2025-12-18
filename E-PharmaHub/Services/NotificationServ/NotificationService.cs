@@ -47,9 +47,23 @@ namespace E_PharmaHub.Services.NotificationServ
 
             return notification;
         }
-        public async Task<(IEnumerable<Notification> Orders, IEnumerable<Notification> Appointments)> GetUserNotificationsByCategoryAsync(string userId)
+        public async Task<object> GetUserNotificationsByCategoryAsync(
+    string userId,
+    string role)
         {
-            var notifications = await _unitOfWork.Notifications.GetUserNotificationsAsync(userId);
+            var notifications = await _unitOfWork.Notifications
+                .GetUserNotificationsAsync(userId);
+
+            if (role == "Doctor")
+            {
+                var doctorAppointments = notifications
+                    .Where(n => n.Type == NotificationType.NewAppointmentForDoctor);
+
+                return new
+                {
+                    AppointmentRequests = doctorAppointments
+                };
+            }
 
             var orders = notifications
                 .Where(n => n.Type == NotificationType.OrderCancelled
@@ -62,8 +76,13 @@ namespace E_PharmaHub.Services.NotificationServ
                          || n.Type == NotificationType.AppointmentReminder
                          || n.Type == NotificationType.AppointmentStartingSoon);
 
-            return (orders, appointments);
+            return new
+            {
+                Orders = orders,
+                Appointments = appointments
+            };
         }
+
 
     }
 }

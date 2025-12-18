@@ -178,5 +178,27 @@ namespace E_PharmaHub.Controllers
             return Ok(result);
         }
 
+        [HttpPut("update-doctorprofile")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> UpdateDoctorProfile(
+   [FromForm] DoctorUpdateDto dto
+   )
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var result = await _doctorService.UpdateDoctorProfileAsync(
+                userId,
+                dto
+            );
+
+            if (!result)
+                return NotFound("Doctor not found");
+
+            return Ok(new { message = "Doctor profile updated successfully" });
+        }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using E_PharmaHub.Models;
 using E_PharmaHub.Models.Enums;
+using E_PharmaHub.Services.AppointmentNotificationScheduleServe;
+using E_PharmaHub.Services.NotificationServ;
 using E_PharmaHub.UnitOfWorkes;
+using Stripe;
 using Stripe.Checkout;
 
 namespace E_PharmaHub.Services.PaymentServ
@@ -8,14 +11,57 @@ namespace E_PharmaHub.Services.PaymentServ
     public class PaymentService : IPaymentService
     {
         private readonly IUnitOfWork _unitOfWork;
-
+        private readonly INotificationService _notificationService;
+        private readonly IAppointmentNotificationScheduler _appointmentNotificationScheduler;
 
         public PaymentService(
-            IUnitOfWork unitOfWork
+            IUnitOfWork unitOfWork,
+            INotificationService notificationService,
+            IAppointmentNotificationScheduler appointmentNotificationScheduler
            )
         {
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
+            _appointmentNotificationScheduler = appointmentNotificationScheduler;
         }
+
+        public async Task HandlePaymentCanceledAsync(PaymentIntent paymentIntent)
+        {
+            var payment = await _unitOfWork.Payments
+                .GetByPaymentIntendIdAsync(paymentIntent.Id);
+
+            if (payment == null)
+                return;
+
+            payment.Status = PaymentStatus.Failed;
+            await _unitOfWork.CompleteAsync();
+        }
+        public async Task HandleCheckoutSessionCompletedAsync(Session session)
+        {
+            var payment = await _unitOfWork.Payments
+                .GetByCheckoutSessionIdAsync(session.Id);
+
+            if (payment == null)
+                return;
+
+            if (payment.PaymentFor != PaymentForType.Appointment)
+                return;
+
+            var appointment = await _unitOfWork.Appointments
+                .GetAppointmentByPaymentIdAsync(payment.Id);
+
+            if (appointment == null)
+                return;
+
+            await _notificationService.CreateAndSendAsync(
+                appointment.DoctorId,
+                "New Appointment Request",
+                $"{appointment.PatientName} requested an appointment at {appointment.StartAt}",
+                NotificationType.NewAppointmentForDoctor
+            );
+        }
+
+
 
         public async Task<Payment> GetByReferenceIdAsync(string referenceId)
         {

@@ -7,7 +7,6 @@ using E_PharmaHub.Services.EmailSenderServ;
 using E_PharmaHub.Services.NotificationServ;
 using E_PharmaHub.Services.StripePaymentServ;
 using E_PharmaHub.UnitOfWorkes;
-using System.Numerics;
 
 namespace E_PharmaHub.Services.AppointmentServ
 {
@@ -65,6 +64,7 @@ namespace E_PharmaHub.Services.AppointmentServ
                 Status = AppointmentStatus.Pending
             };
 
+            
             var response = await _unitOfWork.Appointments
                 .AddAppointmentAndReturnResponseAsync(appointment);
 
@@ -103,7 +103,12 @@ namespace E_PharmaHub.Services.AppointmentServ
             await _unitOfWork.CompleteAsync();
             return true;
         }
-
+        public async Task<IEnumerable<AppointmentResponseDto>> FilterByStatusAsync(
+    AppointmentStatus status)
+        {
+            return await _unitOfWork.Appointments
+                .GetByStatusAsync(status);
+        }
         public async Task<(bool success, string message)> ApproveAppointmentAsync(int appointmentId,string userId)
         {
             var appointment = await _unitOfWork.Appointments.GetByIdAsync(appointmentId);
@@ -150,7 +155,6 @@ namespace E_PharmaHub.Services.AppointmentServ
                 type: NotificationType.AppointmentApproved
             );
 
-            await _appointmentNotificationScheduler.ScheduleAppointmentNotifications(appointment);
 
             return (true, "Appointment approved successfully after confirming payment.");
         }

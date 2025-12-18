@@ -8,6 +8,7 @@
         AppointmentStartingSoon,
         OrderConfirmed,
         OrderCancelled,
-        OrderDelivered
+        OrderDelivered,
+        NewAppointmentForDoctor
     }
 }

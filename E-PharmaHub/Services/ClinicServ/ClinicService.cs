@@ -57,6 +57,8 @@ namespace E_PharmaHub.Services.ClinicServ
             var clinic = await _unitOfWork.Clinics
                 .GetByIdAsync(doctor.ClinicId.Value);
 
+            var doctorRelatedClinic = await _unitOfWork.Doctors.GetDoctorProfileByClinicIdAsync(clinic.Id);
+
             if (clinic == null)
                 return (false, "Clinic not found ❌");
 
@@ -89,6 +91,13 @@ namespace E_PharmaHub.Services.ClinicServ
             if (dto.Longitude.HasValue)
                 clinic.Address.Longitude = dto.Longitude;
 
+            if (dto.ConsultationPrice.HasValue)
+                doctorRelatedClinic.ConsultationPrice = dto.ConsultationPrice.Value;
+
+            if (dto.ConsultationType.HasValue)
+                doctorRelatedClinic.ConsultationType = dto.ConsultationType.Value;
+
+
             if (image != null)
             {
                 var imagePath = await _fileStorageService.SaveFileAsync(image, "clinics");
@@ -96,6 +105,7 @@ namespace E_PharmaHub.Services.ClinicServ
             }
 
             _unitOfWork.Clinics.Update(clinic);
+            _unitOfWork.Doctors.Update(doctorRelatedClinic);
             await _unitOfWork.CompleteAsync();
 
             return (true, "Clinic updated successfully ✅");
