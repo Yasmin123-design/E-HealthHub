@@ -9,6 +9,7 @@ namespace E_PharmaHub.Dtos
         public string PatientName { get; set; }
         public string PatientPhone { get; set; }
         public int PatientAge { get; set; }
+        public string PatientId { get; set; }
         public Gender PatientGender { get; set; }
 
         public DateTime StartAt { get; set; }

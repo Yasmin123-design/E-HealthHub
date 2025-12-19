@@ -39,6 +39,7 @@ namespace E_PharmaHub.Helpers
             {
                 AppointmentId = appointment.Id,
                 PatientName = appointment.PatientName,
+                PatientId = appointment.UserId,
                 PatientPhone = appointment.PatientPhone,
                 PatientAge = appointment.PatientAge,
                 PatientGender = appointment.PatientGender,

@@ -4,97 +4,91 @@ using E_PharmaHub.Services.PrescriptionServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
     public class PrescriptionController : ControllerBase
     {
         private readonly IPrescriptionService _prescriptionService;
-        private readonly IDoctorService _doctorService;
-        public PrescriptionController(IPrescriptionService prescriptionService,
-            IDoctorService doctorService)
+
+        public PrescriptionController(IPrescriptionService prescriptionService)
         {
             _prescriptionService = prescriptionService;
-            _doctorService = doctorService;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
-        [HttpPost("create")]
-        public async Task<IActionResult> CreatePrescription([FromBody] CreatePrescriptionDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        [HttpGet("userPrescription/{userId}")]
+        public async Task<IActionResult> GetUserPrescriptions(string userId)
+        {        
 
-            var doctorUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (doctorUserId == null)
+            if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            var doctor = await _doctorService.GetDoctorByUserIdAsync(doctorUserId);
-            if (doctor == null)
-                return BadRequest(new { message = "Doctor profile not found" });
+            var result =
+                await _prescriptionService.GetUserPrescriptionsAsync(userId);
 
-            dto.DoctorId = doctor.Id;
-
-            var result = await _prescriptionService.CreatePrescriptionAsync(dto);
-            if (!result.success)
-                return BadRequest(new { message = result.message });
-
-            return Ok(new { message = "Prescription created successfully"});
+            return Ok(result);
         }
 
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
-        [HttpGet("user")]
-        public async Task<IActionResult> GetUserPrescriptions()
+        [HttpPost]
+        public async Task<IActionResult> Create(
+            [FromBody] CreatePrescriptionDto dto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-                return Unauthorized();
+           
+            await _prescriptionService.CreateAsync(dto);
 
-            var prescriptions = await _prescriptionService.GetUserPrescriptionsAsync(userId);
-            return Ok(prescriptions);
+            return Ok(new { message = "Prescription created successfully" });
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
-        [HttpGet("doctor")]
-        public async Task<IActionResult> GetDoctorPrescriptions()
+        [HttpPut("{prescriptionId}/items")]
+        public async Task<IActionResult> UpdateItems(
+            int prescriptionId,
+            [FromBody] List<PrescriptionItemDto> items)
         {
+            await _prescriptionService
+                .UpdateItemsAsync(prescriptionId, items);
 
-            var doctorUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (doctorUserId == null)
-                return Unauthorized();
-
-            var doctor = await _doctorService.GetDoctorByUserIdAsync(doctorUserId);
-            if (doctor == null)
-                return BadRequest(new { message = "Doctor profile not found" });
-
-            var prescriptions = await _prescriptionService.GetDoctorPrescriptionsAsync(doctor.Id);
-            return Ok(prescriptions);
+            return Ok(new { message = "Prescription items updated successfully" });
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPrescriptionById(int id)
+        [HttpDelete("{prescriptionId}")]
+        public async Task<IActionResult> Delete(int prescriptionId)
         {
-            var prescription = await _prescriptionService.GetByIdAsync(id);
-            if (prescription == null)
-                return NotFound(new { message = "Prescription not found" });
-
-            return Ok(prescription);
-        }
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePrescription(int id)
-        {
-            var result = await _prescriptionService.DeletePrescriptionAsync(id);
-            if (!result)
-                return BadRequest(new { message = "Failed to delete prescription" });
+            await _prescriptionService.DeleteAsync(prescriptionId);
 
             return Ok(new { message = "Prescription deleted successfully" });
+        }
+
+        [HttpPost("{prescriptionId}/items")]
+        public async Task<IActionResult> AddItem(
+            int prescriptionId,
+            [FromBody] PrescriptionItemDto dto)
+        {
+            await _prescriptionService
+                .AddItemAsync(prescriptionId, dto);
+
+            return Ok(new { message = "Item added successfully" });
+        }
+
+        [HttpPut("items/{itemId}")]
+        public async Task<IActionResult> UpdateItem(
+            int itemId,
+            [FromBody] PrescriptionItemDto dto)
+        {
+            await _prescriptionService
+                .UpdateItemAsync(itemId, dto);
+
+            return Ok(new { message = "Item updated successfully" });
+        }
+
+        [HttpDelete("items/{itemId}")]
+        public async Task<IActionResult> DeleteItem(int itemId)
+        {
+            await _prescriptionService.DeleteItemAsync(itemId);
+
+            return Ok(new { message = "Item deleted successfully" });
         }
 
     }

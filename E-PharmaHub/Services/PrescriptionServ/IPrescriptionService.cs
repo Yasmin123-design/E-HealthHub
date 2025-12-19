@@ -5,10 +5,12 @@ namespace E_PharmaHub.Services.PrescriptionServ
 {
     public interface IPrescriptionService
     {
-        Task<(bool success, string message, Prescription prescription)> CreatePrescriptionAsync(CreatePrescriptionDto dto);
-        Task<IEnumerable<PrescriptionDetailsDto>> GetUserPrescriptionsAsync(string userId);
-        Task<IEnumerable<PrescriptionDetailsDto>> GetDoctorPrescriptionsAsync(int doctorId);
-        Task<PrescriptionDetailsDto?> GetByIdAsync(int id);
-        Task<bool> DeletePrescriptionAsync(int id);
+        Task<List<PrescriptionDto>> GetUserPrescriptionsAsync(string userId);
+        Task CreateAsync(CreatePrescriptionDto dto);
+        Task AddItemAsync(int prescriptionId, PrescriptionItemDto dto);
+        Task UpdateItemAsync(int itemId, PrescriptionItemDto dto);
+        Task DeleteItemAsync(int itemId);
+        Task UpdateItemsAsync(int prescriptionId, List<PrescriptionItemDto> items);
+        Task DeleteAsync(int prescriptionId);
     }
 }

@@ -17,6 +17,7 @@ using E_PharmaHub.Repositories.OrderRepo;
 using E_PharmaHub.Repositories.PaymentRepo;
 using E_PharmaHub.Repositories.PharmacistRepo;
 using E_PharmaHub.Repositories.PharmacyRepo;
+using E_PharmaHub.Repositories.PrescriptionItemRepo;
 using E_PharmaHub.Repositories.PrescriptionRepo;
 using E_PharmaHub.Repositories.ReviewRepo;
 using E_PharmaHub.Repositories.UserRepo;
@@ -51,6 +52,8 @@ namespace E_PharmaHub.UnitOfWorkes
         IDonorMatchRepository donorMatches { get; }
         INotificationRepository Notifications { get; }
         ICartItemRepository CartItemRepository { get; }
+        IPrescriptionItemRepository PrescriptionItems { get; }
+
 
         Task<int> CompleteAsync();
     }

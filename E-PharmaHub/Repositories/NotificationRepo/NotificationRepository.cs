@@ -25,6 +25,21 @@ namespace E_PharmaHub.Repositories.NotificationRepo
                 .OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
         }
+        public async Task<List<Notification>> GetUnreadByUserAsync(string userId)
+        {
+            return await _context.Notifications
+                .Where(n => n.UserId == userId && !n.IsRead)
+                .ToListAsync();
+        }
+        public async Task<Notification?> GetByIdAsync(int id)
+        {
+            return await _context.Notifications.FindAsync(id);
+        }
+
+        public void Update(Notification notification)
+        {
+            _context.Notifications.Update(notification);
+        }
     }
 
 }

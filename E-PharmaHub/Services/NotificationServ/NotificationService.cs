@@ -47,6 +47,25 @@ namespace E_PharmaHub.Services.NotificationServ
 
             return notification;
         }
+
+        public async Task SendAppointmentNotificationIfValidAsync(
+    int appointmentId,
+    string userId,
+    string title,
+    string message,
+    NotificationType type)
+        {
+            var appointment = await _unitOfWork.Appointments.GetByIdAsync(appointmentId);
+
+            if (appointment == null)
+                return;
+
+            if (appointment.Status != AppointmentStatus.Confirmed)
+                return; 
+
+            await CreateAndSendAsync(userId, title, message, type);
+        }
+
         public async Task<object> GetUserNotificationsByCategoryAsync(
     string userId,
     string role)
@@ -56,12 +75,9 @@ namespace E_PharmaHub.Services.NotificationServ
 
             if (role == "Doctor")
             {
-                var doctorAppointments = notifications
-                    .Where(n => n.Type == NotificationType.NewAppointmentForDoctor);
-
                 return new
                 {
-                    AppointmentRequests = doctorAppointments
+                    AppointmentRequests = notifications
                 };
             }
 
@@ -81,6 +97,34 @@ namespace E_PharmaHub.Services.NotificationServ
                 Orders = orders,
                 Appointments = appointments
             };
+        }
+
+        public async Task MarkAsReadAsync(int notificationId, string userId)
+        {
+            var notification =
+                await _unitOfWork.Notifications.GetByIdAsync(notificationId);
+
+            if (notification == null)
+                throw new Exception("Notification not found");
+
+            if (notification.UserId != userId)
+                throw new Exception("Unauthorized access");
+
+            notification.IsRead = true;
+
+            _unitOfWork.Notifications.Update(notification);
+            await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task MarkAllAsReadAsync(string userId)
+        {
+            var notifications =
+                await _unitOfWork.Notifications.GetUnreadByUserAsync(userId);
+
+            foreach (var notification in notifications)
+                notification.IsRead = true;
+
+            await _unitOfWork.CompleteAsync();
         }
 
 

@@ -7,7 +7,6 @@ namespace E_PharmaHub.Models
         [Key] public int Id { get; set; }
         public string UserId { get; set; }
         public int DoctorId { get; set; }
-        public string Notes { get; set; }
         public DateTime IssuedAt { get; set; } = DateTime.UtcNow;
         public virtual DoctorProfile Doctor { get; set; }
 

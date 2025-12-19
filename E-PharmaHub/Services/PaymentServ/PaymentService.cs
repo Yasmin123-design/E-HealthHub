@@ -1,4 +1,5 @@
-﻿using E_PharmaHub.Models;
+﻿using E_PharmaHub.Helpers;
+using E_PharmaHub.Models;
 using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.AppointmentNotificationScheduleServe;
 using E_PharmaHub.Services.NotificationServ;
@@ -56,9 +57,10 @@ namespace E_PharmaHub.Services.PaymentServ
             await _notificationService.CreateAndSendAsync(
                 appointment.DoctorId,
                 "New Appointment Request",
-                $"{appointment.PatientName} requested an appointment at {appointment.StartAt}",
+                $"{appointment.PatientName} requested an appointment at {appointment.StartAt.ToEgyptTime():MM/dd/yyyy h:mm tt}",
                 NotificationType.NewAppointmentForDoctor
             );
+            await _appointmentNotificationScheduler.ScheduleAppointmentNotifications(appointment);
         }
 
 

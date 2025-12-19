@@ -32,7 +32,31 @@ namespace E_PharmaHub.Controllers
             return Ok(result);
         }
 
+        [HttpPut("{notificationId}/read")]
+        public async Task<IActionResult> MarkAsRead(int notificationId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            if (userId == null)
+                return Unauthorized();
 
+            await _notificationService
+                .MarkAsReadAsync(notificationId, userId);
+
+            return Ok(new { message = "Notification marked as read" });
+        }
+
+        [HttpPut("read-all")]
+        public async Task<IActionResult> MarkAllAsRead()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+                return Unauthorized();
+
+            await _notificationService.MarkAllAsReadAsync(userId);
+
+            return Ok(new { message = "All notifications marked as read" });
+        }
     }
 }

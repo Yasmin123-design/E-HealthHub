@@ -21,6 +21,7 @@ using E_PharmaHub.Repositories.InventoryItemRepo;
 using E_PharmaHub.Repositories.MessageThreadRepo;
 using E_PharmaHub.Repositories.NotificationRepo;
 using E_PharmaHub.Repositories.CartItemRepo;
+using E_PharmaHub.Repositories.PrescriptionItemRepo;
 
 namespace E_PharmaHub.UnitOfWorkes
 {
@@ -56,6 +57,8 @@ namespace E_PharmaHub.UnitOfWorkes
         public IPrescriptionRepository Prescriptions { get; private set; }
         public INotificationRepository Notifications { get; private set; }
         public ICartItemRepository CartItemRepository { get; private set; }
+        public IPrescriptionItemRepository PrescriptionItems { get; }
+
         public UnitOfWork(EHealthDbContext context,
             IMedicineRepository medicineRepository,
             IReviewRepository reviewRepository,
@@ -80,7 +83,8 @@ namespace E_PharmaHub.UnitOfWorkes
             IPrescriptionRepository prescriptionRepository,
             IFavouriteDoctorRepository favouriteDoctorRepository,
             INotificationRepository notificationRepository,
-            ICartItemRepository cartItemRepository
+            ICartItemRepository cartItemRepository,
+            IPrescriptionItemRepository prescriptionItem
             )
         {
             _context = context;
@@ -92,6 +96,7 @@ namespace E_PharmaHub.UnitOfWorkes
             Reviews = reviewRepository;
             Carts = cartRepository;
             BloodRequest = bloodRequestRepository;
+            PrescriptionItems = prescriptionItem;
             Addresses = addressRepository;
             PharmasistsProfile = pharmacistRepository;
             Doctors = doctorRepository;

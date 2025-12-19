@@ -19,32 +19,24 @@ namespace E_PharmaHub.Repositories.PrescriptionRepo
                 .Include(p => p.Doctor)
                 .ThenInclude(a => a.AppUser)
                 .Include(p => p.Items)
-                .ThenInclude(i => i.Medication)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
+        
 
-        public async Task<IEnumerable<Prescription>> GetByUserIdAsync(string userId)
+        public async Task<List<Prescription>> GetByUserIdAsync(string userId)
         {
             return await _context.Prescriptions
-                .Include(u => u.User)
-                .Include(p => p.Doctor)
-                .ThenInclude(a => a.AppUser)
                 .Include(p => p.Items)
-                .ThenInclude(i => i.Medication)
+                .Include(p => p.Doctor)
                 .Where(p => p.UserId == userId)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Prescription>> GetByDoctorIdAsync(int doctorId)
+        public async Task<Prescription?> GetWithItemsAsync(int id)
         {
             return await _context.Prescriptions
-                 .Include(p => p.User)
-                .Include(p => p.Doctor)
-                .ThenInclude(a => a.AppUser)
                 .Include(p => p.Items)
-                .ThenInclude(i => i.Medication)
-                .Where(p => p.DoctorId == doctorId)
-                .ToListAsync();
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task AddAsync(Prescription prescription)
