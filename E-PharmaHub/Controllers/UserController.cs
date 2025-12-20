@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace E_PharmaHub.Controllers
@@ -143,11 +144,27 @@ namespace E_PharmaHub.Controllers
             }
 
             var token = GenerateJwtToken(user, roles);
+            var refreshToken = GenerateRefreshToken();
+            await _userService.SaveRefreshTokenAsync(user.Id, refreshToken);
 
+            Response.Cookies.Append("auth_token", token, new CookieOptions
+            {
+                HttpOnly = true,         
+                Secure = false,            
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(3)
+            });
+
+            Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTimeOffset.UtcNow.AddDays(7) 
+            });
             return Ok(new
             {
                 message = "Login successful ✅",
-                token,
                 user = new
                 {
                     user.UserName,
@@ -157,6 +174,56 @@ namespace E_PharmaHub.Controllers
             });
         }
 
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            var refreshToken = Request.Cookies["refresh_token"];
+            if (string.IsNullOrEmpty(refreshToken))
+                return Unauthorized();
+
+            var storedToken = await _userService.RotateRefreshTokenAsync(refreshToken);
+
+            var user = storedToken.User;
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var newAccessToken = GenerateJwtToken(user, roles);
+            var newRefreshToken = GenerateRefreshToken();
+
+            await _userService.SaveRefreshTokenAsync(user.Id, newRefreshToken);
+
+            Response.Cookies.Append("auth_token", newAccessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(3)
+            });
+            Response.Cookies.Append("refresh_token", newRefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTimeOffset.UtcNow.AddDays(7) 
+            });
+
+            return Ok();
+        }
+
+        [HttpPost("logout")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Logout()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            await _userService.RevokeAllRefreshTokensAsync(userId);
+
+            Response.Cookies.Delete("auth_token");
+            Response.Cookies.Delete("refresh_token");
+
+            return Ok(new { message = "Logged out successfully ✅" });
+        }
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
@@ -206,11 +273,15 @@ namespace E_PharmaHub.Controllers
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.UtcNow.AddMinutes(3),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        private string GenerateRefreshToken()
+        {
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         }
 
         [HttpGet("google-login")]

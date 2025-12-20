@@ -4,6 +4,11 @@ using E_PharmaHub.Repositories.UserRepo;
 using E_PharmaHub.Services.FileStorageServ;
 using E_PharmaHub.UnitOfWorkes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace E_PharmaHub.Services.UserServ
 {
@@ -13,13 +18,74 @@ namespace E_PharmaHub.Services.UserServ
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<AppUser> _userManager;
         private readonly IFileStorageService _fileStorage;
+        private readonly EHealthDbContext _context;
 
-        public UserService(IUserRepository userRepo, IUnitOfWork unitOfWork, UserManager<AppUser> userManager, IFileStorageService fileStorage)
+        public UserService(IUserRepository userRepo,
+            IUnitOfWork unitOfWork,
+            UserManager<AppUser> userManager,
+            IFileStorageService fileStorage,
+            EHealthDbContext context
+            )
         {
+            _context = context;
             _userRepo = userRepo;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _fileStorage = fileStorage;
+        }
+
+        public async Task SaveRefreshTokenAsync(string userId, string refreshToken)
+        {
+            var refreshTokenEntity = new RefreshToken
+            {
+                UserId = userId,
+                TokenHash = HashToken(refreshToken),
+                Expires = DateTime.UtcNow.AddDays(7),
+                IsRevoked = false
+            };
+
+            _context.RefreshTokens.Add(refreshTokenEntity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<RefreshToken> RotateRefreshTokenAsync(string oldRefreshToken)
+        {
+            var hashedToken = HashToken(oldRefreshToken);
+
+            var storedToken = await _context.RefreshTokens
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r =>
+                    r.TokenHash == hashedToken &&
+                    !r.IsRevoked &&
+                    r.Expires > DateTime.UtcNow);
+
+            if (storedToken == null)
+                throw new SecurityTokenException("Invalid refresh token");
+
+            storedToken.IsRevoked = true;
+            await _context.SaveChangesAsync();
+
+            return storedToken; 
+        }
+
+        private string HashToken(string token)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
+            return Convert.ToBase64String(bytes);
+        }
+        public async Task RevokeAllRefreshTokensAsync(string userId)
+        {
+            var tokens = await _context.RefreshTokens
+                .Where(t => t.UserId == userId && !t.IsRevoked)
+                .ToListAsync();
+
+            foreach (var token in tokens)
+            {
+                token.IsRevoked = true;
+            }
+
+            await _unitOfWork.CompleteAsync();
         }
 
         public async Task<UserProfileDto?> GetUserProfileAsync(string userId)

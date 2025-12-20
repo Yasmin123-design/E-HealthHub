@@ -32,7 +32,7 @@ namespace E_PharmaHub.Models
         public DbSet<DonorMatch> DonorMatches { get; set; }
         public DbSet<MessageThread> MessageThreads { get; set; }
         public DbSet<Notification> Notifications { get; set; }
-
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<AlternativeMedication> AlternativeMedications { get; set; }
 

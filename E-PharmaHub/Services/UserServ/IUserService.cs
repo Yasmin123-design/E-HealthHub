@@ -1,9 +1,13 @@
 ﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Models;
 
 namespace E_PharmaHub.Services.UserServ
 {
     public interface IUserService
     {
+        Task RevokeAllRefreshTokensAsync(string userId);
+        Task SaveRefreshTokenAsync(string userId, string refreshToken);
+        Task<RefreshToken> RotateRefreshTokenAsync(string oldRefreshToken);
         Task<(bool Success, string Message)> UpdatePasswordAsync(string userId, UserPasswordUpdateDto dto);
         Task UpdateUserLocationAsync(string userId, double latitude, double longitude);
 

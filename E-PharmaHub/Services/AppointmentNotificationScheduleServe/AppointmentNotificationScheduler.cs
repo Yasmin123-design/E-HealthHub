@@ -1,14 +1,23 @@
 ﻿using E_PharmaHub.Models;
 using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.NotificationServ;
+using E_PharmaHub.UnitOfWorkes;
 using Hangfire;
 
 namespace E_PharmaHub.Services.AppointmentNotificationScheduleServe
 {
     public class AppointmentNotificationScheduler : IAppointmentNotificationScheduler
     {
+        private readonly IUnitOfWork _unitOfWork;
+        public AppointmentNotificationScheduler(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
         public async Task ScheduleAppointmentNotifications(Appointment appointment)
         {
+            if (appointment.NotificationsScheduled)
+                return;
+
             var appointmentUtc = DateTime.SpecifyKind(
                 appointment.StartAt,
                 DateTimeKind.Utc
@@ -53,7 +62,7 @@ namespace E_PharmaHub.Services.AppointmentNotificationScheduleServe
                         appointment.Id,
                         userId,
                         "Appointment Starting Soon",
-                        $"Your appointment with Dr. {appointment.Doctor.UserName} starts in 10 minutes, join now",
+                        $"Your appointment with Dr.{appointment.Doctor.UserName} starts in 10 minutes, join now",
                         NotificationType.AppointmentStartingSoon
                     ),
                     soonUtc
@@ -69,6 +78,8 @@ namespace E_PharmaHub.Services.AppointmentNotificationScheduleServe
                     soonUtc
                 );
             }
+            appointment.NotificationsScheduled = true;
+            await _unitOfWork.CompleteAsync();
         }
     }
 }

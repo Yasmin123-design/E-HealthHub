@@ -27,6 +27,7 @@ namespace E_PharmaHub.Models
         public bool IsPaid { get; set; } = false;
         public int ClinicId { get; set; }
         public virtual Clinic? Clinic { get; set; }
+        public bool NotificationsScheduled { get; set; } = false;
 
         public DateTime StartAt { get; set; }
         public DateTime EndAt { get; set; }

@@ -94,39 +94,47 @@ namespace E_PharmaHub
                                 });
             builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-
                 options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
             })
             .AddJwtBearer(options =>
             {
-              options.TokenValidationParameters = new TokenValidationParameters
-            {
-              ValidateIssuer = true,
-              ValidateAudience = true,
-              ValidateLifetime = true,
-              ValidateIssuerSigningKey = true,
-              ValidIssuer = builder.Configuration["JWT:Issuer"],
-              ValidAudience = builder.Configuration["JWT:Audience"],
-              IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
-            };
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = builder.Configuration["JWT:Issuer"],
+                    ValidAudience = builder.Configuration["JWT:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                };
+
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
-
                         var path = context.HttpContext.Request.Path;
-                        Console.WriteLine($"Path: {path}, Token: {accessToken}");
 
                         if (!string.IsNullOrEmpty(accessToken) &&
                             path.StartsWithSegments("/hubs/notification"))
                         {
                             context.Token = accessToken;
+                            return Task.CompletedTask;
+                        }
+                        var cookieToken = context.Request.Cookies["auth_token"];
+
+                        if (!string.IsNullOrEmpty(cookieToken))
+                        {
+                            context.Token = cookieToken;
                         }
 
                         return Task.CompletedTask;
@@ -135,15 +143,15 @@ namespace E_PharmaHub
             })
             .AddGoogle(options =>
             {
-               options.ClientId = builder.Configuration["AuthenticationGoogle:Google:ClientId"];
-               options.ClientSecret = builder.Configuration["AuthenticationGoogle:Google:ClientSecret"];
-               options.CallbackPath = "/signin-google";
+                options.ClientId = builder.Configuration["AuthenticationGoogle:Google:ClientId"];
+                options.ClientSecret = builder.Configuration["AuthenticationGoogle:Google:ClientSecret"];
+                options.CallbackPath = "/signin-google";
             })
             .AddFacebook(options =>
             {
-               options.AppId = builder.Configuration["AuthenticationFacebook:Facebook:AppId"];
-               options.AppSecret = builder.Configuration["AuthenticationFacebook:Facebook:AppSecret"];
-               options.CallbackPath = "/signin-facebook";
+                options.AppId = builder.Configuration["AuthenticationFacebook:Facebook:AppId"];
+                options.AppSecret = builder.Configuration["AuthenticationFacebook:Facebook:AppSecret"];
+                options.CallbackPath = "/signin-facebook";
             });
 
 
