@@ -6,6 +6,9 @@ namespace E_PharmaHub.Repositories.DoctorRepo
 {
     public interface IDoctorRepository : IGenericRepository<DoctorProfile>
     {
+        Task<IEnumerable<DoctorAvailability>> GetByDoctorAndDayAsync(
+      int doctorId,
+      DayOfWeek dayOfWeek);
         Task<DoctorProfile?> GetDoctorProfileByClinicIdAsync(int clinicId);
         Task<DoctorProfile?> GetDoctorProfileByIdAsync(int id);
         Task<IEnumerable<DoctorReadDto>> GetDoctorsBySpecialtyAsync(Speciality specialty);

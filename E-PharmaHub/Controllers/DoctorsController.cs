@@ -200,5 +200,17 @@ namespace E_PharmaHub.Controllers
 
             return Ok(new { message = "Doctor profile updated successfully" });
         }
+
+        [HttpGet("{doctorId}/slots")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetSlots(
+    int doctorId,
+    [FromQuery] DateTime date)
+        {
+            var slots = await _doctorService
+                .GetDoctorSlotsAsync(doctorId, date);
+
+            return Ok(slots);
+        }
     }
 }

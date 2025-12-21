@@ -24,6 +24,8 @@ namespace E_PharmaHub.Models
         public string? AppUserId { get; set; }
         public virtual AppUser? AppUser { get; set; }
         public virtual ICollection<Review>? Reviews { get; set; }
+        public virtual ICollection<DoctorAvailability> Availabilities { get; set; }
+        = new List<DoctorAvailability>();
 
     }
 }

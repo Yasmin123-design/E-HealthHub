@@ -15,7 +15,9 @@ namespace E_PharmaHub.Services.DoctorServ
         Task<DoctorProfile> GetDoctorByIdAsync(int id);
         Task<IEnumerable<DoctorReadDto>> GetAllDoctorsAcceptedByAdminAsync();
         Task<IEnumerable<DoctorReadDto>> GetAllDoctorsShowToAdmin();
-
+        Task<IEnumerable<DoctorSlotDto>> GetDoctorSlotsAsync(
+     int doctorId,
+     DateTime date);
         Task MarkAsPaid(string userId);
         Task<bool> UpdateDoctorProfileAsync(string userId, DoctorUpdateDto dto);
         Task DeleteDoctorAsync(int id);

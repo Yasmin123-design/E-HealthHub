@@ -1,6 +1,7 @@
-﻿namespace E_PharmaHub.Models
+﻿namespace E_PharmaHub.Models.Enums
 {
-    public enum AppointmentStatus { 
+    public enum AppointmentStatus
+    {
         Pending,
         Confirmed,
         Completed,

@@ -1,6 +1,8 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Helpers;
 using E_PharmaHub.Models;
+using E_PharmaHub.Models.Enums;
+using E_PharmaHub.Repositories.DoctorRepo;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -9,10 +11,11 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
     public class AppointmentRepository : IAppointmentRepository
     {
         private readonly EHealthDbContext _context;
-
-        public AppointmentRepository(EHealthDbContext context)
+        private readonly IDoctorRepository _doctorRepository;
+        public AppointmentRepository(EHealthDbContext context,IDoctorRepository doctorRepository)
         {
             _context = context;
+            _doctorRepository = doctorRepository;
         }
 
         public async Task AddAsync(Appointment entity)
@@ -113,11 +116,23 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
         {
             var today = DateTime.Today;
 
-            return await _context.Appointments
+            var appointments = await _context.Appointments
                 .CountAsync(a =>
                 a.Status == AppointmentStatus.Confirmed &&
                     a.DoctorId == doctorId &&
                     a.StartAt.Date == today);
+
+            return appointments;
+        }
+        public async Task<int> GetYesterdayAppointmentsCountAsync(string doctorId)
+        {
+            var yesterday = DateTime.Today.AddDays(-1);
+
+            return await _context.Appointments
+                .CountAsync(a =>
+                a.Status == AppointmentStatus.Confirmed &&
+                    a.DoctorId == doctorId &&
+                    a.StartAt.Date == yesterday);
         }
         public async Task<int> GetTotalAppointmentsCountAsync(string doctorId)
         {
@@ -126,6 +141,33 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
                 .CountAsync(a =>
                 a.Status == AppointmentStatus.Confirmed &&
                     a.DoctorId == doctorId );
+        }
+        public async Task<IEnumerable<Appointment>> GetConfirmedByDoctorAndDateAsync(
+    int doctorId,
+    DateTime date)
+        {
+            var doctor = await _doctorRepository.GetByIdAsync(doctorId);
+            
+            return await _context.Appointments
+                .Where(a =>
+                    a.DoctorId == doctor.AppUserId &&
+                    a.StartAt.Date == date.Date &&
+                    a.Status == AppointmentStatus.Confirmed)
+                .ToListAsync();
+        }
+
+        public async Task<bool> IsSlotBookedAsync(
+            int doctorId,
+            DateTime startAt,
+            DateTime endAt)
+        {
+            var doctor = await _doctorRepository.GetByIdAsync(doctorId);
+
+            return await _context.Appointments.AnyAsync(a =>
+                a.DoctorId == doctor.AppUserId &&
+                a.StartAt == startAt &&
+                a.EndAt == endAt &&
+                a.Status == AppointmentStatus.Confirmed);
         }
         public async Task<IEnumerable<AppointmentResponseDto>> GetByStatusAsync(
     AppointmentStatus status)
@@ -157,7 +199,18 @@ namespace E_PharmaHub.Repositories.AppointmentRepo
                     a.StartAt.Date == today)
                 .SumAsync(a => a.Payment!.Amount);
         }
+        public async Task<decimal> GetYesterRevenueAsync(string doctorId)
+        {
+            var yesterday = DateTime.Today.AddDays(-1);
 
+            return await _context.Appointments
+                .Where(a =>
+                    a.DoctorId == doctorId &&
+                    a.IsPaid &&
+                    a.Status == AppointmentStatus.Confirmed &&
+                    a.StartAt.Date == yesterday)
+                .SumAsync(a => a.Payment!.Amount);
+        }
         public async Task<decimal> GetTotalRevenueAsync(string doctorId)
         {
             return await _context.Appointments

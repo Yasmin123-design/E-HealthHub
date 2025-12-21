@@ -35,6 +35,52 @@ namespace E_PharmaHub.Services.DoctorServ
             _emailSender = emailSender;
         }
 
+
+        public async Task<IEnumerable<DoctorSlotDto>> GetDoctorSlotsAsync(
+            int doctorId,
+            DateTime date)
+        {
+            var dayOfWeek = date.DayOfWeek;
+
+            var availabilities =
+                await _unitOfWork.Doctors
+                    .GetByDoctorAndDayAsync(doctorId, dayOfWeek);
+
+            if (!availabilities.Any())
+                return Enumerable.Empty<DoctorSlotDto>();
+
+            var appointments =
+                await _unitOfWork.Appointments
+                    .GetConfirmedByDoctorAndDateAsync(doctorId, date);
+
+            var result = new List<DoctorSlotDto>();
+
+            foreach (var avail in availabilities)
+            {
+                var start = date.Date + avail.StartTime;
+                var end = date.Date + avail.EndTime;
+
+                while (start.AddMinutes(avail.SlotDurationInMinutes) <= end)
+                {
+                    var slotEnd = start.AddMinutes(avail.SlotDurationInMinutes);
+
+                    var isBooked = appointments.Any(a =>
+                        a.StartAt == start &&
+                        a.EndAt == slotEnd);
+
+                    result.Add(new DoctorSlotDto
+                    {
+                        StartAt = start,
+                        EndAt = slotEnd,
+                        IsActive = !isBooked
+                    });
+
+                    start = slotEnd;
+                }
+            }
+
+            return result;
+        }
         public async Task<DoctorDashboardStatsDto> GetDashboardStatsAsync(string doctorId)
         {
             var doctor = await _unitOfWork.Doctors.GetDoctorByUserIdAsync(doctorId);
@@ -42,9 +88,14 @@ namespace E_PharmaHub.Services.DoctorServ
             {
                 TodayAppointmentsCount =
                     await _unitOfWork.Appointments.GetTodayAppointmentsCountAsync(doctorId),
-                TotalAppointmentCount = 
+                TotalAppointmentCount =
                     await _unitOfWork.Appointments.GetTotalAppointmentsCountAsync(doctorId),
 
+                YesterdayAppointmentsCount = 
+                await _unitOfWork.Appointments.GetYesterdayAppointmentsCountAsync(doctorId),
+
+                YesterdayRevenue = 
+                await _unitOfWork.Appointments.GetYesterRevenueAsync(doctorId),
                 TotalPatientsCount =
                     await _unitOfWork.Appointments.GetTotalPatientsCountAsync(doctorId),
 

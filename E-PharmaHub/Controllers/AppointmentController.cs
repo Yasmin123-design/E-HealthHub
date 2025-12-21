@@ -1,5 +1,5 @@
 ﻿using E_PharmaHub.Dtos;
-using E_PharmaHub.Models;
+using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.AppointmentServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

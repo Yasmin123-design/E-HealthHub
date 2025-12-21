@@ -25,7 +25,16 @@ namespace E_PharmaHub.Repositories.DoctorRepo
                 .Include(d => d.Reviews)
                 .AsNoTracking();
         }
-
+        public async Task<IEnumerable<DoctorAvailability>> GetByDoctorAndDayAsync(
+    int doctorId,
+    DayOfWeek dayOfWeek)
+        {
+            return await _context.DoctorAvailabilities
+                .Where(a =>
+                    a.DoctorProfileId == doctorId &&
+                    a.DayOfWeek == dayOfWeek)
+                .ToListAsync();
+        }
         private Expression<Func<DoctorProfile, DoctorReadDto>> Selector =>
             DoctorSelectors.GetDoctorSelector(
                 _context.Appointments,

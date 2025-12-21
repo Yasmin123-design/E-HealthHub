@@ -3,6 +3,8 @@
     public class DoctorDashboardStatsDto
     {
         public int TodayAppointmentsCount { get; set; }
+        public int YesterdayAppointmentsCount { get; set; }
+        public decimal YesterdayRevenue { get; set; }
         public int TotalAppointmentCount { get; set; }
         public int TotalPatientsCount { get; set; }
         public decimal TodayRevenue { get; set; }
