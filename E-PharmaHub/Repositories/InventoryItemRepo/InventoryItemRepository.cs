@@ -28,11 +28,39 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
                     .ThenInclude(p => p.Address);
         }
 
+        public async Task<InventoryItem?> GetByPharmacyAndMedicationWithoutIncludesAsync(int pharmacyId, int medicationId)
+        {
+            return await _context.InventoryItems
+                .AsNoTracking() // 🔹 هنا فقط على DbSet
+                .FirstOrDefaultAsync(x => x.PharmacyId == pharmacyId && x.MedicationId == medicationId);
+        }
+
+        public async Task<int> GetTotalProductsAsync(int pharmacyId)
+        {
+            return await _context.InventoryItems
+                .CountAsync(p => p.PharmacyId == pharmacyId);
+        }
+
+        public async Task<int> GetLowStockCountAsync(int pharmacyId, int threshold = 5)
+        {
+            return await _context.InventoryItems
+                .CountAsync(p =>
+                    p.PharmacyId == pharmacyId &&
+                    p.Quantity > 0 &&
+                    p.Quantity <= threshold);
+        }
+
+        public async Task<int> GetOutOfStockCountAsync(int pharmacyId)
+        {
+            return await _context.InventoryItems
+                .CountAsync(p =>
+                    p.PharmacyId == pharmacyId &&
+                    p.Quantity == 0);
+        }
         public async Task<IEnumerable<InventoryItem>> GetAllAsync()
         {
             return await BaseInventoryIncludes().ToListAsync();
         }
-
         public async Task<IEnumerable<MedicineDto>> GetAlternativeMedicinesAsync(string name)
         {
             var originalMedicine = await _medicineRepository.FindAsync(m => m.BrandName == name);
@@ -53,8 +81,6 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
                 .Select(MedicineSelector.MapInventoryToDto)
                 .ToList();
         }
-
-
         public async Task<MedicineDto?> GetByIdAsync(int id)
         {
             var inventoryItem = await BaseInventoryIncludes()
@@ -147,6 +173,24 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
                 inventory.Quantity -= quantity;
                 _context.InventoryItems.Update(inventory);
             }
+        }
+        public async Task<List<CategoryItemsCountDto>> GetItemsCountByCategoryAsync(
+     int pharmacyId,
+     DateTime from,
+     DateTime to)
+        {
+            return await _context.InventoryItems
+                .Where(p =>
+                    p.PharmacyId == pharmacyId &&
+                    p.CreatedAt >= from &&
+                    p.CreatedAt <= to)
+                .GroupBy(p => p.Medication.Category) 
+                .Select(g => new CategoryItemsCountDto
+                {
+                    CategoryName = g.Key,
+                    ItemsCount = g.Count()
+                })
+                .ToListAsync();
         }
     }
 }

@@ -48,7 +48,7 @@ namespace E_PharmaHub.Services.UserServ
             await _context.SaveChangesAsync();
         }
 
-        public async Task<RefreshToken> RotateRefreshTokenAsync(string oldRefreshToken)
+        public async Task<RefreshToken?> RotateRefreshTokenAsync(string oldRefreshToken)
         {
             var hashedToken = HashToken(oldRefreshToken);
 
@@ -60,13 +60,14 @@ namespace E_PharmaHub.Services.UserServ
                     r.Expires > DateTime.UtcNow);
 
             if (storedToken == null)
-                throw new SecurityTokenException("Invalid refresh token");
+                return null; 
 
             storedToken.IsRevoked = true;
             await _context.SaveChangesAsync();
 
-            return storedToken; 
+            return storedToken;
         }
+
 
         private string HashToken(string token)
         {
@@ -187,20 +188,30 @@ namespace E_PharmaHub.Services.UserServ
             return (true, "Account deleted successfully 🗑️");
         }
 
-        public async Task UpdateUserLocationAsync(string userId, double latitude, double longitude)
+        public async Task<UpdateLocationResult> UpdateUserLocationAsync(
+string userId, double lat, double lng)
         {
             var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
-                throw new Exception("User not found");
+                return new UpdateLocationResult
+                {
+                    Success = false,
+                    ErrorMessage = "User not found"
+                };
+            if (lat < -90 || lat > 90 ||
+        lng < -180 || lng > 180)
+                return new UpdateLocationResult
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid latitude or longitude"
+                };
+            user.Latitude = lat;
+            user.Longitude = lng;
 
-            user.Latitude = latitude;
-            user.Longitude = longitude;
+            await _unitOfWork.CompleteAsync();
+            return new UpdateLocationResult { Success = true };
 
-            var result = await _userManager.UpdateAsync(user);
-
-            if (!result.Succeeded)
-                throw new Exception("Failed to update user location");
         }
     }
 }

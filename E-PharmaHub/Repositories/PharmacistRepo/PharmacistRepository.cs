@@ -44,6 +44,18 @@ namespace E_PharmaHub.Repositories.PharmacistRepo
 
             pharmacist.HasPaid = true;
         }
+        public async Task<int?> GetPharmacyIdByUserIdAsync(string userId)
+        {
+            var profile = await _context.Pharmacists
+                .FirstOrDefaultAsync(p => p.AppUserId == userId);
+
+            return profile?.PharmacyId;
+        }
+        public async Task<PharmacistProfile?> GetByPharmacyIdAsync(int pharmacyId)
+        {
+            return await _context.Pharmacists
+                .FirstOrDefaultAsync(p => p.PharmacyId == pharmacyId);
+        }
 
         public async Task<IEnumerable<PharmacistReadDto>> GetAllDetailsAsync()
         {

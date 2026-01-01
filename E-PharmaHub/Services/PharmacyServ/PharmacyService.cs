@@ -15,6 +15,7 @@ namespace E_PharmaHub.Services.PharmacyServ
             _unitOfWork = unitOfWork;
             _fileStorage = fileStorage;
         }
+
         public async Task<(bool Success, string Message)> UpdatePharmacyAsync(
     int id,
     PharmacyUpdateDto dto,
@@ -22,16 +23,23 @@ namespace E_PharmaHub.Services.PharmacyServ
         {
             var pharmacy = await _unitOfWork.Pharmacies
                 .GetByIdAsync(id);
-
+            var pharmacist = await _unitOfWork.PharmasistsProfile.GetByPharmacyIdAsync(pharmacy.Id);
             if (pharmacy == null)
                 return (false, "Pharmacy not found ❌");
+
+            if (pharmacist == null)
+                return (false, "Pharmacist not found ❌");
 
             if (!string.IsNullOrWhiteSpace(dto.Name))
                 pharmacy.Name = dto.Name;
 
             if (!string.IsNullOrWhiteSpace(dto.Phone))
                 pharmacy.Phone = dto.Phone;
+            if(dto.DeliveryFee != null)
+                pharmacy.DeliveryFee = dto.DeliveryFee;
 
+            if (!string.IsNullOrWhiteSpace(dto.LicenseNumber))
+                pharmacist.LicenseNumber = dto.LicenseNumber;
             if (
                 dto.Country != null ||
                 dto.City != null ||
@@ -43,36 +51,26 @@ namespace E_PharmaHub.Services.PharmacyServ
             {
                 if (pharmacy.Address == null)
                 {
-                    pharmacy.Address = new Address
-                    {
-                        Country = dto.Country ?? "",
-                        City = dto.City ?? "",
-                        Street = dto.Street ?? "",
-                        PostalCode = dto.PostalCode,
-                        Latitude = dto.Latitude,
-                        Longitude = dto.Longitude
-                    };
+                    pharmacy.Address = new Address();
                 }
-                else
-                {
-                    if (!string.IsNullOrWhiteSpace(dto.Country))
-                        pharmacy.Address.Country = dto.Country;
 
-                    if (!string.IsNullOrWhiteSpace(dto.City))
-                        pharmacy.Address.City = dto.City;
+                if (!string.IsNullOrWhiteSpace(dto.Country))
+                    pharmacy.Address.Country = dto.Country;
 
-                    if (!string.IsNullOrWhiteSpace(dto.Street))
-                        pharmacy.Address.Street = dto.Street;
+                if (!string.IsNullOrWhiteSpace(dto.City))
+                    pharmacy.Address.City = dto.City;
 
-                    if (!string.IsNullOrWhiteSpace(dto.PostalCode))
-                        pharmacy.Address.PostalCode = dto.PostalCode;
+                if (!string.IsNullOrWhiteSpace(dto.Street))
+                    pharmacy.Address.Street = dto.Street;
 
-                    if (dto.Latitude.HasValue)
-                        pharmacy.Address.Latitude = dto.Latitude;
+                if (!string.IsNullOrWhiteSpace(dto.PostalCode))
+                    pharmacy.Address.PostalCode = dto.PostalCode;
 
-                    if (dto.Longitude.HasValue)
-                        pharmacy.Address.Longitude = dto.Longitude;
-                }
+                if (dto.Latitude.HasValue)
+                    pharmacy.Address.Latitude = dto.Latitude;
+
+                if (dto.Longitude.HasValue)
+                    pharmacy.Address.Longitude = dto.Longitude;
             }
 
             if (image != null)
@@ -84,11 +82,11 @@ namespace E_PharmaHub.Services.PharmacyServ
             }
 
             _unitOfWork.Pharmacies.Update(pharmacy);
+            _unitOfWork.PharmasistsProfile.Update(pharmacist);
             await _unitOfWork.CompleteAsync();
 
             return (true, "Pharmacy updated successfully ✅");
         }
-
 
         public async Task<IEnumerable<PharmacySimpleDto>> GetAllPharmaciesAsync()
         {

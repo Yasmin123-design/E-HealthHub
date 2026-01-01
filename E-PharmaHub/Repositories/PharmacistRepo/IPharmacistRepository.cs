@@ -6,7 +6,8 @@ namespace E_PharmaHub.Repositories.PharmacistRepo
     public interface IPharmacistRepository : IGenericRepository<PharmacistProfile>
     {
         Task MarkAsPaid(string userId);
-
+        Task<int?> GetPharmacyIdByUserIdAsync(string userId);
+        Task<PharmacistProfile?> GetByPharmacyIdAsync(int pharmacyId);
         Task<PharmacistReadDto?> GetPharmacistReadDtoByUserIdAsync(string userId);
         Task<bool> ApprovePharmacistAsync(int id);
         Task<bool> RejectPharmacistAsync(int id);

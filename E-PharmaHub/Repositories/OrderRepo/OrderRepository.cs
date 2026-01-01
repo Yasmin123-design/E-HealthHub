@@ -58,7 +58,65 @@ namespace E_PharmaHub.Repositories.OrderRepo
                     .ThenInclude(i => i.Medication)
                 .AsNoTracking();
         }
+        public async Task<int> GetTotalOrdersAsync(int pharmacyId)
+        {
+            return await _context.Orders
+                .CountAsync(o => o.PharmacyId == pharmacyId);
+        }
 
+        public async Task<int> GetPendingOrdersAsync(int pharmacyId)
+        {
+            return await _context.Orders
+                .CountAsync(o =>
+                    o.PharmacyId == pharmacyId &&
+                    o.Status == OrderStatus.Pending);
+        }
+
+        public async Task<int> GetConfirmedOrdersAsync(int pharmacyId)
+        {
+            return await _context.Orders
+                .CountAsync(o =>
+                    o.PharmacyId == pharmacyId &&
+                    o.Status == OrderStatus.Confirmed);
+        }
+
+        public async Task<int> GetCancelledOrdersAsync(int pharmacyId)
+        {
+            return await _context.Orders
+                .CountAsync(o =>
+                    o.PharmacyId == pharmacyId &&
+                    o.Status == OrderStatus.Cancelled);
+        }
+        public async Task<int> GetDelieveredOrdersAsync(int pharmacyId)
+        {
+            return await _context.Orders
+                .CountAsync(o =>
+                    o.PharmacyId == pharmacyId &&
+                    o.Status == OrderStatus.Delivered);
+        }
+        public async Task<int> CountAsync(
+      int pharmacyId,
+      DateTime from,
+      DateTime to)
+        {
+            return await _context.Orders.CountAsync(o =>
+                o.PharmacyId == pharmacyId &&
+                o.CreatedAt >= from &&
+                o.CreatedAt <= to);
+        }
+
+        public async Task<int> CountByStatusAsync(
+            int pharmacyId,
+            OrderStatus status,
+            DateTime from,
+            DateTime to)
+        {
+            return await _context.Orders.CountAsync(o =>
+                o.PharmacyId == pharmacyId &&
+                o.Status == status &&
+                o.CreatedAt >= from &&
+                o.CreatedAt <= to);
+        }
         private Expression<Func<Order, OrderResponseDto>> Selector =>
             OrderSelectors.GetOrderSelector();
 
@@ -137,8 +195,12 @@ namespace E_PharmaHub.Repositories.OrderRepo
 
         public async Task<Order?> GetOrderByIdAsync(int orderId)
         {
+            return await BaseOrderIncludes()
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+        }
+        public async Task<Order?> GetOrderByIdTrackingAsync(int orderId)
+        {
             return await _context.Orders
-                    .AsNoTracking()
                 .Include(o => o.User)
                 .Include(o => o.Pharmacy)
                 .Include(o => o.Payment)
@@ -146,7 +208,6 @@ namespace E_PharmaHub.Repositories.OrderRepo
                     .ThenInclude(i => i.Medication)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
-
 
         public async Task<Order?> GetPendingOrderEntityByUserForUpdateAsync(string userId, int pharmacyId)
         {
@@ -163,6 +224,14 @@ namespace E_PharmaHub.Repositories.OrderRepo
             return await _context.Orders
                 .Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.Id == id);
+        }
+        public async Task<decimal> GetRevenueAsync(int pharmacyId, DateTime from, DateTime to, OrderStatus status)
+        {
+            return await _context.Orders
+                .Where(o => o.PharmacyId == pharmacyId &&
+                            o.Status == status &&
+                            o.CreatedAt >= from && o.CreatedAt <= to)
+                .SumAsync(o => o.TotalPrice); 
         }
 
         public async Task UpdateWithItemsAsync(Order order)

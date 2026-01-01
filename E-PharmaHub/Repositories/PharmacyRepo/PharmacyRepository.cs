@@ -22,6 +22,7 @@ namespace E_PharmaHub.Repositories.PharmacyRepo
                 .Include(p => p.Reviews)
                 .AsNoTracking();
         }
+       
 
         public async Task<Pharmacy?> GetPharmacyByPharmacistUserIdAsync(string userId)
         {

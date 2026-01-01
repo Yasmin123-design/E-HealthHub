@@ -1,10 +1,12 @@
 ﻿using E_PharmaHub.Dtos;
 using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.ClinicServ;
+using E_PharmaHub.Services.DoctorAnalyticsServ;
 using E_PharmaHub.Services.DoctorServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using System.Security.Claims;
 
 namespace E_PharmaHub.Controllers
@@ -15,13 +17,20 @@ namespace E_PharmaHub.Controllers
     {
         private readonly IDoctorService _doctorService;
         private readonly IClinicService _clinicService;
-
-        public DoctorsController(IDoctorService doctorService,IClinicService clinicService
+        private readonly IDoctorAnalyticsService _doctorAnalyticsService;
+        public DoctorsController(
+            IDoctorService doctorService,
+            IClinicService clinicService,
+            IDoctorAnalyticsService doctorAnalyticsService
             )
         {
             _doctorService = doctorService;
             _clinicService = clinicService;
+            _doctorAnalyticsService = doctorAnalyticsService;
         }
+
+        private string userId =>
+    User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] DoctorRegisterDto dto,
@@ -55,7 +64,6 @@ namespace E_PharmaHub.Controllers
         [HttpPut("update-clinic")]
         public async Task<IActionResult> UpdateClinic([FromForm] ClinicUpdateDto dto, IFormFile? image)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "User not authenticated." });
 
@@ -81,7 +89,6 @@ namespace E_PharmaHub.Controllers
 
         [HttpGet("allDoctorsShowToRegularUser")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
-
         public async Task<IActionResult> GetAllDoctorsShowToRegularUser()
         {
             var doctor = await _doctorService.GetAllDoctorsAcceptedByAdminAsync();
@@ -103,11 +110,8 @@ namespace E_PharmaHub.Controllers
             return Ok(doctor);
         }
 
-    
-
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-
         public async Task<IActionResult> DeleteDoctorWithClinicWithAddressRelated(int id)
         {
             try
@@ -166,27 +170,12 @@ namespace E_PharmaHub.Controllers
             return Ok(result);
         }
 
-        [HttpGet("stats")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
-
-        public async Task<IActionResult> GetStats()
-        {
-            var doctorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var result = await _doctorService.GetDashboardStatsAsync(doctorId);
-
-            return Ok(result);
-        }
-
         [HttpPut("update-doctorprofile")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
-
         public async Task<IActionResult> UpdateDoctorProfile(
-   [FromForm] DoctorUpdateDto dto
-   )
+[FromForm] DoctorUpdateDto dto
+)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
@@ -212,5 +201,79 @@ namespace E_PharmaHub.Controllers
 
             return Ok(slots);
         }
+
+        [HttpGet("stats")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+        public async Task<IActionResult> GetStats()
+        {
+
+            var result = await _doctorAnalyticsService.GetDashboardStatsAsync(userId);
+
+            return Ok(result);
+        }
+
+        [HttpGet("weekly-appointments")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> WeeklyAppointments() =>
+            Ok(await _doctorAnalyticsService.GetWeeklyAppointmentsAsync(userId));
+
+        [HttpGet("weekly-revenue")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> WeeklyRevenue() =>
+            Ok(await _doctorAnalyticsService.GetWeeklyRevenueAsync(userId));
+
+        [HttpGet("gender-stats")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> GenderStats() =>
+            Ok(await _doctorAnalyticsService.GetGenderStatsAsync(userId));
+
+        [HttpGet("weekly-status")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> WeeklyStatus() =>
+            Ok(await _doctorAnalyticsService.GetWeeklyStatusStatsAsync(userId));
+
+        [HttpGet("age-ranges")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> AgeRanges() =>
+            Ok(await _doctorAnalyticsService.GetAgeRangesAsync(userId));
+
+        [HttpGet("weekly-patients")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> GetWeeklyPatients()
+        {
+            var stats = await _doctorAnalyticsService.GetWeeklyPatientsStatsAsync(userId);
+            return Ok(stats);
+        }
+        [HttpGet("daily-revenue")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+        public async Task<IActionResult> GetDailyRevenue(
+    [FromQuery] int? year,
+    [FromQuery] int? month)
+        {
+            var result = await _doctorAnalyticsService
+                .GetDailyRevenueAsync(userId, year, month);
+
+            return Ok(result);
+        }
+
+        [HttpGet("daily-appointments")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+
+        public async Task<IActionResult> GetDailyAppointments(
+    [FromQuery] int? year,
+    [FromQuery] int? month)
+        {
+            var result = await _doctorAnalyticsService
+                .GetDailyAppointmentsAsync(userId, year, month);
+
+            return Ok(result);
+        }
+
     }
 }

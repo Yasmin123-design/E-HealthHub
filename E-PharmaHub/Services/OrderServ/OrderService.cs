@@ -179,7 +179,7 @@ namespace E_PharmaHub.Services.OrderServ
 
         public async Task<(bool Success, string Message)> AcceptOrderAsync(int id)
         {
-            var order = await _unitOfWork.Order.GetOrderByIdAsync(id);
+            var order = await _unitOfWork.Order.GetOrderByIdTrackingAsync(id);
             if (order == null)
                 return (false, "Order not found.");
 
@@ -223,7 +223,7 @@ namespace E_PharmaHub.Services.OrderServ
 
         public async Task<(bool Success, string Message)> CancelOrderAsync(int id)
         {
-            var order = await _unitOfWork.Order.GetByIdForUpdateAsync(id);
+            var order = await _unitOfWork.Order.GetOrderByIdTrackingAsync(id);
             if (order == null)
                 return (false, "Order not found.");
 
@@ -273,7 +273,8 @@ namespace E_PharmaHub.Services.OrderServ
                 foreach (var item in order.Items)
                 {
                     var invItem = await _unitOfWork.IinventoryItem
-                        .GetByPharmacyAndMedicationAsync(order.PharmacyId, item.MedicationId);
+    .GetByPharmacyAndMedicationWithoutIncludesAsync(order.PharmacyId, item.MedicationId);
+
 
                     if (invItem != null)
                     {

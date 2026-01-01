@@ -1,4 +1,5 @@
 ﻿using E_PharmaHub.Dtos;
+using E_PharmaHub.Services.PharmacistAnalyticsServ;
 using E_PharmaHub.Services.PharmacistServ;
 using E_PharmaHub.Services.PharmacyServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,14 +15,20 @@ namespace E_PharmaHub.Controllers
     {
         private readonly IPharmacistService _pharmacistService;
         private readonly IPharmacyService _pharmacyService;
-        public PharmactiesController(IPharmacistService pharmacistService,IPharmacyService pharmacyService)
+        private readonly IPharmacistDashboardService _pharmacistDashboardService;
+        public PharmactiesController(
+            IPharmacistService pharmacistService,
+            IPharmacyService pharmacyService,
+            IPharmacistDashboardService pharmacistDashboardService
+            )
         {
             _pharmacistService = pharmacistService;
             _pharmacyService = pharmacyService;
+            _pharmacistDashboardService = pharmacistDashboardService;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromForm] PharmacistRegisterDto dto, IFormFile pharmacyImage , IFormFile pharmacistImage)
+        public async Task<IActionResult> Register([FromForm] PharmacistRegisterDto dto, IFormFile? pharmacyImage , IFormFile? pharmacistImage)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -90,13 +97,8 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message });
         }
 
-
-
-
-
         [HttpGet("all")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-
         public async Task<IActionResult> GetAllPharmacists()
         {
             var pharmacists = await _pharmacistService.GetAllPharmacistsAsync();
@@ -105,7 +107,6 @@ namespace E_PharmaHub.Controllers
 
         [HttpGet("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-
         public async Task<IActionResult> GetPharmacistById(int id)
         {
             var pharmacist = await _pharmacistService.GetPharmacistByIdAsync(id);
@@ -118,7 +119,6 @@ namespace E_PharmaHub.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
-
         public async Task<IActionResult> DeletePharmacist(int id)
         {
             try
@@ -131,6 +131,7 @@ namespace E_PharmaHub.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPut("approve/{id}")]
         public async Task<IActionResult> ApprovePharmacist(int id)
@@ -153,8 +154,53 @@ namespace E_PharmaHub.Controllers
             return Ok(new { message });
         }
 
+        [Authorize(
+    AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+    Roles = "Pharmacist")]
+        [HttpGet("orders-dashboard")]
+        public async Task<IActionResult> GetOrdersDashboard()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
+            var result = await _pharmacistDashboardService.GetWeeklyOrdersAsync(userId);
+            return Ok(result);
+        }
 
+        [Authorize(
+    AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+    Roles = "Pharmacist")]
+        [HttpGet("categories-dashboard")]
+        public async Task<IActionResult> GetCategoriesDashboard()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var result = await _pharmacistDashboardService.GetWeeklyCategoryItemsAsync(userId);
+            return Ok(result);
+        }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Pharmacist")]
+        [HttpGet("dashboard/inventory")]
+        public async Task<IActionResult> GetInventoryDashboard()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { message = "User not authenticated." });
+
+                var dashboard = await _pharmacistDashboardService.GetInventoryDashboardAsync(userId);
+
+                return Ok(dashboard);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
     }
 

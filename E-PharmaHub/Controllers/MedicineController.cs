@@ -3,6 +3,7 @@ using E_PharmaHub.Models.Enums;
 using E_PharmaHub.Services.InventoryServ;
 using E_PharmaHub.Services.MedicineServ;
 using E_PharmaHub.Services.PharmacistServ;
+using E_PharmaHub.Services.PharmacyServ;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,10 @@ namespace E_PharmaHub.Controllers
         private readonly IMedicineService _medicineService;
         private readonly IPharmacistService _pharmacistService;
         private readonly IInventoryService _inventoryService;
-
         public MedicineController(IMedicineService medicineService,
             IPharmacistService pharmacistService,
-            IInventoryService inventoryService)
+            IInventoryService inventoryService
+            )
         {
             _medicineService = medicineService;
             _pharmacistService = pharmacistService;
@@ -132,23 +133,35 @@ namespace E_PharmaHub.Controllers
         {
             var alternatives = await _inventoryService.GetAlternativeMedicinesAsync(name);
             if (!alternatives.Any())
-                return NotFound(new { message = "No alternative medicines found." });
+                return Ok(new { message = "No alternative medicines found." });
 
             return Ok(alternatives);
         }
-
-        [HttpGet("pharmacy/{pharmacyId}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
-
-        public async Task<IActionResult> GetByPharmacy(int pharmacyId)
+        [HttpGet("pharmacy")]
+        [Authorize(
+        AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme
+    )]
+        public async Task<IActionResult> GetByPharmacy()
         {
-            var items = await _medicineService.GetMedicinesByPharmacyIdAsync(pharmacyId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Invalid token");
+
+            var pharmacyId = await _pharmacistService
+                .GetPharmacyIdByUserIdAsync(userId);
+
+            if (pharmacyId == null)
+                return NotFound("Pharmacy not found for this pharmacist");
+
+            var items = await _medicineService
+                .GetMedicinesByPharmacyIdAsync(pharmacyId.Value);
+
             if (!items.Any())
-                return NotFound($"No medicines found for pharmacy ID {pharmacyId}.");
+                return NotFound("No medicines found for this pharmacy");
 
             return Ok(items);
         }
-
 
         [HttpGet("top-medications")]
         public async Task<IActionResult> GetTopMedications()

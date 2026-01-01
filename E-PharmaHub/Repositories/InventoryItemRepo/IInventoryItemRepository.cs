@@ -1,13 +1,18 @@
 ﻿using E_PharmaHub.Dtos;
-using E_PharmaHub.Helpers;
 using E_PharmaHub.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace E_PharmaHub.Repositories.InventoryItemRepo
 {
     public interface IInventoryItemRepository
     {
+        Task<List<CategoryItemsCountDto>> GetItemsCountByCategoryAsync(
+    int pharmacyId,
+    DateTime from,
+    DateTime to);
+        Task<int> GetTotalProductsAsync(int pharmacyId);
+        Task<int> GetLowStockCountAsync(int pharmacyId, int threshold = 5);
+        Task<int> GetOutOfStockCountAsync(int pharmacyId);
         Task<InventoryItem> GetInventoryForCheckoutAsync(int medicationId, int pharmacyId, decimal price);
         Task DecreaseQuantityAsync(int inventoryId, int quantity);
         Task<IEnumerable<InventoryItem>> GetAllAsync();
@@ -24,6 +29,7 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
 
         Task<InventoryItem?> GetByPharmacyAndMedicationAsync(int pharmacyId, int medicationId);
         Task<InventoryItem?> GetInventoryItemByIdAsync(int id);
+        Task<InventoryItem?> GetByPharmacyAndMedicationWithoutIncludesAsync(int pharmacyId, int medicationId);
 
     }
 

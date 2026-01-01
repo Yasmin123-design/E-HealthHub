@@ -56,10 +56,14 @@ namespace E_PharmaHub.Controllers
             await _pharmacyService.AddPharmacyAsync(pharmacy,image);
             return CreatedAtAction(nameof(GetById), new { id = pharmacy.Id }, pharmacy);
         }
-
-        [HttpPut("{id}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Pharmacist")]
-        public async Task<IActionResult> Update(int id, [FromForm] PharmacyUpdateDto dto, IFormFile? image)
+        [HttpPut]
+        [Authorize(
+            AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,
+            Roles = "Pharmacist"
+        )]
+        public async Task<IActionResult> Update(
+            [FromForm] PharmacyUpdateDto dto,
+            IFormFile? image)
         {
             if (dto == null)
                 return BadRequest("Pharmacy data is invalid.");
@@ -67,29 +71,30 @@ namespace E_PharmaHub.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var existing = await _pharmacyService.GetPharmacyByIdAsync(id);
-            if (existing == null)
-                return NotFound($"Pharmacy with Id {id} not found.");
-
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                          ?? User.FindFirst("sub")?.Value;
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new { message = "User not authenticated." });
 
+            int pharmacyId;
+
+            var pharmacyIdResult =
+                await _pharmacistService.GetPharmacyIdByUserIdAsync(userId);
+
+            if (!pharmacyIdResult.HasValue)
+                return NotFound("Pharmacy not found for this pharmacist.");
+
+            pharmacyId = pharmacyIdResult.Value;
+
+            var existing = await _pharmacyService.GetPharmacyByIdAsync(pharmacyId);
+
+            if (existing == null)
+                return NotFound($"Pharmacy with Id {pharmacyId} not found.");
+
             try
             {
-                if (!User.IsInRole("Admin"))
-                {
-                    var pharmacist = await _pharmacistService.GetPharmacistByUserIdAsync(userId);
-                    if (pharmacist == null)
-                        return NotFound(new { message = "Pharmacist profile not found." });
-
-                    if (!pharmacist.IsApproved)
-                        return Forbid("Your account is pending admin approval.");
-                }
-
-                await _pharmacyService.UpdatePharmacyAsync(id, dto, image);
+                await _pharmacyService.UpdatePharmacyAsync(pharmacyId, dto, image);
 
                 return NoContent();
             }
@@ -98,6 +103,8 @@ namespace E_PharmaHub.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+
 
 
 

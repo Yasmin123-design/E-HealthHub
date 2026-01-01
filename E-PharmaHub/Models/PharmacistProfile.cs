@@ -10,8 +10,6 @@ namespace E_PharmaHub.Models
         public bool IsApproved { get; set; } = false;
         public bool IsRejected { get; set; } = false;
         public bool HasPaid { get; set; } = false;
-        //public string? Image { get; set; }
-
         public string? AppUserId { get; set; }
 
         [Required(ErrorMessage = "License number is required.")]

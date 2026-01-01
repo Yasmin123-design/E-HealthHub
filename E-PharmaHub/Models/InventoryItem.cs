@@ -10,6 +10,7 @@ namespace E_PharmaHub.Models
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public DateTime LastUpdated { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public virtual Pharmacy? Pharmacy { get; set; }
         public virtual Medication? Medication { get; set; }

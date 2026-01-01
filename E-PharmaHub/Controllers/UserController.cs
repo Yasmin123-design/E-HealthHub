@@ -150,16 +150,16 @@ namespace E_PharmaHub.Controllers
             Response.Cookies.Append("auth_token", token, new CookieOptions
             {
                 HttpOnly = true,         
-                Secure = false,            
-                SameSite = SameSiteMode.Lax,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(3)
+                Secure = true,            
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(30)
             });
 
             Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.Lax,
+                Secure = true,
+                SameSite = SameSiteMode.None,
                 Expires = DateTimeOffset.UtcNow.AddDays(7) 
             });
             return Ok(new
@@ -182,6 +182,8 @@ namespace E_PharmaHub.Controllers
                 return Unauthorized();
 
             var storedToken = await _userService.RotateRefreshTokenAsync(refreshToken);
+            if (storedToken == null)
+                return Unauthorized(new { message = "Invalid or expired refresh token ❌" });
 
             var user = storedToken.User;
             var roles = await _userManager.GetRolesAsync(user);
@@ -194,15 +196,15 @@ namespace E_PharmaHub.Controllers
             Response.Cookies.Append("auth_token", newAccessToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.Lax,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(3)
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(30)
             });
             Response.Cookies.Append("refresh_token", newRefreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.Lax,
+                Secure = true,
+                SameSite = SameSiteMode.None,
                 Expires = DateTimeOffset.UtcNow.AddDays(7) 
             });
 
@@ -421,21 +423,21 @@ namespace E_PharmaHub.Controllers
 
             return Ok(new { message });
         }
-        [HttpPut("location")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
+
+        [HttpPut("location")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "RegularUser")]
         public async Task<IActionResult> UpdateLocation([FromBody] UpdateLocationDto dto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            await _userService.UpdateUserLocationAsync(
-                userId!,
-                dto.Latitude,
-                dto.Longitude
-            );
+            var result = await _userService.UpdateUserLocationAsync(
+                userId, dto.Latitude, dto.Longitude);
+
+            if (!result.Success)
+                return BadRequest(new { message = result.ErrorMessage });
 
             return Ok(new { message = "Location updated successfully" });
         }
-
     }
 }

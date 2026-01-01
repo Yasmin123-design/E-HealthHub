@@ -133,6 +133,12 @@ namespace E_PharmaHub.Services.PharmacistServ
             await _unitOfWork.PharmasistsProfile.AddAsync(pharmacist);
             await _unitOfWork.CompleteAsync();
         }
+        public async Task<int?> GetPharmacyIdByUserIdAsync(string userId)
+        {
+            var pharmacyId = await _unitOfWork.PharmasistsProfile.GetPharmacyIdByUserIdAsync(userId);
+            return pharmacyId.Value;
+        }
+
         public async Task MarkAsPaid(string userId)
         {
             await _unitOfWork.PharmasistsProfile.MarkAsPaid(userId);

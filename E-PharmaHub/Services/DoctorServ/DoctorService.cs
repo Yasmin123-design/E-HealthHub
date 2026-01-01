@@ -37,8 +37,8 @@ namespace E_PharmaHub.Services.DoctorServ
 
 
         public async Task<IEnumerable<DoctorSlotDto>> GetDoctorSlotsAsync(
-            int doctorId,
-            DateTime date)
+    int doctorId,
+    DateTime date)
         {
             var dayOfWeek = date.DayOfWeek;
 
@@ -51,7 +51,7 @@ namespace E_PharmaHub.Services.DoctorServ
 
             var appointments =
                 await _unitOfWork.Appointments
-                    .GetConfirmedByDoctorAndDateAsync(doctorId, date);
+                    .GetBookedByDoctorAndDateAsync(doctorId, date);
 
             var result = new List<DoctorSlotDto>();
 
@@ -65,8 +65,8 @@ namespace E_PharmaHub.Services.DoctorServ
                     var slotEnd = start.AddMinutes(avail.SlotDurationInMinutes);
 
                     var isBooked = appointments.Any(a =>
-                        a.StartAt == start &&
-                        a.EndAt == slotEnd);
+                        a.StartAt < slotEnd &&
+                        a.EndAt > start);
 
                     result.Add(new DoctorSlotDto
                     {
@@ -81,35 +81,7 @@ namespace E_PharmaHub.Services.DoctorServ
 
             return result;
         }
-        public async Task<DoctorDashboardStatsDto> GetDashboardStatsAsync(string doctorId)
-        {
-            var doctor = await _unitOfWork.Doctors.GetDoctorByUserIdAsync(doctorId);
-            return new DoctorDashboardStatsDto
-            {
-                TodayAppointmentsCount =
-                    await _unitOfWork.Appointments.GetTodayAppointmentsCountAsync(doctorId),
-                TotalAppointmentCount =
-                    await _unitOfWork.Appointments.GetTotalAppointmentsCountAsync(doctorId),
-
-                YesterdayAppointmentsCount = 
-                await _unitOfWork.Appointments.GetYesterdayAppointmentsCountAsync(doctorId),
-
-                YesterdayRevenue = 
-                await _unitOfWork.Appointments.GetYesterRevenueAsync(doctorId),
-                TotalPatientsCount =
-                    await _unitOfWork.Appointments.GetTotalPatientsCountAsync(doctorId),
-
-                TodayRevenue =
-                    await _unitOfWork.Appointments.GetTodayRevenueAsync(doctorId),
-
-                TotalRevenue =
-                    await _unitOfWork.Appointments.GetTotalRevenueAsync(doctorId),
-
-                ReviewsCount =
-                    await _unitOfWork.Reviews.GetReviewsCountAsync(doctor.Id)
-            };
-        }
-            public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
+        public async Task<DoctorReadDto?> GetDoctorByUserIdAsync(string userId)
         {
             return await _unitOfWork.Doctors.GetDoctorByUserIdReadDtoAsync(userId);
         }
@@ -317,8 +289,6 @@ namespace E_PharmaHub.Services.DoctorServ
 
             return true;
         }
-
-
 
         public async Task DeleteDoctorAsync(int id)
         {

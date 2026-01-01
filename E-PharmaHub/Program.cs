@@ -62,6 +62,8 @@ using E_PharmaHub.Services.UserIdProviderServ;
 using E_PharmaHub.Repositories.CartItemRepo;
 using System;
 using E_PharmaHub.Repositories.PrescriptionItemRepo;
+using E_PharmaHub.Services.DoctorAnalyticsServ;
+using E_PharmaHub.Services.PharmacistAnalyticsServ;
 
 namespace E_PharmaHub
 {
@@ -79,10 +81,12 @@ namespace E_PharmaHub
                 options.AddPolicy("AllowAll", policy =>
                 {
                     policy
+                        .SetIsOriginAllowed(origin =>
+                            origin == "http://localhost:5500" ||
+                            origin.Contains("ngrok-free.dev")) // أضف نطاق ngrok
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowCredentials() 
-                        .SetIsOriginAllowed(_ => true); 
+                        .AllowCredentials();
                 });
             });
 
@@ -217,6 +221,8 @@ namespace E_PharmaHub
             builder.Services.AddScoped<IPrescriptionItemRepository, PrescriptionItemRepository>();
             builder.Services.AddScoped<IAppointmentNotificationScheduler, AppointmentNotificationScheduler>();
             builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+            builder.Services.AddScoped<IDoctorAnalyticsService, DoctorAnalyticsService>();
+            builder.Services.AddScoped<IPharmacistDashboardService, PharmacistDashboardService>();
 
             builder.Services.AddHttpContextAccessor();
 
