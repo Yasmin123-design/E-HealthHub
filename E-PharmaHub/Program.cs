@@ -81,9 +81,7 @@ namespace E_PharmaHub
                 options.AddPolicy("AllowAll", policy =>
                 {
                     policy
-                        .SetIsOriginAllowed(origin =>
-                            origin == "http://localhost:5500" ||
-                            origin.Contains("ngrok-free.dev")) // أضف نطاق ngrok
+                        .WithOrigins("http://localhost:5500")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();

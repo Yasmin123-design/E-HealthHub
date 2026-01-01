@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
     <PackageReference Include="Hangfire" Version="1.8.22" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.22" />
@@ -30,6 +34,7 @@
 
   <ItemGroup>
     <None Include="C:\Users\Lenovo\source\repos\API\E-PharmaHub\E-PharmaHub\.editorconfig" />
+    <None Include="wwwroot\index.html" />
   </ItemGroup>
 
 </Project>

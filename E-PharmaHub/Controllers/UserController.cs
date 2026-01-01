@@ -150,16 +150,16 @@ namespace E_PharmaHub.Controllers
             Response.Cookies.Append("auth_token", token, new CookieOptions
             {
                 HttpOnly = true,         
-                Secure = true,            
-                SameSite = SameSiteMode.None,
+                Secure = false,            
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddMinutes(30)
             });
 
             Response.Cookies.Append("refresh_token", refreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddDays(7) 
             });
             return Ok(new
@@ -196,15 +196,15 @@ namespace E_PharmaHub.Controllers
             Response.Cookies.Append("auth_token", newAccessToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddMinutes(30)
             });
             Response.Cookies.Append("refresh_token", newRefreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddDays(7) 
             });
 
