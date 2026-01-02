@@ -228,7 +228,7 @@ namespace E_PharmaHub.Services.OrderServ
                     {
                         await _notificationService.CreateAndSendAsync(
                             userId: pharmacist.AppUserId,
-                            title: "Low Stock",
+                            title: "Out Of Stock",
                             message: $"Medication '{orderItem.Medication.BrandName}' is out of stock.",
                             type: NotificationType.InventoryOutOfStock
                         );
