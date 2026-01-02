@@ -9,6 +9,9 @@
         OrderConfirmed,
         OrderCancelled,
         OrderDelivered,
-        NewAppointmentForDoctor
+        NewAppointmentForDoctor,
+        NewOrderForPharmacist,
+        InventoryOutOfStock,
+        InventoryLowStock
     }
 }

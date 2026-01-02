@@ -73,11 +73,11 @@ namespace E_PharmaHub.Services.NotificationServ
             var notifications = await _unitOfWork.Notifications
                 .GetUserNotificationsAsync(userId);
 
-            if (role == "Doctor")
+            if (role == "Doctor" || role == "Pharmacist")
             {
                 return new
                 {
-                    AppointmentRequests = notifications
+                    Notifications = notifications
                 };
             }
 

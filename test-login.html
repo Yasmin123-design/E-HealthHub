@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login - E-PharmaHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            direction: rtl;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .response {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .response.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .response.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .cookie-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            border: 2px solid #2196f3;
+        }
+
+        .cookie-info h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .cookie-item {
+            background: white;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .test-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .test-buttons button {
+            background: #28a745;
+        }
+
+        .test-buttons button:nth-child(2) {
+            background: #ffc107;
+        }
+
+        .test-buttons button:nth-child(3) {
+            background: #dc3545;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 اختبار تسجيل الدخول</h1>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" id="email" name="email" required placeholder="example@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" name="password" required placeholder="********">
+            </div>
+            
+            <button type="submit">تسجيل الدخول</button>
+        </form>
+
+        <div class="test-buttons">
+            <button onclick="checkCookies()">فحص Cookies</button>
+            <button onclick="testAuthEndpoint()">اختبار API محمي</button>
+            <button onclick="logout()">تسجيل خروج</button>
+        </div>
+
+        <div id="response" class="response"></div>
+
+        <div class="cookie-info" id="cookieInfo" style="display: none;">
+            <h3>📦 Cookies المخزنة:</h3>
+            <div id="cookieList"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5221/api'; // غير البورت حسب API بتاعك
+        
+        // دالة تسجيل الدخول
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            showResponse('جاري تسجيل الدخول...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/User/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include', // مهم جداً لإرسال واستقبال cookies
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResponse(`✅ ${data.message}\n\nالمستخدم: ${data.user.userName}\nالبريد: ${data.user.email}\nالأدوار: ${data.user.roles.join(', ')}`, 'success');
+                    
+                    // فحص الـ cookies مباشرة بعد Login
+                    setTimeout(() => {
+                        checkCookies();
+                    }, 500);
+                } else {
+                    showResponse(`❌ فشل تسجيل الدخول:\n${data.message || 'خطأ غير معروف'}`, 'error');
+                }
+            } catch (error) {
+                showResponse(`❌ خطأ في الاتصال:\n${error.message}`, 'error');
+                console.error('Login error:', error);
+            }
+        });
+
+        // دالة فحص الـ Cookies
+        function checkCookies() {
+            const cookies = document.cookie;
+            const cookieInfo = document.getElementById('cookieInfo');
+            const cookieList = document.getElementById('cookieList');
+            
+            let html = '';
+            
+            // ⚠️ ملحوظة مهمة عن HttpOnly
+            html += `<div class="cookie-item" style="background: #fff3cd; border: 2px solid #ffc107; padding: 15px; margin-bottom: 15px;">
+                <strong>⚠️ ملحوظة مهمة:</strong><br>
+                الـ <code>auth_token</code> و <code>refresh_token</code> مضبوطين على <code>HttpOnly = true</code><br>
+                <strong>يعني JavaScript مش هيقدر يشوفهم هنا!</strong> (ده للأمان ضد XSS attacks)<br><br>
+                <strong>✅ للتأكد من وجود الـ cookies:</strong><br>
+                1. افتح <strong>Developer Tools (F12)</strong><br>
+                2. اذهب لـ <strong>Application → Cookies</strong><br>
+                3. أو جرب "اختبار API محمي" - لو نجح، يبقى الـ cookies شغالة! 🎉
+            </div>`;
+            
+            if (!cookies) {
+                html += '<div class="cookie-item">ℹ️ لا توجد cookies يمكن قراءتها من JavaScript (HttpOnly cookies موجودة لكن مخفية)</div>';
+            } else {
+                const cookieArray = cookies.split('; ');
+                html += '<div class="cookie-item"><strong>📦 Cookies اللي JavaScript يقدر يشوفها:</strong></div>';
+                
+                let hasNonHttpOnlyCookies = false;
+                cookieArray.forEach(cookie => {
+                    const [name, value] = cookie.split('=');
+                    html += `<div class="cookie-item"><strong>${name}:</strong> ${value}</div>`;
+                    hasNonHttpOnlyCookies = true;
+                });
+                
+                if (!hasNonHttpOnlyCookies) {
+                    html += '<div class="cookie-item">ℹ️ لا توجد cookies غير HttpOnly</div>';
+                }
+            }
+            
+            html += `<div class="cookie-item" style="background: #d4edda; border: 2px solid #28a745; padding: 10px; margin-top: 10px;">
+                <strong>✨ الـ HttpOnly cookies موجودة وبتشتغل في الخلفية!</strong><br>
+                اضغط "اختبار API محمي" للتأكد!
+            </div>`;
+            
+            cookieList.innerHTML = html;
+            cookieInfo.style.display = 'block';
+            
+            // طباعة في console للتشخيص
+            console.log('⚠️ HttpOnly Cookies مش بتظهر في document.cookie');
+            console.log('Visible cookies:', document.cookie);
+            console.log('👉 افتح Application → Cookies في DevTools عشان تشوف كل الـ cookies');
+        }
+
+        // دالة اختبار endpoint محمي
+        async function testAuthEndpoint() {
+            showResponse('جاري اختبار الـ API المحمي...', 'info');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/User/profile`, {
+                    method: 'GET',
+                    credentials: 'include', // مهم لإرسال cookies
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResponse(`✅ تم الوصول للـ API بنجاح!\n\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResponse(`❌ فشل الوصول للـ API:\nالكود: ${response.status}\nالرسالة: ${data.message || 'Unauthorized'}`, 'error');
+                }
+            } catch (error) {
+                showResponse(`❌ خطأ:\n${error.message}`, 'error');
+                console.error('API test error:', error);
+            }
+        }
+
+        // دالة تسجيل الخروج
+        async function logout() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/User/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    showResponse('✅ تم تسجيل الخروج بنجاح', 'success');
+                    document.getElementById('cookieInfo').style.display = 'none';
+                } else {
+                    showResponse('❌ فشل تسجيل الخروج', 'error');
+                }
+            } catch (error) {
+                showResponse(`❌ خطأ:\n${error.message}`, 'error');
+            }
+        }
+
+        // دالة عرض الرسائل
+        function showResponse(message, type) {
+            const responseDiv = document.getElementById('response');
+            responseDiv.textContent = message;
+            responseDiv.className = `response ${type}`;
+            responseDiv.style.display = 'block';
+        }
+
+        // فحص Cookies عند تحميل الصفحة
+        window.addEventListener('load', () => {
+            if (document.cookie) {
+                checkCookies();
+            }
+        });
+    </script>
+</body>
+</html>

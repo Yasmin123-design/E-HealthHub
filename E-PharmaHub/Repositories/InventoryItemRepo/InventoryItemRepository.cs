@@ -31,7 +31,7 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
         public async Task<InventoryItem?> GetByPharmacyAndMedicationWithoutIncludesAsync(int pharmacyId, int medicationId)
         {
             return await _context.InventoryItems
-                .AsNoTracking() // 🔹 هنا فقط على DbSet
+                .AsNoTracking() 
                 .FirstOrDefaultAsync(x => x.PharmacyId == pharmacyId && x.MedicationId == medicationId);
         }
 

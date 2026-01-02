@@ -18,7 +18,7 @@ namespace E_PharmaHub.Repositories.OrderRepo
             DateTime from,
             DateTime to);
         Task<decimal> GetRevenueAsync(int pharmacyId, DateTime from, DateTime to, OrderStatus status);
-
+        Task<Order> GetOrderByPaymentIdAsync(int paymentId);
         Task<Order?> GetOrderByIdTrackingAsync(int orderId);
 
         Task<Order?> GetPendingOrderEntityByUserForUpdateAsync(string userId, int pharmacyId);

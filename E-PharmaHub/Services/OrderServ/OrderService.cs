@@ -211,8 +211,39 @@ namespace E_PharmaHub.Services.OrderServ
                type: NotificationType.OrderConfirmed
            );
 
-                return (true, "Order accepted successfully.");
 
+                foreach (var orderItem in order.Items)
+                {
+                    var inventoryItem = await _unitOfWork.IinventoryItem
+                        .GetByPharmacyAndMedicationAsync
+                        (order.PharmacyId,orderItem.MedicationId);
+
+                    if (inventoryItem == null)
+                        continue;
+
+                    var pharmacist = 
+                        await _unitOfWork.PharmasistsProfile.GetByPharmacyIdAsync(inventoryItem.PharmacyId);
+
+                    if (inventoryItem.Quantity == 0)
+                    {
+                        await _notificationService.CreateAndSendAsync(
+                            userId: pharmacist.AppUserId,
+                            title: "Low Stock",
+                            message: $"Medication '{orderItem.Medication.BrandName}' is out of stock.",
+                            type: NotificationType.InventoryOutOfStock
+                        );
+                    }
+                    else if (inventoryItem.Quantity < 5)
+                    {
+                        await _notificationService.CreateAndSendAsync(
+                            userId: pharmacist.AppUserId,
+                            title: "Low Stock",
+                            message: $"Medication '{orderItem.Medication.BrandName}' is running low.",
+                            type: NotificationType.InventoryLowStock
+                        );
+                    }
+                }
+                return (true, "Order accepted successfully.");
 
             }
             catch (Exception ex)

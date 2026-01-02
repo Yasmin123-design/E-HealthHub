@@ -45,26 +45,39 @@ namespace E_PharmaHub.Services.PaymentServ
             if (payment == null)
                 return;
 
-            if (payment.PaymentFor != PaymentForType.Appointment)
-                return;
+            if (payment.PaymentFor == PaymentForType.Appointment)
+            {
 
-            var appointment = await _unitOfWork.Appointments
-                .GetAppointmentByPaymentIdAsync(payment.Id);
+                var appointment = await _unitOfWork.Appointments
+                    .GetAppointmentByPaymentIdAsync(payment.Id);
 
-            if (appointment == null)
-                return;
+                if (appointment == null)
+                    return;
 
-            await _notificationService.CreateAndSendAsync(
-                appointment.DoctorId,
-                "New Appointment Request",
-                $"{appointment.PatientName} requested an appointment at {appointment.StartAt.ToEgyptTime():MM/dd/yyyy h:mm tt}",
-                NotificationType.NewAppointmentForDoctor
-            );
-            await _appointmentNotificationScheduler.ScheduleAppointmentNotifications(appointment);
+                await _notificationService.CreateAndSendAsync(
+                    appointment.DoctorId,
+                    "New Appointment Request",
+                    $"{appointment.PatientName} requested an appointment at {appointment.StartAt.ToEgyptTime():MM/dd/yyyy h:mm tt}",
+                    NotificationType.NewAppointmentForDoctor
+                );
+                await _appointmentNotificationScheduler.ScheduleAppointmentNotifications(appointment);
+            }else if(payment.PaymentFor == PaymentForType.Order)
+            {
+                var order = await _unitOfWork.Order
+                    .GetOrderByPaymentIdAsync(payment.Id);
+                if (order == null)
+                    return;
+                var pharmacist = await _unitOfWork.PharmasistsProfile
+                    .GetByPharmacyIdAsync(order.PharmacyId);
+
+                await _notificationService.CreateAndSendAsync(
+                   pharmacist.AppUserId,
+                   "New Order Recieved",
+                   "A customer placed a new order",
+                   NotificationType.NewOrderForPharmacist
+               );
+            }
         }
-
-
-
         public async Task<Payment> GetByReferenceIdAsync(string referenceId)
         {
             return await _unitOfWork.Payments.GetByReferenceIdAsync(referenceId);

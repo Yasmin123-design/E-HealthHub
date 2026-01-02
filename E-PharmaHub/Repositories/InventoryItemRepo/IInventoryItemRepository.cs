@@ -6,6 +6,7 @@ namespace E_PharmaHub.Repositories.InventoryItemRepo
 {
     public interface IInventoryItemRepository
     {
+
         Task<List<CategoryItemsCountDto>> GetItemsCountByCategoryAsync(
     int pharmacyId,
     DateTime from,

@@ -81,7 +81,11 @@ namespace E_PharmaHub
                 options.AddPolicy("AllowAll", policy =>
                 {
                     policy
-                        .WithOrigins("http://localhost:5500")
+                        .WithOrigins(
+                            "http://127.0.0.1:5501",
+                            "http://localhost:5501",
+                            "https://unendingly-unfoul-emmy.ngrok-free.dev"
+                        )
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
@@ -258,6 +262,57 @@ namespace E_PharmaHub
 
             var app = builder.Build();
             app.UseRouting();
+
+            // Custom CORS middleware to handle ngrok issues - set headers at the last moment
+            //app.Use(async (context, next) =>
+            //{
+            //    var origin = context.Request.Headers["Origin"].ToString();
+                
+            //    // List of allowed origins
+            //    var allowedOrigins = new[] 
+            //    { 
+            //        "http://127.0.0.1:5501", 
+            //        "http://localhost:5501",
+            //        "https://unendingly-unfoul-emmy.ngrok-free.dev"
+            //    };
+
+            //    // Handle preflight requests immediately
+            //    if (context.Request.Method == "OPTIONS")
+            //    {
+            //        if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
+            //        {
+            //            context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+            //            context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
+            //            context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
+            //            context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH";
+            //        }
+            //        context.Response.StatusCode = 200;
+            //        return;
+            //    }
+
+            //    // Use OnStarting to set headers at the last possible moment
+            //    if (!string.IsNullOrEmpty(origin) && allowedOrigins.Contains(origin))
+            //    {
+            //        context.Response.OnStarting(() =>
+            //        {
+            //            // Remove any existing CORS headers first
+            //            context.Response.Headers.Remove("Access-Control-Allow-Origin");
+            //            context.Response.Headers.Remove("Access-Control-Allow-Credentials");
+            //            context.Response.Headers.Remove("Access-Control-Allow-Headers");
+            //            context.Response.Headers.Remove("Access-Control-Allow-Methods");
+                        
+            //            // Set the correct headers
+            //            context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+            //            context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
+            //            context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Requested-With";
+            //            context.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH";
+                        
+            //            return Task.CompletedTask;
+            //        });
+            //    }
+
+            //    await next();
+            //});
 
             app.UseCors("AllowAll");
 

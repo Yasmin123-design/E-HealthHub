@@ -162,7 +162,21 @@ namespace E_PharmaHub.Controllers
 
             return Ok(items);
         }
+        [HttpGet("pharmacy/{id}")]
+        [Authorize(
+  AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme
+)]
+        public async Task<IActionResult> GetByPharmacy(int id)
+        {
+         
+            var items = await _medicineService
+                .GetMedicinesByPharmacyIdAsync(id);
 
+            if (!items.Any())
+                return NotFound("No medicines found for this pharmacy");
+
+            return Ok(items);
+        }
         [HttpGet("top-medications")]
         public async Task<IActionResult> GetTopMedications()
         {

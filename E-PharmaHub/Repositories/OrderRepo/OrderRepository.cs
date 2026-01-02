@@ -139,7 +139,7 @@ namespace E_PharmaHub.Repositories.OrderRepo
         public async Task<IEnumerable<OrderResponseDto>> GetByUserIdAsync(string userId)
         {
             return await BaseOrderIncludes()
-                .Where(o => o.UserId == userId)
+                .Where(o => o.UserId == userId && o.PaymentId != null && o.Payment.PaymentIntentId != null)
                 .Select(Selector)
                 .ToListAsync();
         }
@@ -151,7 +151,12 @@ namespace E_PharmaHub.Repositories.OrderRepo
                 .Select(Selector)
                 .ToListAsync();
         }
-
+        public async Task<Order> GetOrderByPaymentIdAsync(int paymentId)
+        {
+            return await BaseOrderIncludes()
+                .Where(a => a.PaymentId == paymentId)
+                .FirstOrDefaultAsync();
+        }
         public async Task<OrderResponseDto?> GetByPaymentIdAsync(int paymentId)
         {
             return await BaseOrderIncludes()
